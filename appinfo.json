@@ -1,0 +1,188 @@
+{
+    "appKeys": {
+        "day1_conditions": 22,
+        "day1_timestamp": 23,
+        "day2_temp": 31,
+        "day4_icon": 50,
+        "day4_temp": 51,
+        "day0_icon": 10,
+        "day1_temp": 21,
+        "day0_conditions": 12,
+        "day1_icon": 20,
+        "day4_timestamp": 53,
+        "day0_temp": 11,
+        "location": 72,
+        "day2_timestamp": 33,
+        "day2_icon": 30,
+        "day5_icon": 60,
+        "day2_conditions": 32,
+        "day3_temp": 41,
+        "day5_timestamp": 63,
+        "day5_conditions": 62,
+        "sunset": 71,
+        "day3_conditions": 42,
+        "day5_temp": 61,
+        "day0_timestamp": 13,
+        "day3_timestamp": 43,
+        "day3_icon": 40,
+        "day4_conditions": 52,
+        "sunrise": 70
+    },
+    "versionLabel": "2.0.0",
+    "versionCode": 1,
+    "shortName": "FM Integrated",
+    "companyName": "the Klebeian Group",
+    "watchapp": {
+        "watchface": true
+    },
+    "longName": "FM Integrated",
+    "resources": {
+        "media": [
+                  {
+                  "file": "images/sun v3.png",
+                  "type": "png",
+                  "name": "IMAGE_SUN"
+                  },
+                  {
+                  "file": "images/moonv3.png",
+                  "type": "png",
+                  "name": "IMAGE_MOON"
+                  },
+                  {
+                  "file": "images/pcloudyv2.png",
+                  "type": "png",
+                  "name": "IMAGE_PCLOUDY"
+                  },
+                  {
+                  "file": "images/pcloudy_moonV3.png",
+                  "type": "png",
+                  "name": "IMAGE_PCLOUDY_MOON"
+                  },
+                  {
+                  "file": "images/cloud.png",
+                  "type": "png",
+                  "name": "IMAGE_CLOUD"
+                  },
+                  {
+                  "file": "images/rain.png",
+                  "type": "png",
+                  "name": "IMAGE_RAIN"
+                  },
+                  {
+                  "file": "images/snow.png",
+                  "type": "png",
+                  "name": "IMAGE_SNOW"
+                  },
+                  {
+                  "file": "images/haze_lines_3_block.png",
+                  "type": "png",
+                  "name": "IMAGE_FOG"
+                  },
+                  {
+                  "file": "fonts/Tahoma Bold.ttf",
+                  "type": "font",
+                  "name": "FONT_TAHOMA_BOLD_18"
+                  },
+                  {
+                  "file": "fonts/Tahoma Bold.ttf",
+                  "type": "font",
+                  "name": "FONT_TAHOMA_BOLD_22"
+                  },
+                  {
+                  "file": "fonts/Tahoma Bold.ttf",
+                  "type": "font",
+                  "name": "FONT_TAHOMA_BOLD_27"
+                  },
+                  {
+                  "file": "fonts/Tahoma Bold.ttf",
+                  "type": "font",
+                  "name": "FONT_TAHOMA_BOLD_28"
+                  },
+                  {
+                  "file": "images/DateBorderSquare.png",
+                  "type": "png",
+                  "name": "IMAGE_DATE_BORDER"
+                  },
+                  {
+                  "file": "fonts/Arial.ttf",
+                  "type": "font",
+                  "name": "FONT_ARIAL_18"
+                  },
+                  {
+                  "file": "fonts/Arial.ttf",
+                  "type": "font",
+                  "name": "FONT_ARIAL_15"
+                  },
+                  {
+                  "file": "fonts/Arial.ttf",
+                  "type": "font",
+                  "name": "FONT_ARIAL_17"
+                  },
+                  {
+                  "file": "images/10%.png",
+                  "type": "png",
+                  "name": "IMAGE_10"
+                  },
+                  {
+                  "file": "images/20%.png",
+                  "type": "png",
+                  "name": "IMAGE_20"
+                  },
+                  {
+                  "file": "images/30%.png",
+                  "type": "png",
+                  "name": "IMAGE_30"
+                  },
+                  {
+                  "file": "images/40%.png",
+                  "type": "png",
+                  "name": "IMAGE_40"
+                  },
+                  {
+                  "file": "images/50%.png",
+                  "type": "png",
+                  "name": "IMAGE_50"
+                  },
+                  {
+                  "file": "images/60%.png",
+                  "type": "png",
+                  "name": "IMAGE_60"
+                  },
+                  {
+                  "file": "images/70%.png",
+                  "type": "png",
+                  "name": "IMAGE_70"
+                  },
+                  {
+                  "file": "images/80%.png",
+                  "type": "png",
+                  "name": "IMAGE_80"
+                  },
+                  {
+                  "file": "images/90%.png",
+                  "type": "png",
+                  "name": "IMAGE_90"
+                  },
+                  {
+                  "file": "images/100%.png",
+                  "type": "png",
+                  "name": "IMAGE_100"
+                  },
+                  {
+                  "file": "images/vNext thunder.png",
+                  "type": "png",
+                  "name": "IMAGE_TSTORM"
+                  },
+                  {
+                  "file": "fonts/Arial Bold.ttf",
+                  "type": "font",
+                  "name": "FONT_ARIAL_BOLD_16"
+                  }
+                  ]
+    },
+    "uuid": "40588d95-2aed-41e6-9300-e53a9a501af3",
+    "capabilities": [
+                     "location",
+                     "configurable"
+                     ]
+}
