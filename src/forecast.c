@@ -50,7 +50,7 @@ GBitmap *nextday_icon_bitmap = NULL;
 GBitmap *date_layer_bitmap = NULL;
 uint32_t offsetInt = 0;
 
-uint32_t todayInt = 1095345601;
+uint32_t todayInt = 1095345600;
 uint32_t tomorrowInt = 1095432000;
 uint32_t nextdayInt = 1095518400;
 uint32_t sunriseInt = 1095429600 - (3600 * 7);
