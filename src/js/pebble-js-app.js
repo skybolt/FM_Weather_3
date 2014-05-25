@@ -7,8 +7,8 @@ var setPebbleToken = 'JUCP'; //    'XPGE';
 //console.log("request.open( http://x.SetPebble.com/api/" + setPebbleToken + '/' + Pebble.getAccountToken());
 //Pebble.addEventListener('ready', function(e) {
 //});
-var debug_flag = 5;
-var m = 0;
+var debug_flag = 0;
+var m = 1;
 //var tempFlag = 7; //0F, 1C, 2K, 3Ra, 4Re, 5Ro, 6N, 7De
 
 //localStorage.removeItem("tempFlag");
@@ -94,6 +94,56 @@ function tempLabel() {
 		return "°De"; 
 	}   
 }
+
+function pressureGetter(pressure) {
+    if (pressureFlag == 0 ) {
+		//inHG, base unit
+		return pressure;
+	} else
+        if (pressureFlag == 1) {
+            //mb = inHg * 33.8637526
+            pressure = pressure * 33.8637526;
+            pressure = Math.round(pressure);
+            return pressure;
+        } else
+            if (pressureFlag == 2) {
+                //PSI = inHg / 2.0360206576
+                pressure = pressure /2.0360206576;
+                pressure = Math.round(pressure*100)/100;
+                return pressure;
+            } else
+                if (pressureFlag == 3) {
+                    //Pa, pascals = inHg * 3377 or MPa, megapascals * 0.003386
+                    // [°R] = [K] × 9/5
+                    pressure = pressure * 3386.37526;
+                    pressure = Math.round(pressure);
+                    return pressure;
+                } else
+                    if (pressureFlag == 4) {
+                        //Technical Atmosphere
+                        // Ta = inHg * 0.034531557667501
+                        // [°Ré] = ([K] − 273.15) × 4/5
+                        pressure = pressure * 0.034531557667501;
+                        pressure = Math.round(pressure*100)/100;
+                        return pressure; 
+                    } else 
+                        if (pressureFlag == 5) {
+                            //Standard Atmosphere
+                            //Sa = inHg * 0.0334210543544
+                            pressure = pressure * 0.0334210543544;
+                            pressure = Math.round(pressure*100);
+                            return pressure; 
+                        } else 
+                            if (pressureFlag == 6) {
+                                //Torr
+                                //Torr = inHg * 0.254
+                                pressure = pressure * 0.254; 
+                                pressure = Math.round(pressure*100);
+                                return pressure; 
+                            }
+	
+}
+
 
 function tempGetter(temp) {
 	if (tempFlag == 0 ) {
@@ -181,7 +231,8 @@ function fetchWeatherForecast(latitude, longitude) {
             if (req.status == 200) {
                 var response = JSON.parse(req.responseText);
 			  if (debug_flag > 0) {
-			  console.log("req.responseText.lenght = " + req.responseText.length); 
+			  console.log("req.responseText.lenght = " + req.responseText.length);
+                  console.log("test response dump \n" + req.responseText);
 			  }
                 if (req.responseText.length > 100) {
 				 
@@ -265,21 +316,34 @@ function fetchWeatherConditions(latitude, longitude) {
     var response;
     var req = new XMLHttpRequest();
     req.open("GET", "http://api.openweathermap.org/data/2.5/weather?" + "lat=" + latitude + "&lon=" + longitude + "&cnt=2", true);
+    if (debug_flag > 0) {
+        console.log("http://api.openweathermap.org/data/2.5/weather?" + "lat=" + latitude + "&lon=" + longitude + "&cnt=2");
+    }
     req.onload = function(e) {
         var offset = new Date().getTimezoneOffset() / 60;
         if (req.readyState == 4) {
             if (req.status == 200) {
                 response = JSON.parse(req.responseText);
-			  console.log("req.responseText.lenght = " + req.responseText.length); 
+                if (debug_flag > 0) {
+			  console.log("req.responseText.lenght = " + req.responseText.length);
+                console.log("fetchWeatherConditions response = \n" + req.responseText);
+                }
                 if (req.responseText.length > 100) {
                     var location = response.name;
-//                    var staleDate = new Date(response.dt * 1e3);
-//                    var days = 0;
-//                    var difference = 0;
- //                   var today = new Date();
-//                    difference = today - staleDate;
-//                    days = Math.round(difference / (1e3 * 60 * 60 * 24));
-//				 console.log("offset is " + offset);
+                    
+                    // get icon
+                    var day0_icon = response.weather[0].id;
+                    // get temp
+                    var day0_temp = tempGetter(response.main.temp);
+                    // get conditions
+                    var day0_conditions = response.weather[0].main;
+                    // get barometer
+                    var day0_baro = response.main.pressure;
+                    // get timestamp
+                    var day0_timestamp = response.dt;
+                    console.log("day0_icon " + day0_icon + " " + day0_temp + " " + day0_conditions + " " + day0_timestamp);
+
+                    
                     var sunrise = response.sys.sunrise;
 //				 console.log("raw sunrise = " + sunrise); 
 				 sunrise = parseInt(sunrise) - parseInt (offset * 3600); 
@@ -300,6 +364,75 @@ function fetchWeatherConditions(latitude, longitude) {
     req.send(null);
 }
 
+function fetchWeatherTodayForecast(latitude, longitude) {
+    var response;
+    var req = new XMLHttpRequest();
+//    http://api.openweathermap.org/data/2.5/forecast?lat=47.68969385897765&lon=-122.38351216622917&mode=xml
+    req.open("GET", "http://api.openweathermap.org/data/2.5/forecast?" + "lat=" + latitude + "&lon=" + longitude + "&cnt=2", true);
+    req.onload = function(e) {
+        var offset = new Date().getTimezoneOffset() / 60;
+        if (req.readyState == 4) {
+            if (req.status == 200) {
+                response = JSON.parse(req.responseText);
+                console.log("fetchWeatherTodayForecast req.responseText.length = " + req.responseText.length);
+                console.log("fred");
+                if (req.responseText.length > 100) {
+//                    console.log(response.city.name);
+//                    console.log(response.list[0].dt_txt);
+ //                   console.log(response.list[0].weather[0].description);
+//                    var location = response.name;
+                    var n = 1;
+//                    list[n].dt;
+//                    list[n].main.temp;
+//                    list[n].main.weather[0]. //(icon 04n, id 803, main "Clouds");
+                    var day1_icon = iconFromWeatherId(response.list[1].weather[0].id);
+                    var day1_temp = tempGetter(response.list[n].main.temp);
+                    var day1_timestamp = response.list[n].dt;
+                    console.log(day1_timestamp);
+                    day1_timestamp = parseInt(day1_timestamp) - parseInt (offset * 3600);
+                    console.log("day1_icon = " + day1_icon + " " + response.list[n].weather[0].id + " " + response.list[n].weather[0].description + " " + day1_temp + " " + day1_timestamp);
+                    console.log()
+
+                    n = 4
+                    var day2_icon = iconFromWeatherId(response.list[n].weather[0].id);
+                    var day2_temp = tempGetter(response.list[n].main.temp);
+                    var day2_timestamp = response.list[n].dt;
+                    console.log(day2_timestamp);
+                    day2_timestamp = parseInt(day2_timestamp) - parseInt (offset * 3600);
+                    console.log("day2_icon = " + day2_icon + " " + response.list[n].weather[0].id + " " + response.list[n].weather[0].description + " " + day2_temp + " " + day2_timestamp);
+                    
+                    //get conditions for array item 1 and array item 3, that's 3 hours out and 9 hours out
+                    // 0 is now to 3, 1 is 3 to 6, 2 is 6 to 9, 3 is 9 to 12, 4 is 12 to 15, etc.
+                    
+                    //                    var staleDate = new Date(response.dt * 1e3);
+                    //                    var days = 0;
+                    //                    var difference = 0;
+                    //                   var today = new Date();
+                    //                    difference = today - staleDate;
+                    //                    days = Math.round(difference / (1e3 * 60 * 60 * 24));
+                    //				 console.log("offset is " + offset);
+                    //var sunrise = response.sys.sunrise;
+                    //				 console.log("raw sunrise = " + sunrise);
+                    //sunrise = parseInt(sunrise) - parseInt (offset * 3600);
+                    //				 console.log("adj sunrise = " + sunrise);
+                    //var sunset = response.sys.sunset;
+                    //				 console.log("raw sunset = " + sunset);
+                    //sunset = parseInt(sunset) - parseInt (offset * 3600);
+                    //				 console.log("adgj sunset = " + sunset);
+                    
+                    
+                    /*MessageQueue.sendAppMessage({
+                                                location: location,
+                                                sunrise: sunrise,
+                                                sunset: sunset,
+                                                }); */
+                } else {console.log("fail if responseText.lenght > 100")}
+            } else {console.log("fail else req status 200")}
+        } else {console.log("fail readyState == 4")}
+    };
+    req.send(null);
+}
+
 function locationSuccess(pos) {
     var coordinates = pos.coords;
 	console.log("locationSuccess, " + coordinates.latitude + ", " + coordinates.longitude); 
@@ -307,6 +440,7 @@ function locationSuccess(pos) {
 //var longitude = 12.577281; 	
 //fetchWeather(latitude, longitude);
 	fetchWeatherForecast(coordinates.latitude, coordinates.longitude);
+    fetchWeatherTodayForecast(coordinates.latitude, coordinates.longitude);
 	fetchWeatherConditions(coordinates.latitude, coordinates.longitude);
 
 }
@@ -434,27 +568,29 @@ function iconFromWeatherIconCode(weatherIconCode) {
     }
 }
 
+
 function iconFromWeatherId(weatherId) {
-    if (weatherId < 200) {
+    if (weatherId < 200) {		    // 0-199 undefined, return lines?
         return 10;
-    } else if (weatherId < 300) {
+    } else if (weatherId < 300) {     // 200 series - thunderstorms,
         return 12;
-    } else if (weatherId < 600) {
+    } else if (weatherId < 600) {      // 300 to 321 defined as rain, 400-499 not defined, 500-599 is rain
         return 6;
-    } else if (weatherId < 700) {
+    } else if (weatherId < 700) { 	// 600-699 defined as snow
         return 8;
-    } else if (weatherId < 800) {
-        return 10;
-    } else if (weatherId == 800) {
+    } else if (weatherId < 800) {		// 700-799 is mist, smoke, fog, etc. Return lines
+        return 10;						// 900-99 is crazy atmospheric shit,
+    } else  if (weatherId == 800 ) {		// 800 is clear
         return 0;
-    } else if (weatherId < 804) {
+    } else if (weatherId < 804 ) {	// 801, 802, 803 are all partly cloudy
         return 2;
-    } else if (weatherId = 804) {
-        return 4;
-    } else {
+    } else if (weatherId = 804 ) {   // 804 = overcast. Should it be clouds, or lines? I love lines. So, lines. But it shoudl probably be clouds
+        return 10;
+    } else {							// 900 to 962 ranges from tornado to calm. Most strange.
         return 10;
     }
 }
+
 
 var MessageQueue = function() {
     function t() {

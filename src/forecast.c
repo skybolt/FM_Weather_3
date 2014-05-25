@@ -7,7 +7,7 @@
 // weather underground fm_forecast_stable
 
 Window *window;
-//Layer *window_layer; // = window_get_root_layer(window);
+//Layer *forecast_layer; // = window_get_root_layer(window);
 
 BitmapLayer *today_icon_layer;
 BitmapLayer *tomorrow_icon_layer;
@@ -156,11 +156,20 @@ static void fetch_message(void) {
 	app_message_outbox_send();
 }
 
-static void handle_battery(BatteryChargeState charge_state) {	
-//	int xPos = charge_state.charge_percent; 
-	//int xPos = lclTimeInt % 60; 
-//	xPos = (144 * xPos) / 100; 
-//	layer_set_frame(power_bar_layer, GRect(xPos, 37, 1, 2));
+static void handle_battery(BatteryChargeState charge_state) {
+    //int xPos = lclTimeInt % 60;
+	
+    
+    APP_LOG(APP_LOG_LEVEL_INFO, "battery handler invoked");
+	int xPos = charge_state.charge_percent;
+	xPos = (144 * xPos) / 100;
+	layer_set_frame(power_bar_layer, GRect(xPos, 37, 1, 2));
+    
+    /*int xPos = charge_state.charge_percent;
+	xPos = (144 * xPos) / 100;
+	layer_set_frame(power_bar_layer, GRect(xPos, 97, 1, 2));
+//	layer_set_update_proc(power_bar_layer, black_layer_update_callback);
+*/
 /*	if (charge_state.is_charging) {
 
 	} else {
@@ -632,7 +641,7 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
 
 void infolines_init(void) {
 	//to call infolines_init(); 
-	Layer *window_layer = window_get_root_layer(window);
+	Layer *forecast_layer = window_get_root_layer(window);
 	
 	info_line_layer = layer_create(GRect(x, y, w, h));
 	layer_set_update_proc(info_line_layer, black_layer_update_callback);
@@ -652,11 +661,11 @@ void infolines_init(void) {
 	power_bar_layer = layer_create(GRect(-1, -1, 0, 0));
 	layer_set_update_proc(power_bar_layer, white_layer_update_callback);  
 
-	layer_add_child(window_layer, top_line_layer);
-	layer_add_child(window_layer, bottom_line_layer); //
-	layer_add_child(window_layer, info_line_layer);
-	layer_add_child(window_layer, power_bar_layer); 
-	layer_add_child(window_layer, second_layer);
+	layer_add_child(forecast_layer, top_line_layer);
+	layer_add_child(forecast_layer, bottom_line_layer); //
+	layer_add_child(forecast_layer, info_line_layer);
+	layer_add_child(forecast_layer, power_bar_layer); 
+	layer_add_child(forecast_layer, second_layer);
 	
 
 }
@@ -684,7 +693,8 @@ static void window_load(Window *window) {
         //uint32_t sunsetInt = 1095472800;
 	};
 	
-    Layer *window_layer = window_get_root_layer(window);
+    Layer *forecast_layer = window_get_root_layer(window);
+    infolines_init();
 	
     //	int hite = 58;
 	int hite = 43;
@@ -798,42 +808,51 @@ static void window_load(Window *window) {
 	text_layer_set_font(location_layer, custom_font_time);
   	text_layer_set_text_alignment(location_layer, GTextAlignmentCenter);
 		    
-	layer_add_child(window_layer, text_layer_get_layer(today_cond_layer));
-	layer_add_child(window_layer, text_layer_get_layer(tomorrow_cond_layer));
-	layer_add_child(window_layer, text_layer_get_layer(nextday_cond_layer));
+	layer_add_child(forecast_layer, text_layer_get_layer(today_cond_layer));
+	layer_add_child(forecast_layer, text_layer_get_layer(tomorrow_cond_layer));
+	layer_add_child(forecast_layer, text_layer_get_layer(nextday_cond_layer));
 	
-	layer_add_child(window_layer, text_layer_get_layer(today_temp_layer));
-	layer_add_child(window_layer, text_layer_get_layer(tomorrow_temp_layer));
-	layer_add_child(window_layer, text_layer_get_layer(nextday_temp_layer));
+	layer_add_child(forecast_layer, text_layer_get_layer(today_temp_layer));
+	layer_add_child(forecast_layer, text_layer_get_layer(tomorrow_temp_layer));
+	layer_add_child(forecast_layer, text_layer_get_layer(nextday_temp_layer));
 	
-	layer_add_child(window_layer, text_layer_get_layer(today_day_layer));
-	layer_add_child(window_layer, text_layer_get_layer(tomorrow_day_layer));
-	layer_add_child(window_layer, text_layer_get_layer(nextday_day_layer));
+	layer_add_child(forecast_layer, text_layer_get_layer(today_day_layer));
+	layer_add_child(forecast_layer, text_layer_get_layer(tomorrow_day_layer));
+	layer_add_child(forecast_layer, text_layer_get_layer(nextday_day_layer));
 	
-	layer_add_child(window_layer, text_layer_get_layer(time_layer));
-	layer_add_child(window_layer, bitmap_layer_get_layer(date_border_layer));
-	layer_add_child(window_layer, text_layer_get_layer(date_layer));
+	layer_add_child(forecast_layer, text_layer_get_layer(time_layer));
+	layer_add_child(forecast_layer, bitmap_layer_get_layer(date_border_layer));
+	layer_add_child(forecast_layer, text_layer_get_layer(date_layer));
 	
-	layer_add_child(window_layer, bitmap_layer_get_layer(today_icon_layer));
-	layer_add_child(window_layer, bitmap_layer_get_layer(tomorrow_icon_layer));
-	layer_add_child(window_layer, bitmap_layer_get_layer(nextday_icon_layer));
+	layer_add_child(forecast_layer, bitmap_layer_get_layer(today_icon_layer));
+	layer_add_child(forecast_layer, bitmap_layer_get_layer(tomorrow_icon_layer));
+	layer_add_child(forecast_layer, bitmap_layer_get_layer(nextday_icon_layer));
 	
-	layer_add_child(window_layer, text_layer_get_layer(bt_layer));
+	layer_add_child(forecast_layer, text_layer_get_layer(bt_layer));
 	layer_set_hidden(text_layer_get_layer(bt_layer), true);
 	
-	layer_add_child(window_layer, text_layer_get_layer(location_layer));
+	layer_add_child(forecast_layer, text_layer_get_layer(location_layer));
 	app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values, ARRAY_LENGTH(initial_values),
 	sync_tuple_changed_callback, sync_error_callback, NULL);
 	
 	inverter_layer = inverter_layer_create(GRect(0, 0, 144, 168));
 	layer_set_hidden(inverter_layer_get_layer(inverter_layer), true);
-	layer_add_child(window_layer, inverter_layer_get_layer(inverter_layer));
+	layer_add_child(forecast_layer, inverter_layer_get_layer(inverter_layer));
     
 	send_cmd();
 	tick_timer_service_subscribe(SECOND_UNIT, &handle_second_tick);
 	handle_minute_tick();
 	handle_hour_tick();
 	bluetooth_connection_service_subscribe(&handle_bluetooth);
+    if (debug_flag > 0) {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "next line sets battery service subscribe on");
+    }
+    battery_state_service_subscribe(handle_battery);
+    if (debug_flag > 0) {
+        APP_LOG(APP_LOG_LEVEL_INFO, "next line peeks at battery state");
+    }
+    handle_battery(battery_state_service_peek());
+ 
 }
 
 static void window_unload(Window *window) {
