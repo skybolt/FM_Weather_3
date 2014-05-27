@@ -43,7 +43,10 @@ Layer* bottom_line_layer;
 int x = 0; 
 int y = 37; 
 int w = 144; 
-int h = 2; 
+int h = 2;
+
+Layer *todayForecastLayer;
+TextLayer *todayForecastTextLayer;
 
 InverterLayer *inverter_layer;
 
@@ -794,15 +797,7 @@ static void window_load(Window *window) {
     }
 	
 	Tuplet initial_values[] = {
-/*		TupletCString(WEATHER_DAY0_BARO_KEY, "27.89Hg"),
-		TupletInteger(WEATHER_DAY0_ICON_KEY, (int) 1 + night_flag),
-		TupletInteger(WEATHER_DAY1_ICON_KEY, (int) 1 + night_flag),
-		TupletInteger(WEATHER_DAY2_ICON_KEY, (int) 1 + night_flag),
-		TupletInteger(WEATHER_DAY3_ICON_KEY, (int) 1 + night_flag),
-		TupletInteger(WEATHER_DAY4_ICON_KEY, (int) 1 + night_flag),
-		TupletInteger(WEATHER_DAY5_ICON_KEY, (int) 1 + night_flag),
-*/
-		
+		TupletCString(WEATHER_DAY0_BARO_KEY, "27.89Hg"),
         TupletInteger(WEATHER_DAY0_ICON_KEY, (int) 14),
 		TupletInteger(WEATHER_DAY1_ICON_KEY, (int) 14),
 		TupletInteger(WEATHER_DAY2_ICON_KEY, (int) 14),
@@ -979,7 +974,14 @@ static void window_load(Window *window) {
 	layer_add_child(forecast_layer, text_layer_get_layer(location_layer));
 	app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values, ARRAY_LENGTH(initial_values),
 	sync_tuple_changed_callback, sync_error_callback, NULL);
-	
+    
+    todayForecastLayer = layer_create(GRect(0, 43, 144, 50));
+//	layer_set_update_proc(todayForecastLayer, white_layer_update_callback);
+    todayForecastTextLayer = text_layer_create(GRect(0, 0, 144, 50));
+    text_layer_set_background_color(todayForecastTextLayer, GColorBlack);
+    layer_add_child(forecast_layer, todayForecastLayer);
+    layer_add_child(todayForecastLayer, text_layer_get_layer(todayForecastTextLayer));
+    
 	inverter_layer = inverter_layer_create(GRect(0, 0, 144, 168));
 	layer_set_hidden(inverter_layer_get_layer(inverter_layer), true);
 	layer_add_child(forecast_layer, inverter_layer_get_layer(inverter_layer));
