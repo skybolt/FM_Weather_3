@@ -128,56 +128,6 @@
                   "name": "FONT_ARIAL_16"
                   },
                   {
-                  "file": "images/10%.png",
-                  "type": "png",
-                  "name": "IMAGE_10"
-                  },
-                  {
-                  "file": "images/20%.png",
-                  "type": "png",
-                  "name": "IMAGE_20"
-                  },
-                  {
-                  "file": "images/30%.png",
-                  "type": "png",
-                  "name": "IMAGE_30"
-                  },
-                  {
-                  "file": "images/40%.png",
-                  "type": "png",
-                  "name": "IMAGE_40"
-                  },
-                  {
-                  "file": "images/50%.png",
-                  "type": "png",
-                  "name": "IMAGE_50"
-                  },
-                  {
-                  "file": "images/60%.png",
-                  "type": "png",
-                  "name": "IMAGE_60"
-                  },
-                  {
-                  "file": "images/70%.png",
-                  "type": "png",
-                  "name": "IMAGE_70"
-                  },
-                  {
-                  "file": "images/80%.png",
-                  "type": "png",
-                  "name": "IMAGE_80"
-                  },
-                  {
-                  "file": "images/90%.png",
-                  "type": "png",
-                  "name": "IMAGE_90"
-                  },
-                  {
-                  "file": "images/100%.png",
-                  "type": "png",
-                  "name": "IMAGE_100"
-                  },
-                  {
                   "file": "images/vNext thunder.png",
                   "type": "png",
                   "name": "IMAGE_TSTORM"
