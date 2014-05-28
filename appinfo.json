@@ -122,6 +122,10 @@
                   "file": "fonts/Arial.ttf",
                   "type": "font",
                   "name": "FONT_ARIAL_17"
+                  },                  {
+                  "file": "fonts/Arial.ttf",
+                  "type": "font",
+                  "name": "FONT_ARIAL_16"
                   },
                   {
                   "file": "images/10%.png",

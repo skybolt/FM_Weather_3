@@ -1052,7 +1052,8 @@ static void window_load(Window *window) {
 	text_layer_set_text_alignment(current_conditions_layer, GTextAlignmentLeft);
     GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
 	text_layer_set_font(current_temperature_layer, custom_font_time);
-	GFont custom_font_status = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_17));
+    GFont custom_font_status = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_17));
+	GFont custom_font_status_16 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_16));
 	text_layer_set_font(current_status_layer, custom_font_status);
 	text_layer_set_font(current_conditions_layer, custom_font_status);
 	text_layer_set_font(current_barometer_layer, custom_font_status);
