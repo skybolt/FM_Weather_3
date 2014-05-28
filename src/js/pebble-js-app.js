@@ -360,7 +360,7 @@ function fetchWeatherForecast(latitude, longitude) {
                     
                     
                 } else {console.log("fail length not zero");}
-            } else {console.log("fail 200");}
+            } else {console.log("fail 200: fetchWeatherForecast");}
 		} else{console.log("fail 4"); }
 	    if (debug_flag > 1) {
             console.log("end onload");
@@ -546,7 +546,7 @@ function fetchWeatherTodayForecast(latitude, longitude) {
                     
                     
                 } else {console.log("fail if responseText.lenght > 100")}
-            } else {console.log("fail else req status 200")}
+            } else {console.log("fail 200: fetchWeatherTodayForecast")}
         } else {console.log("fail readyState == 4")}
     };
     req.send(null);
@@ -643,6 +643,12 @@ Pebble.addEventListener("webviewclosed", function(e) {
                         var config = JSON.parse(responseText);
                         tempFlag = config.tempUnits;
                         localStorage.setItem("tempFlag", tempFlag);
+                        pressureFlag = config.pressUnits;
+                        localStorage.setItem("pressureFlag", pressureFlag);
+                        //var location = config.location;
+                        MessageQueue.sendAppMessage({
+                        location: config.location,
+                                })
                         
                         //localStorage.setItem("tempFlag", JSON.parse(e.response));
                         //console.log("e.response " + e.response);

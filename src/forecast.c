@@ -69,8 +69,8 @@ static TextLayer *current_barometer_layer;
 
 InverterLayer *inverter_layer;
 GBitmap *day0_icon_bitmap = NULL;
-GBitmap *todayForecast_icon_bitmap = NULL;
-GBitmap *tonightForecast_icon_bitmap = NULL;
+GBitmap *day1_icon_bitmap = NULL;
+GBitmap *day2_icon_bitmap = NULL;
 GBitmap *day3_icon_bitmap = NULL;
 GBitmap *day4_icon_bitmap = NULL;
 GBitmap *day5_icon_bitmap = NULL;
@@ -441,27 +441,27 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         if (debug_flag > 1) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY1_ICON_KEY %lu + night_flag %d", new_tuple->value->uint32, night_flag);
         }
-        if (todayForecast_icon_bitmap) {
-            gbitmap_destroy(todayForecast_icon_bitmap);
+        if (day1_icon_bitmap) {
+            gbitmap_destroy(day1_icon_bitmap);
         }
-        bitmap_layer_set_bitmap(todayForecastIconLayer, todayForecast_icon_bitmap);
-        todayForecast_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + night_flag]);
+        bitmap_layer_set_bitmap(todayForecastIconLayer, day1_icon_bitmap);
+        day1_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + night_flag]);
         break;
         
 		case WEATHER_DAY2_ICON_KEY:
         if (debug_flag > 1) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY2_ICON_KEY %lu + night_flag %d", new_tuple->value->uint32, night_flag);
         }
-        if (tonightForecast_icon_bitmap) {
-            gbitmap_destroy(tonightForecast_icon_bitmap);
+        if (day2_icon_bitmap) {
+            gbitmap_destroy(day2_icon_bitmap);
         }
         if (night_flag == 0) {
-            tonightForecast_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + 1]);
-            bitmap_layer_set_bitmap(tonightForecastIconLayer, tonightForecast_icon_bitmap);
+            day2_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + 1]);
+            bitmap_layer_set_bitmap(tonightForecastIconLayer, day2_icon_bitmap);
         }
         else if (night_flag == 1) {
-            tonightForecast_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + 0]);
-            bitmap_layer_set_bitmap(tonightForecastIconLayer, tonightForecast_icon_bitmap);
+            day2_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + 0]);
+            bitmap_layer_set_bitmap(tonightForecastIconLayer, day2_icon_bitmap);
         }
         break;
         
@@ -580,17 +580,17 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         }
 
             if (charCount < 10 ) {
-/*                GFont custom_font_large_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
-                text_layer_set_font(location_layer, custom_font_large_location);
-                text_layer_set_font(location_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
+                //GFont custom_font_large_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
+                //text_layer_set_font(location_layer, custom_font_large_location);
+                //text_layer_set_font(location_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
                 if (debug_flag > 1) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "charCount %d reads less than 10", charCount);
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting location_layer, custom_font_large_location");
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting ocation_layer, GTextOverflowModeTrailingEllipsis");
                 }
-                layer_set_frame(text_layer_get_layer(location_layer), (GRect(-10, 115+changer, 164, 35)));
-                text_layer_set_overflow_mode(location_layer, GTextOverflowModeTrailingEllipsis);
-*/            } else if (charCount < 16) {
+                //layer_set_frame(text_layer_get_layer(location_layer), (GRect(-10, 115+changer, 164, 35)));
+                //text_layer_set_overflow_mode(location_layer, GTextOverflowModeTrailingEllipsis);
+              } else if (charCount < 16) {
                 if (debug_flag > 1) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "charCount %d reads greater than 10 less than 16", charCount);
                 }
@@ -599,8 +599,8 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
                 // not in use anymore
                 GFont custom_font_small_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_18));
                 //text_layer_set_font(location_layer, custom_font_small_location);
-                text_layer_set_font(location_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
-                layer_set_frame(text_layer_get_layer(location_layer), (GRect(0, 122+changer, 144, 100)));
+                text_layer_set_font(location_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
+                //layer_set_frame(text_layer_get_layer(location_layer), (GRect(0, 122+changer, 144, 100)));
                 if (debug_flag > 1) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting location_layer, custom_font_small_location");
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting ocation_layer, GTextOverflowModeWordWrap");
@@ -615,7 +615,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
                 GFont custom_font_tiny_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_BOLD_16));
                 //text_layer_set_font(location_layer, custom_font_tiny_location);
                 text_layer_set_font(location_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
-                layer_set_frame(text_layer_get_layer(location_layer), (GRect(0, 125+changer, 144, 100)));
+                //layer_set_frame(text_layer_get_layer(location_layer), (GRect(0, 125+changer, 144, 100)));
                 text_layer_set_overflow_mode(location_layer, GTextOverflowModeWordWrap);
             }
         if (debug_flag > 4) {
@@ -1036,7 +1036,7 @@ static void window_load(Window *window) {
 	time_layer = text_layer_create(GRect(0, 1, 144 * .75, 50));
 	date_layer = text_layer_create(GRect(92+4, -1, 52, 32));
 //	location_layer = text_layer_create(GRect(0, 111-3, 144, 100));
-	location_layer = text_layer_create(GRect(-5, 125, 154, 35));
+	location_layer = text_layer_create(GRect(-2, 125, 148, 40));
 //    layer_set_frame(text_layer_get_layer(location_layer), (GRect(-10, 115+changer, 164, 35)));
     
     
