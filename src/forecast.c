@@ -1,5 +1,6 @@
 #include <pebble.h>
 #include "bluetooth.h"
+#include "forecast.h"
 	
 //native background white
 //inverted background black
@@ -57,7 +58,17 @@ TextLayer *todayForecastStatusLayer;
 TextLayer *tonightForecastStatusLayer;
 InverterLayer *tonight_forecast_inverter_layer;
 
+
+Layer *currentConditionsLayer;
+static BitmapLayer *current_icon_layer;
+static TextLayer *current_temperature_layer;
+static TextLayer *current_status_layer;
+static TextLayer *current_conditions_layer;
+static TextLayer *current_barometer_layer;
+
+
 InverterLayer *inverter_layer;
+GBitmap *day0_icon_bitmap = NULL;
 GBitmap *todayForecast_icon_bitmap = NULL;
 GBitmap *tonightForecast_icon_bitmap = NULL;
 GBitmap *day3_icon_bitmap = NULL;
@@ -66,6 +77,8 @@ GBitmap *day5_icon_bitmap = NULL;
 GBitmap *date_layer_bitmap = NULL;
 uint32_t offsetInt = 0;
 
+
+uint32_t current_conditions_time_int = 1095345600;
 uint32_t todayInt = 1095345600;
 uint32_t tomorrowInt = 1095432000;
 uint32_t nextdayInt = 1095518400;
@@ -85,6 +98,9 @@ uint8_t 				sync_buffer[1024];
 const uint32_t			dictSizeInt;
 char 				dictSizeString;
 const char			*location;
+const char			*current_conditions;
+const char			*current_barometer;
+const char			*current_temperature;
 const char			*today_conditions;
 const char			*tomorrow_conditions;
 const char			*nextday_conditions;
@@ -94,6 +110,10 @@ const char			*tomorrow_hilo;
 const char			*nextday_hilo;
 
 enum WeatherKey {
+    SETTING_NUMBER_1_KEY        = 1,
+    
+    
+    
 	WEATHER_DAY0_ICON_KEY		= 10,
 	WEATHER_DAY0_TEMP_KEY		= 11, 
 	WEATHER_DAY0_CONDITIONS_KEY	= 12, 
@@ -176,18 +196,49 @@ static void fetch_message(void) {
 	app_message_outbox_send();
 }
 
-void windowSwitch(void) {
-    if (switchFlag == 0) {
-        layer_set_hidden(todayForecastLayer, switchFlag);
-		switchFlag = 1;
-	} else if (switchFlag == 1) {
-        layer_set_hidden(todayForecastLayer, switchFlag);
-		switchFlag = 0;
-	}
+void back_click_handler(ClickRecognizerRef recognizer, void *context) {
+    windowSwitch();
 }
 
+void config_provider(void *context) {
+    window_single_click_subscribe(BUTTON_ID_BACK, back_click_handler);
+}
+
+
+
+void windowSwitch(void) {
+    //    if (switchFlag == 0) {
+    //		switchFlag = 1;
+    //	} else
+    
+/*    if (counter_one == 0) {
+        counter_one = 15;
+    }  */
+
+    if (switchFlag == 0) {
+        // show today_forecast
+        layer_set_hidden(currentConditionsLayer, true);
+        layer_set_hidden(todayForecastLayer, false);
+		switchFlag = 1;
+        counter_one = 150;
+    } else if (switchFlag == 1) {
+        // show way out forecast
+        layer_set_hidden(currentConditionsLayer, true);
+        layer_set_hidden(todayForecastLayer, true);
+        switchFlag = 2;
+        counter_one = 150;
+    } else if (switchFlag == 2) {
+        //set back to base leve, current conditions show
+        layer_set_hidden(currentConditionsLayer, false);
+        layer_set_hidden(todayForecastLayer, true);
+        switchFlag = 0;
+        counter_one = 0;
+    }
+}
+ 
+
 void accel_tap_handler(AccelAxisType axis, int32_t direction) {
-	APP_LOG(APP_LOG_LEVEL_DEBUG, "accl press received");
+	APP_LOG(APP_LOG_LEVEL_INFO, "accl event received");
 	windowSwitch();
 }
 
@@ -241,18 +292,31 @@ int countChar(char *s)
 	return len;
 }
 
+
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
 	//GFont custom_font_temp		= fonts_get_system_font(FONT_KEY_FONT_FALLBACK);
 	GFont custom_font_tinytemp 	= fonts_get_system_font(FONT_KEY_GOTHIC_18);
 	GFont custom_font_temp 		= fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
+    GFont custom_font_large_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
 
 	
 	switch (key) {
-        static char day_text[] = "aaaaaaa";
+        static char day_text[]      = "aaa aaa aaa";
+        static char night_text[]    = "aaa aaa aaa";
+        static char current_text[]  = "aaa aaa aaa";
         struct tm *timer_tm;
-            
+        
+        case SETTING_NUMBER_1_KEY:
+        break;
+
+        
 		case WEATHER_DAY0_TIMESTAMP_KEY:
 //        todayInt = new_tuple->value->uint32;
+        current_conditions_time_int = new_tuple->value->uint32;
+        time_t currentStamp     = current_conditions_time_int;
+        timer_tm = localtime (&currentStamp);
+        strftime(current_text, sizeof(current_text), "%l:%M%P", timer_tm);
+        text_layer_set_text(current_status_layer, current_text);
         if (debug_flag > 1) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY0_TIMESTAMP_KEY %lu", new_tuple->value->uint32);
         }
@@ -274,9 +338,9 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         tonightForecastTimeInt = new_tuple->value->uint32;
         time_t nightStamp   		= tonightForecastTimeInt;
         timer_tm = localtime (&nightStamp);
-        strftime(day_text, sizeof(day_text), "%a %l%P", timer_tm);
-        text_layer_set_text(tonightForecastStatusLayer, day_text);
-        if (debug_flag > 6) {
+        strftime(night_text, sizeof(night_text), "%a %l%P", timer_tm);
+        text_layer_set_text(tonightForecastStatusLayer, night_text);
+        if (debug_flag > 10) {
             text_layer_set_text(tonightForecastStatusLayer, "Xor 8xM");
         }
 
@@ -307,15 +371,16 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         break;
         
         case WEATHER_DAY0_BARO_KEY:
-        //today_conditions = new_tuple->value->cstring;
+        current_barometer = new_tuple->value->cstring;
+        text_layer_set_text(current_barometer_layer, current_barometer);
         if (debug_flag > 1) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY0_BARO_KEY %s", new_tuple->value->cstring);
         }
         break;
             
 		case WEATHER_DAY0_CONDITIONS_KEY:
-//        text_layer_set_text(today_cond_layer, new_tuple->value->cstring);
-//        today_conditions = new_tuple->value->cstring;
+        current_conditions = new_tuple->value->cstring;
+        text_layer_set_text(current_conditions_layer, current_conditions);
         if (debug_flag > 1) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY0_CONDITIONS_KEY %s", new_tuple->value->cstring);
         }
@@ -365,6 +430,11 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         if (debug_flag > 1) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY0_ICON_KEY %lu + night_flag %d", new_tuple->value->uint32, night_flag);
         }
+        if (day0_icon_bitmap) {
+            gbitmap_destroy(day0_icon_bitmap);
+        }
+        bitmap_layer_set_bitmap(current_icon_layer, day0_icon_bitmap);
+        day0_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + night_flag]);
         break;
         
         case WEATHER_DAY1_ICON_KEY:
@@ -432,6 +502,8 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         if (debug_flag > 9) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY0_TEMP_KEY %s", new_tuple->value->cstring);
         }
+        current_temperature = new_tuple->value->cstring;
+        text_layer_set_text(current_temperature_layer, current_temperature);
         break;
         
 		case WEATHER_DAY1_TEMP_KEY:
@@ -503,43 +575,46 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             strcpy(location_counter, new_location);
             int charCount = countChar(location_counter);
 		int changer = 10;
-        if (debug_flag > 10) {
+        if (debug_flag > 1) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "STRING [02] %s has %d characters", location_counter, charCount);
         }
 
             if (charCount < 10 ) {
-                GFont custom_font_large_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
+/*                GFont custom_font_large_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
                 text_layer_set_font(location_layer, custom_font_large_location);
-                if (debug_flag > 10) {
+                text_layer_set_font(location_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
+                if (debug_flag > 1) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "charCount %d reads less than 10", charCount);
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting location_layer, custom_font_large_location");
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting ocation_layer, GTextOverflowModeTrailingEllipsis");
                 }
                 layer_set_frame(text_layer_get_layer(location_layer), (GRect(-10, 115+changer, 164, 35)));
-                
                 text_layer_set_overflow_mode(location_layer, GTextOverflowModeTrailingEllipsis);
-            } else if (charCount < 16) {
-                if (debug_flag > 10) {
+*/            } else if (charCount < 16) {
+                if (debug_flag > 1) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "charCount %d reads greater than 10 less than 16", charCount);
                 }
                 text_layer_set_overflow_mode(location_layer, GTextOverflowModeWordWrap);
-                GFont custom_font_small_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_18));
-                //GFont custom_font_small_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_22));
-                text_layer_set_font(location_layer, custom_font_small_location);
+                //GFont custom_font_small_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_18));
+                // not in use anymore
+                GFont custom_font_small_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_18));
+                //text_layer_set_font(location_layer, custom_font_small_location);
+                text_layer_set_font(location_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
                 layer_set_frame(text_layer_get_layer(location_layer), (GRect(0, 122+changer, 144, 100)));
-                if (debug_flag > 10) {
+                if (debug_flag > 1) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting location_layer, custom_font_small_location");
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting ocation_layer, GTextOverflowModeWordWrap");
                 }
             } else
             {
-                if (debug_flag > 10) {
+                if (debug_flag > 1) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "charCount %d reads 17 or more", charCount);
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting location_layer, custom_font_tiny_location");
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting ocation_layer, GTextOverflowModeWordWrap");
                 }
                 GFont custom_font_tiny_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_BOLD_16));
-                text_layer_set_font(location_layer, custom_font_tiny_location);
+                //text_layer_set_font(location_layer, custom_font_tiny_location);
+                text_layer_set_font(location_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
                 layer_set_frame(text_layer_get_layer(location_layer), (GRect(0, 125+changer, 144, 100)));
                 text_layer_set_overflow_mode(location_layer, GTextOverflowModeWordWrap);
             }
@@ -673,9 +748,23 @@ void handle_minute_tick() {
 static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
 
 //	handle_battery(battery_state_service_peek());
+    if (counter_one == 0) {
+        if (debug_flag > 8) {
+            APP_LOG(APP_LOG_LEVEL_DEBUG, "counter_one = 0");
+        }
+    } else if (counter_one == 1) {
+        switchFlag = 2;
+        windowSwitch();
+        counter_one = 0;
+    } else {
+        counter_one = counter_one - 1;
+        if (debug_flag > 2) {
+            APP_LOG(APP_LOG_LEVEL_DEBUG, "counter_one = %d", counter_one);
+        }
+    }
 	
 	static char time_text[] = "00:00AAA"; // Needs to be static because it's used by the system later. "%l:%M %y"
-	strftime(time_text, sizeof(time_text), "%l:%M%P", tick_time);
+	strftime(time_text, sizeof(time_text), "%l:%M%PM", tick_time);
 	text_layer_set_text(time_layer, time_text);
 	
 	strftime(time_text, sizeof(time_text), "%H", tick_time);
@@ -757,6 +846,11 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
 	if (debug_flag > 8) {
 	APP_LOG(APP_LOG_LEVEL_DEBUG, "%lu", (nowInt % 12));
 	}
+    
+    int xPos = nowInt % 60;
+	xPos = (144 * xPos) / 60;
+	layer_set_frame(second_layer, GRect(xPos, 37, 2, 2));
+	layer_set_update_proc(second_layer, white_layer_update_callback);
 	
 	if (nowInt % 12 == 0) {
 		if (debug_flag > 8) {
@@ -779,6 +873,11 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
 		layer_set_hidden(text_layer_get_layer(tomorrow_day_layer), false);
 		layer_set_hidden(text_layer_get_layer(nextday_day_layer), false);
         
+        layer_set_hidden(text_layer_get_layer(current_status_layer), false);
+        layer_set_hidden(text_layer_get_layer(current_conditions_layer), true);
+        layer_set_hidden(text_layer_get_layer(current_barometer_layer), true);
+        
+        
 	} else if (nowInt % 12 == 4) {
 		if (debug_flag > 8) {
 			APP_LOG(APP_LOG_LEVEL_DEBUG, "show conditions!");
@@ -799,6 +898,9 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
 		layer_set_hidden(text_layer_get_layer(today_day_layer), true);
 		layer_set_hidden(text_layer_get_layer(tomorrow_day_layer), true);
 		layer_set_hidden(text_layer_get_layer(nextday_day_layer), true);
+        layer_set_hidden(text_layer_get_layer(current_status_layer), true);
+        layer_set_hidden(text_layer_get_layer(current_conditions_layer), false);
+        layer_set_hidden(text_layer_get_layer(current_barometer_layer), true);
         
 	} else if (nowInt % 12 == 8) {
 		if (debug_flag > 8) {
@@ -820,6 +922,10 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
 		layer_set_hidden(text_layer_get_layer(today_day_layer), true);
 		layer_set_hidden(text_layer_get_layer(tomorrow_day_layer), true);
 		layer_set_hidden(text_layer_get_layer(nextday_day_layer), true);
+        
+        layer_set_hidden(text_layer_get_layer(current_status_layer), true);
+        layer_set_hidden(text_layer_get_layer(current_conditions_layer), true);
+        layer_set_hidden(text_layer_get_layer(current_barometer_layer), false);
 	}
 }
 
@@ -884,19 +990,19 @@ static void window_load(Window *window) {
 		TupletCString(WEATHER_DAY3_TEMP_KEY, " H/L "),
 		TupletCString(WEATHER_DAY4_TEMP_KEY, " H/L "),
 		TupletCString(WEATHER_DAY5_TEMP_KEY, " H/L "),
-		TupletCString(WEATHER_DAY0_CONDITIONS_KEY, "frogs"),
-		TupletCString(WEATHER_DAY1_CONDITIONS_KEY, "boils"),
-		TupletCString(WEATHER_DAY2_CONDITIONS_KEY, "blood"),
-		TupletCString(WEATHER_DAY3_CONDITIONS_KEY, "lava"),
+		TupletCString(WEATHER_DAY0_CONDITIONS_KEY, "gas clouds"),
+		TupletCString(WEATHER_DAY1_CONDITIONS_KEY, "lava flow"),
+		TupletCString(WEATHER_DAY2_CONDITIONS_KEY, "rock hail"),
+		TupletCString(WEATHER_DAY3_CONDITIONS_KEY, "boils"),
 		TupletCString(WEATHER_DAY4_CONDITIONS_KEY, "fire"),
-		TupletCString(WEATHER_DAY5_CONDITIONS_KEY, "hail"),
+		TupletCString(WEATHER_DAY5_CONDITIONS_KEY, "frogs"),
 		TupletInteger(WEATHER_DAY0_TIMESTAMP_KEY, (int) 1095345600),
 		TupletInteger(WEATHER_DAY1_TIMESTAMP_KEY, (int) 1095345600),
 		TupletInteger(WEATHER_DAY2_TIMESTAMP_KEY, (int) 1095345600),
 		TupletInteger(WEATHER_DAY3_TIMESTAMP_KEY, (int) 1095345600),
 		TupletInteger(WEATHER_DAY4_TIMESTAMP_KEY, (int) 1095432000),
 		TupletInteger(WEATHER_DAY5_TIMESTAMP_KEY, (int) 1095518400),
-		TupletCString(WEATHER_LOCATION_KEY, "open weather map.org"),
+		TupletCString(WEATHER_LOCATION_KEY, "Location"),
 		TupletInteger(WEATHER_SUNRISE_KEY, (int) 1095429600), //1395410913 ),
 		TupletInteger(WEATHER_SUNSET_KEY, (int) 1095472800), //1395455062 ),
         
@@ -917,7 +1023,7 @@ static void window_load(Window *window) {
 	int downset = -1; //perfect for ARIAL_15
     //	int downset = -5; //This is for GOTHIC 24
 	int downTempSet = -2; //This is for GOTHIC 18
-	int dayhite = 15;
+	//int dayhite = 15;
     
 	bt_layer = text_layer_create(GRect(2, 41, 15, 19));
 	
@@ -929,8 +1035,32 @@ static void window_load(Window *window) {
 	
 	time_layer = text_layer_create(GRect(0, 1, 144 * .75, 50));
 	date_layer = text_layer_create(GRect(92+4, -1, 52, 32));
-	location_layer = text_layer_create(GRect(0, 111-3, 144, 100));
-	  
+//	location_layer = text_layer_create(GRect(0, 111-3, 144, 100));
+	location_layer = text_layer_create(GRect(-5, 125, 154, 35));
+//    layer_set_frame(text_layer_get_layer(location_layer), (GRect(-10, 115+changer, 164, 35)));
+    
+    
+	current_icon_layer = bitmap_layer_create(GRect(9, 58-43, 50, 50));
+	current_temperature_layer = text_layer_create(GRect(64, 63-43, 124, 36));
+	current_status_layer = text_layer_create(GRect(65, 92-43, 144, 36));
+	current_conditions_layer = text_layer_create(GRect(65, 92-43, 144, 36));
+	current_barometer_layer = text_layer_create(GRect(65, 92-43, 144, 36));
+    
+    
+
+	text_layer_set_text_alignment(current_status_layer, GTextAlignmentLeft);
+	text_layer_set_text_alignment(current_conditions_layer, GTextAlignmentLeft);
+    GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
+	text_layer_set_font(current_temperature_layer, custom_font_time);
+	GFont custom_font_status = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_17));
+	text_layer_set_font(current_status_layer, custom_font_status);
+	text_layer_set_font(current_conditions_layer, custom_font_status);
+	text_layer_set_font(current_barometer_layer, custom_font_status);
+	text_layer_set_overflow_mode(current_status_layer, GTextOverflowModeFill);
+	text_layer_set_overflow_mode(current_conditions_layer, GTextOverflowModeTrailingEllipsis);
+	text_layer_set_overflow_mode(current_barometer_layer, GTextOverflowModeTrailingEllipsis);
+    
+    
 	//GRect X, Y, Width, Height
 	
 	today_icon_layer 		= bitmap_layer_create(GRect(0, hite, w_size, h_size));
@@ -975,12 +1105,15 @@ static void window_load(Window *window) {
 	bitmap_layer_set_alignment(today_icon_layer, GAlignCenter);
 	bitmap_layer_set_alignment(tomorrow_icon_layer, GAlignCenter);
 	bitmap_layer_set_alignment(nextday_icon_layer, GAlignCenter);
-	
-	day3_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CLOUD);
-	day4_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CLOUD);
-	day5_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CLOUD);
+    
+    
+	day0_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_UNKNOWN);
+	day3_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_UNKNOWN);
+	day4_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_UNKNOWN);
+	day5_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_UNKNOWN);
 	date_layer_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_DATE_BORDER);
 	
+	bitmap_layer_set_bitmap(current_icon_layer, day0_icon_bitmap);
 	bitmap_layer_set_bitmap(today_icon_layer, day3_icon_bitmap);
 	bitmap_layer_set_bitmap(tomorrow_icon_layer, day4_icon_bitmap);
 	bitmap_layer_set_bitmap(nextday_icon_layer, day5_icon_bitmap);
@@ -1000,7 +1133,7 @@ static void window_load(Window *window) {
 	text_layer_set_background_color(tomorrow_cond_layer, GColorClear);
 	text_layer_set_background_color(nextday_cond_layer, GColorClear);	
 	
-	GFont custom_font_status = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_17));
+	//GFont custom_font_status = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_17));
 	GFont custom_font_temp 		= fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
 	text_layer_set_font(today_cond_layer, custom_font_status);
 	text_layer_set_font(tomorrow_cond_layer, custom_font_status);
@@ -1019,7 +1152,7 @@ static void window_load(Window *window) {
 	
 	text_layer_set_background_color(time_layer, GColorClear);
 	text_layer_set_text_alignment(time_layer, GTextAlignmentLeft);
-	GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
+	//GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
 	text_layer_set_font(time_layer, custom_font_time);
 	text_layer_set_overflow_mode(time_layer, GTextOverflowModeFill);
 	
@@ -1067,8 +1200,11 @@ static void window_load(Window *window) {
     tonightForecastTextLayer = text_layer_create(GRect(72, 51-2, 72, 35));
     todayForecastTempLayer = text_layer_create(GRect(0, 51, 72, 35));
     tonightForecastTempLayer = text_layer_create(GRect(72, 51, 72, 35));
-    todayForecastStatusLayer = text_layer_create(GRect(0, 51, 72, 35));
-    tonightForecastStatusLayer = text_layer_create(GRect(72, 51, 72, 35));
+    todayForecastStatusLayer = text_layer_create(GRect(5, 51, 72-10, 35));
+    tonightForecastStatusLayer = text_layer_create(GRect(72+5, 51, 72-10, 35));
+    
+    currentConditionsLayer = layer_create(GRect(0, 43, 144, 85));
+	layer_set_update_proc(currentConditionsLayer, white_layer_update_callback);
 
     text_layer_set_text_alignment(todayForecastTextLayer, GTextAlignmentCenter);
     text_layer_set_text_alignment(tonightForecastTextLayer, GTextAlignmentCenter);
@@ -1078,6 +1214,8 @@ static void window_load(Window *window) {
     text_layer_set_font(tonightForecastTextLayer, custom_font_status);
     text_layer_set_font(todayForecastStatusLayer, custom_font_status);
     text_layer_set_font(tonightForecastStatusLayer, custom_font_status);
+    text_layer_set_overflow_mode(todayForecastStatusLayer, GTextOverflowModeWordWrap);
+    text_layer_set_overflow_mode(tonightForecastStatusLayer, GTextOverflowModeWordWrap);
     
     text_layer_set_text_alignment(todayForecastTempLayer, GTextAlignmentCenter);
     text_layer_set_text_alignment(tonightForecastTempLayer, GTextAlignmentCenter);
@@ -1096,6 +1234,15 @@ static void window_load(Window *window) {
     layer_add_child(todayForecastLayer, text_layer_get_layer(todayForecastStatusLayer));
     layer_add_child(todayForecastLayer, text_layer_get_layer(tonightForecastStatusLayer));
     layer_add_child(todayForecastLayer, inverter_layer_get_layer(tonight_forecast_inverter_layer));
+    
+    layer_add_child(window_layer, currentConditionsLayer);
+    layer_add_child(currentConditionsLayer, bitmap_layer_get_layer(current_icon_layer));
+    layer_add_child(currentConditionsLayer, text_layer_get_layer(current_temperature_layer));
+    layer_add_child(currentConditionsLayer, text_layer_get_layer(current_status_layer));
+    layer_add_child(currentConditionsLayer, text_layer_get_layer(current_barometer_layer));
+    layer_add_child(currentConditionsLayer, text_layer_get_layer(current_conditions_layer));
+    layer_set_hidden(currentConditionsLayer, false);
+
     
     
     

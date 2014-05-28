@@ -1,13 +1,13 @@
 /*jshint smarttabs:true*/
 
-var setPebbleToken = 'JUCP'; //    'XPGE';
+var setPebbleToken = 'JUCP'; //    'XPGE'; 'JUCP is FM Forecast, XPGE is WU Forecast
 
 // //mine  //settings Key  http://setpebble.com/api/8BES
 //console.log("substance, setpebble token " + setPebbleToken + " for app v. 2.5.1");
 //console.log("request.open( http://x.SetPebble.com/api/" + setPebbleToken + '/' + Pebble.getAccountToken());
 //Pebble.addEventListener('ready', function(e) {
 //});
-var debug_flag = 2;
+var debug_flag = 0;
 var m = 1;
 //var tempFlag = 7; //0F, 1C, 2K, 3Ra, 4Re, 5Ro, 6N, 7De
 
@@ -39,10 +39,20 @@ if (pressureFlag != 0 ) {
 	}
 }
 
-
-
 if (debug_flag > 1) {
 	console.log("resulting tempFlag, " + tempFlag);
+}
+
+function stripper(stripped) {
+    stripped = stripped.replace("moderate rain", "mod rain");
+    stripped = stripped.replace("scattered clouds", "sctd clds");
+    stripped = stripped.replace("sky is clear", "clear sky");
+    stripped = stripped.replace("Thunderstorm", "ThStr");
+    stripped = stripped.replace("Rain Showers", "rain shwrs");
+    stripped = stripped.replace("Partly Cloudy", "part cldy");
+    stripped = stripped.replace("Mostly Cloudy", "most cldy");
+    stripped = stripped.replace("overcast", "over cast");
+    return stripped;
 }
 
 function tempShower(inTemp) {
@@ -149,51 +159,43 @@ function pressureGetter(pressure) {
         pressure = Math.round(pressure * 100);
         pressure = pressure / 100;
 		return pressure;
-	} else
-        if (pressureFlag == 1) {
-            //mb = inHg * 33.8637526
-            pressure = pressure * 33.8637526;
-            pressure = Math.round(pressure);
-            return pressure;
-        } else
-            if (pressureFlag == 2) {
-                //PSI = inHg / 2.0360206576
-                pressure = pressure /2.0360206576;
-                pressure = Math.round(pressure*100)/100;
-                return pressure;
-            } else
-                if (pressureFlag == 3) {
-                    //Pa, pascals = inHg * 3377 or MPa, megapascals * 0.003386
-                    // [°R] = [K] × 9/5
-                    pressure = pressure * 3386.37526;
-                    pressure = Math.round(pressure);
-                    return pressure;
-                } else
-                    if (pressureFlag == 4) {
-                        //Technical Atmosphere
-                        // Ta = inHg * 0.034531557667501
-                        // [°Ré] = ([K] − 273.15) × 4/5
-                        pressure = pressure * 0.034531557667501;
-                        pressure = Math.round(pressure*100)/100;
-                        return pressure;
-                    } else
-                        if (pressureFlag == 5) {
-                            //Standard Atmosphere
-                            //Sa = inHg * 0.0334210543544
-                            pressure = pressure * 0.0334210543544;
-                            pressure = Math.round(pressure*100);
-                            return pressure;
-                        } else
-                            if (pressureFlag == 6) {
-                                //Torr
-                                //Torr = inHg * 0.254
-                                pressure = pressure * 0.254;
-                                pressure = Math.round(pressure*100);
-                                return pressure;
-                            }
-	
+	} else if (pressureFlag == 1) {
+        //mb = inHg * 33.8637526
+        pressure = pressure * 33.8637526;
+        pressure = Math.round(pressure);
+        return pressure;
+    } else if (pressureFlag == 2) {
+        //PSI = inHg / 2.0360206576
+        pressure = pressure /2.0360206576;
+        pressure = Math.round(pressure*100)/100;
+        return pressure;
+    } else if (pressureFlag == 3) {
+        //Pa, pascals = inHg * 3377 or MPa, megapascals * 0.003386
+        // [°R] = [K] × 9/5
+        pressure = pressure * 3386.37526;
+        pressure = Math.round(pressure);
+        return pressure;
+    } else if (pressureFlag == 4) {
+        //Technical Atmosphere
+        // Ta = inHg * 0.034531557667501
+        // [°Ré] = ([K] − 273.15) × 4/5
+        pressure = pressure * 0.034531557667501;
+        pressure = Math.round(pressure*100)/100;
+        return pressure;
+    } else if (pressureFlag == 5) {
+        //Standard Atmosphere
+        //Sa = inHg * 0.0334210543544
+        pressure = pressure * 0.0334210543544;
+        pressure = Math.round(pressure*100);
+        return pressure;
+    } else if (pressureFlag == 6) {
+        //Torr
+        //Torr = inHg * 0.254
+        pressure = pressure * 0.254;
+        pressure = Math.round(pressure*100);
+        return pressure;
+    }
 }
-
 
 function tempGetter(temp) {
 	if (tempFlag == 0 ) {
@@ -298,7 +300,7 @@ function fetchWeatherForecast(latitude, longitude) {
                     if (debug_flag > 1) {
                         console.log("day3_high = " + day3_high + ", day3_low = " + day3_low + ", day3_temp = " + day3_temp + " conditions = " + response.list[n].weather[0].description);
                     }
-                    var day3_conditions = response.list[n].weather[0].description;
+                    var day3_conditions = stripper(response.list[n].weather[0].description);
                     var day3_timestamp = response.list[n].dt;
                     //Pebble.sendAppMessage({
                     MessageQueue.sendAppMessage({
@@ -317,7 +319,7 @@ function fetchWeatherForecast(latitude, longitude) {
                     } else {
                         var day4_temp = day4_high + "/" + day4_low + getTempLabel();
                     }
-                    var day4_conditions = response.list[n].weather[0].description;
+                    var day4_conditions = stripper(response.list[n].weather[0].description);
                     var day4_timestamp = response.list[n].dt;
                     if (debug_flag > 1) {
                         console.log("day4_high = " + day4_high + ", day4_low = " + day4_low + ", day4_temp = " + day4_temp);
@@ -340,7 +342,7 @@ function fetchWeatherForecast(latitude, longitude) {
                     } else {
                         var day5_temp = day5_high + "/" + day5_low + getTempLabel();
                     }
-                    var day5_conditions = response.list[n].weather[0].description;
+                    var day5_conditions = stripper(response.list[n].weather[0].description);
                     var day5_timestamp = response.list[n].dt;
                     //Pebble.sendAppMessage({
                     if (debug_flag > 1) {
@@ -388,6 +390,7 @@ function fetchWeatherConditions(latitude, longitude) {
                 }
                 if (req.responseText.length > 100) {
                     var location = response.name;
+                    //location = "Kingdom of Los Angeles America";
                     
                     var day0_icon = iconFromWeatherId(response.weather[0].id);
                     var day0_temp = tempGetter(response.main.temp) + getTempLabel();
@@ -395,8 +398,9 @@ function fetchWeatherConditions(latitude, longitude) {
                     var day0_low = tempGetter(response.main.temp_min) + getTempLabel();
                     var day0_conditions = response.weather[0].main;
                     var day0_baro = pressureGetter(response.main.pressure * 0.0295301);
-                    var day0_timestamp = response.dt;
-					if (debug_flag > -1) {
+                    var day0_timestamp = response.dt - (offset * 3600);
+					if (debug_flag > 1) {
+                        console.log("raw timestamp = " + response.dt);
                         console.log("day0_icon " + day0_icon + " " + day0_temp + " " + day0_conditions + " " + day0_timestamp + " " + day0_baro + getPressureLabel());
 					}
 					if (debug_flag > 3) {
@@ -477,7 +481,7 @@ function fetchWeatherTodayForecast(latitude, longitude) {
                         
                     }
                     
-                    var n = 1;
+                    var n = 2;
                     //                    list[n].dt;
                     //                    list[n].main.temp;
                     //                    list[n].main.weather[0]. //(icon 04n, id 803, main "Clouds");
@@ -485,11 +489,11 @@ function fetchWeatherTodayForecast(latitude, longitude) {
                     var day1_temp = tempGetter(response.list[n].main.temp) + getTempLabel();
                     var day1_timestamp = response.list[n].dt;
                     var day1_conditions = response.list[n].weather[0].description;
-					if (debug_flag > 2) {
+					if (debug_flag > 1) {
                         console.log(day1_timestamp);
 					}
                     day1_timestamp = parseInt(day1_timestamp) - parseInt (offset * 3600);
-					if (debug_flag > -1) {
+					if (debug_flag > 1) {
                         console.log(day1_timestamp);
                         console.log("day1_icon = " + day1_icon + " " + response.list[n].weather[0].id + " " + response.list[n].weather[0].description + " " + day1_temp + " " + day1_timestamp);
                         console.log()
@@ -502,16 +506,16 @@ function fetchWeatherTodayForecast(latitude, longitude) {
                                                 day1_conditions: day1_conditions,
                                                 });
                     
-                    n = 4
+                    n = 4;
                     var day2_icon = iconFromWeatherId(response.list[n].weather[0].id);
                     var day2_temp = tempGetter(response.list[n].main.temp) + getTempLabel();
                     var day2_timestamp = response.list[n].dt;
                     var day2_conditions = response.list[n].weather[0].description;
-					if (debug_flag > 2) {
+					if (debug_flag > 1) {
                         console.log(day2_timestamp);
                     }
                     day2_timestamp = parseInt(day2_timestamp) - parseInt (offset * 3600);
-					if (debug_flag > -1) {
+					if (debug_flag > 1) {
                         console.log("day2_icon = " + day2_icon + " " + response.list[n].weather[0].id + " " + response.list[n].weather[0].description + " " + day2_temp + " " + day2_timestamp);
                     }
                     
@@ -635,9 +639,11 @@ Pebble.addEventListener("webviewclosed", function(e) {
                         }
                         responseText = responseText.replace("\"1\"", "\"tempUnits\"");
                         responseText = responseText.replace("\"2\"", "\"pressUnits\"");
+                        responseText = responseText.replace("\"3\"", "\"location\"");
                         var config = JSON.parse(responseText);
                         tempFlag = config.tempUnits;
                         localStorage.setItem("tempFlag", tempFlag);
+                        
                         //localStorage.setItem("tempFlag", JSON.parse(e.response));
                         //console.log("e.response " + e.response);
                         //console.log("JSON.parse(e.response)" + JSON.parse(e.response));
