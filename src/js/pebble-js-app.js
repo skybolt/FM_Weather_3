@@ -1,4 +1,5 @@
 /*jshint smarttabs:true*/
+/*global day0_icon:true*/
 
 var setPebbleToken = 'JUCP'; //    'XPGE'; 'JUCP is FM Forecast, XPGE is WU Forecast
 
@@ -8,8 +9,27 @@ var setPebbleToken = 'JUCP'; //    'XPGE'; 'JUCP is FM Forecast, XPGE is WU Fore
 //Pebble.addEventListener('ready', function(e) {
 //});
 var debug_flag = 0;
-var m = 1;
+var m = 0;
+var provider_flag = 0;
 //var tempFlag = 7; //0F, 1C, 2K, 3Ra, 4Re, 5Ro, 6N, 7De
+var offset = new Date().getTimezoneOffset() / 60;
+
+
+var day0_icon;  //= iconFromWeatherId(response.weather[0].id);
+var day0_temp;  //= tempGetter(response.main.temp) + getTempLabel();
+var day0_high;  //= tempGetter(response.main.temp_max) + getTempLabel();
+var day0_low;  //= tempGetter(response.main.temp_min) + getTempLabel();
+var day0_conditions;  //= response.weather[0].main;
+var day0_baro;  //= pressureGetter(response.main.pressure * 0.0295301);
+var day0_timestamp; //= response.dt - (offset * 3600);
+
+var icon;  //= iconFromWeatherId(response.weather[0].id);
+var temp;  //= tempGetter(response.main.temp) + getTempLabel();
+var high;  //= tempGetter(response.main.temp_max) + getTempLabel();
+var low;  //= tempGetter(response.main.temp_min) + getTempLabel();
+var conditions;  //= response.weather[0].main;
+var baro;  //= pressureGetter(response.main.pressure * 0.0295301);
+var timestamp; //= response.dt - (offset * 3600);
 
 //localStorage.removeItem("tempFlag");
 var tempFlag = parseInt(localStorage.getItem("tempFlag"));
@@ -297,11 +317,9 @@ function fetchWeatherForecast(latitude, longitude) {
                     } else {
                         var day3_temp = day3_high + "/" + day3_low + getTempLabel();
                     }
-                    if (debug_flag > 1) {
-                        console.log("day3_high = " + day3_high + ", day3_low = " + day3_low + ", day3_temp = " + day3_temp + " conditions = " + response.list[n].weather[0].description);
-                    }
+
                     var day3_conditions = stripper(response.list[n].weather[0].description);
-                    var day3_timestamp = response.list[n].dt;
+                    var day3_timestamp = parseInt(response.list[n].dt);
                     //Pebble.sendAppMessage({
                     MessageQueue.sendAppMessage({
                                                 day3_icon: day3_icon,
@@ -309,6 +327,10 @@ function fetchWeatherForecast(latitude, longitude) {
                                                 day3_conditions: day3_conditions,
                                                 day3_timestamp: day3_timestamp
                                                 });
+                    
+                    if (debug_flag > 1) {
+                        console.log("day3_high = " + day3_high + ", day3_low = " + day3_low + ", day3_temp = " + day3_temp + "day3_timestamp = " + day3_timestamp);
+                    }
                     
                     n = m + 1;
                     var day4_icon = iconFromWeatherId(response.list[n].weather[0].id);
@@ -320,10 +342,8 @@ function fetchWeatherForecast(latitude, longitude) {
                         var day4_temp = day4_high + "/" + day4_low + getTempLabel();
                     }
                     var day4_conditions = stripper(response.list[n].weather[0].description);
-                    var day4_timestamp = response.list[n].dt;
-                    if (debug_flag > 1) {
-                        console.log("day4_high = " + day4_high + ", day4_low = " + day4_low + ", day4_temp = " + day4_temp);
-                    }
+                    var day4_timestamp = parseInt(response.list[n].dt);
+
                     //Pebble.sendAppMessage({
                     MessageQueue.sendAppMessage({
                                                 //
@@ -332,6 +352,10 @@ function fetchWeatherForecast(latitude, longitude) {
                                                 day4_conditions: day4_conditions,
                                                 day4_timestamp: day4_timestamp
                                                 });
+                    
+                    if (debug_flag > 1) {
+                        console.log("day4_high = " + day4_high + ", day4_low = " + day4_low + ", day4_temp = " + day4_temp + "day4_timestamp = " + day4_timestamp);
+                    }
                     
                     n = m + 2;
                     var day5_icon = iconFromWeatherId(response.list[n].weather[0].id);
@@ -343,11 +367,8 @@ function fetchWeatherForecast(latitude, longitude) {
                         var day5_temp = day5_high + "/" + day5_low + getTempLabel();
                     }
                     var day5_conditions = stripper(response.list[n].weather[0].description);
-                    var day5_timestamp = response.list[n].dt;
-                    //Pebble.sendAppMessage({
-                    if (debug_flag > 1) {
-                        console.log("day5_high = " + day5_high + ", day5_low = " + day5_low + ", day5_temp = " + day5_temp);
-                    }
+                    var day5_timestamp = parseInt(response.list[n].dt);
+
                     MessageQueue.sendAppMessage({
                                                 //
                                                 day5_icon: day5_icon,
@@ -356,7 +377,9 @@ function fetchWeatherForecast(latitude, longitude) {
                                                 day5_timestamp: day5_timestamp
                                                 });
                     
-                    
+                    if (debug_flag > 1) {
+                        console.log("day5_high = " + day5_high + ", day5_low = " + day5_low + ", day5_temp = " + day5_temp + "day5_timestamp = " + day5_timestamp);
+                    }
                     
                     
                 } else {console.log("fail length not zero");}
@@ -391,21 +414,35 @@ function fetchWeatherConditions(latitude, longitude) {
                 if (req.responseText.length > 100) {
                     var location = response.name;
                     //location = "Kingdom of Los Angeles America";
+                    /*
                     
-                    var day0_icon = iconFromWeatherId(response.weather[0].id);
-                    var day0_temp = tempGetter(response.main.temp) + getTempLabel();
-                    var day0_high = tempGetter(response.main.temp_max) + getTempLabel();
-                    var day0_low = tempGetter(response.main.temp_min) + getTempLabel();
-                    var day0_conditions = response.weather[0].main;
-                    var day0_baro = pressureGetter(response.main.pressure * 0.0295301);
-                    var day0_timestamp = response.dt - (offset * 3600);
-					if (debug_flag > 1) {
-                        console.log("raw timestamp = " + response.dt);
-                        console.log("day0_icon " + day0_icon + " " + day0_temp + " " + day0_conditions + " " + day0_timestamp + " " + day0_baro + getPressureLabel());
-					}
-					if (debug_flag > 3) {
-                        console.log("thinking about sending day0 info");
-					}
+                    day0_icon = iconFromWeatherId(response.weather[0].id);
+                    day0_temp = tempGetter(response.main.temp) + getTempLabel();
+                    day0_high = tempGetter(response.main.temp_max) + getTempLabel();
+                    day0_low = tempGetter(response.main.temp_min) + getTempLabel();
+                    day0_conditions = response.weather[0].main;
+                    day0_baro = pressureGetter(response.main.pressure * 0.0295301);
+                    day0_timestamp = response.dt - (offset * 3600);
+
+                     if (debug_flag > 1) {
+                     console.log("raw timestamp = " + response.dt);
+                     console.log("day0_icon " + day0_icon + " " + day0_temp + " " + day0_conditions + " " + day0_timestamp + " " + day0_baro + getPressureLabel());
+                     }
+                     if (debug_flag > 3) {
+                     console.log("thinking about sending day0 info");
+                     }
+
+                     */
+                    
+                    icon = iconFromWeatherId(response.weather[0].id);
+                    temp = tempGetter(response.main.temp) + getTempLabel();
+                    high = tempGetter(response.main.temp_max) + getTempLabel();
+                    low = tempGetter(response.main.temp_min) + getTempLabel();
+                    conditions = response.weather[0].main;
+                    baro = pressureGetter(response.main.pressure * 0.0295301);
+                    timestamp = response.dt - (offset * 3600);
+
+                    /*
                     MessageQueue.sendAppMessage({
                                                 //Pebble.sendAppMessage({
                                                 day0_icon: day0_icon,
@@ -417,6 +454,10 @@ function fetchWeatherConditions(latitude, longitude) {
                                                 day0_timestamp: day0_timestamp,
                                                 day0_baro: day0_baro + getPressureLabel(),
                                                 });
+                    */
+                    
+                    
+                    sendDayMessages(0);
                     
                     if (debug_flag > 0) {
                         console.log("day0 info sent");
@@ -485,6 +526,7 @@ function fetchWeatherTodayForecast(latitude, longitude) {
                     //                    list[n].dt;
                     //                    list[n].main.temp;
                     //                    list[n].main.weather[0]. //(icon 04n, id 803, main "Clouds");
+                    /*
                     var day1_icon = iconFromWeatherId(response.list[n].weather[0].id);
                     var day1_temp = tempGetter(response.list[n].main.temp) + getTempLabel();
                     var day1_timestamp = response.list[n].dt;
@@ -498,13 +540,28 @@ function fetchWeatherTodayForecast(latitude, longitude) {
                         console.log("day1_icon = " + day1_icon + " " + response.list[n].weather[0].id + " " + response.list[n].weather[0].description + " " + day1_temp + " " + day1_timestamp);
                         console.log()
 					}
+                    */
                     
+                    icon = iconFromWeatherId(response.list[n].weather[0].id);
+                    temp = tempGetter(response.list[n].main.temp) + getTempLabel();
+                    timestamp = response.list[n].dt;
+                    conditions = response.list[n].weather[0].description;
+                    timestamp = parseInt(timestamp) - parseInt (offset * 3600);
+					
+
+                    
+                    /*
                     MessageQueue.sendAppMessage({
                                                 day1_icon: day1_icon,
                                                 //day1_temp: day1_temp,
                                                 day1_timestamp: day1_timestamp,
                                                 day1_conditions: day1_conditions,
                                                 });
+                    */
+                    if (debug_flag > -1) {
+                        console.log("requesting sendDayMessages(1)");
+                    }
+                    sendDayMessages(1);
                     
                     n = 4;
                     var day2_icon = iconFromWeatherId(response.list[n].weather[0].id);
@@ -552,6 +609,460 @@ function fetchWeatherTodayForecast(latitude, longitude) {
     req.send(null);
 }
 
+function fetchWeatherUndergroundForecast(latitude, longitude) {
+    var response;
+    var req = new XMLHttpRequest();
+    console.log("http://api.wunderground.com/api/6fe6c99a5d7df975/forecast/geolookup/q/" + latitude + "," + longitude + ".json");
+    req.open("GET", "http://api.wunderground.com/api/6fe6c99a5d7df975/forecast/geolookup/q/" + latitude + "," + longitude + ".json", true);
+    req.onload = function(e) {
+        if (req.readyState == 4) {
+            if (req.status == 200) {
+                response = JSON.parse(req.responseText);
+                if (req.responseText.length > 0) {
+                    n = m;
+                    var day3_icon = iconFromWeatherString(response.forecast.simpleforecast.forecastday[n].icon);
+                    var day3_timestamp = parseInt(response.forecast.simpleforecast.forecastday[n].date.epoch);
+/*                    var day3_weekday = response.forecast.simpleforecast.forecastday[n].date.weekday_short;
+                    todayWeekday = todayWeekday.replace("day", "");
+                    todayWeekday = todayWeekday.replace("nes", "");
+                    todayWeekday = todayWeekday.replace("rs", "");
+*/                  var day3_conditions = response.forecast.simpleforecast.forecastday[n].conditions;
+                    day3_conditions = stripper(day3_conditions);
+                    var day3_high = response.forecast.simpleforecast.forecastday[n].high.fahrenheit;
+                    var day3_low = response.forecast.simpleforecast.forecastday[n].low.fahrenheit;
+                    var day3_temp = day3_high + "\n" + day3_low;
+                    
+                    MessageQueue.sendAppMessage({
+                                                day3_icon: day3_icon,
+                                                day3_temp: day3_temp,
+                                                day3_conditions: day3_conditions,
+                                                day3_timestamp: day3_timestamp
+                                                });
+                    
+                    if (debug_flag > 1) {
+                        console.log("day3_high = " + day3_high + ", day3_low = " + day3_low + ", day3_temp = " + day3_temp + " day3_timestamp = " + day3_timestamp);
+                    }
+                    /*
+                    localStorage.setItem("today_day", todayWeekday);
+                    localStorage.setItem("todayHiLo", todayHilo);
+                    localStorage.setItem("today_cond", todayConditions);
+                    localStorage.setItem("todayIcon", todayIcon);
+                    */
+                    
+                    
+                    n = m + 1;
+                    var day4_icon = iconFromWeatherString(response.forecast.simpleforecast.forecastday[n].icon);
+                    var day4_timestamp = parseInt(response.forecast.simpleforecast.forecastday[n].date.epoch);
+                    /*                    var day3_weekday = response.forecast.simpleforecast.forecastday[n].date.weekday_short;
+                     todayWeekday = todayWeekday.replace("day", "");
+                     todayWeekday = todayWeekday.replace("nes", "");
+                     todayWeekday = todayWeekday.replace("rs", "");
+                     */
+                    var day4_conditions = response.forecast.simpleforecast.forecastday[n].conditions;
+                    day4_conditions = stripper(day4_conditions);
+                    var day4_high = response.forecast.simpleforecast.forecastday[n].high.fahrenheit;
+                    var day4_low = response.forecast.simpleforecast.forecastday[n].low.fahrenheit;
+                    var day4_temp = day4_high + "\n" + day4_low;
+                    
+
+                    MessageQueue.sendAppMessage({
+                                                day4_icon: day4_icon,
+                                                day4_temp: day4_temp,
+                                                day4_conditions: day4_conditions,
+                                                day4_timestamp: day4_timestamp
+                                                });
+                    
+                    if (debug_flag > 1) {
+                        console.log("day4_high = " + day4_high + ", day4_low = " + day4_low + ", day4_temp = " + day4_temp + " day4_timestamp = " + day4_timestamp);
+                    }
+                    
+
+                    n = m + 2;
+                    var offsetMinutes = new Date().getTimezoneOffset();
+                    var day5_icon = iconFromWeatherString(response.forecast.simpleforecast.forecastday[n].icon);
+                    var day5_timestamp = parseInt(response.forecast.simpleforecast.forecastday[n].date.epoch);
+                    /*                    var day3_weekday = response.forecast.simpleforecast.forecastday[n].date.weekday_short;
+                     todayWeekday = todayWeekday.replace("day", "");
+                     todayWeekday = todayWeekday.replace("nes", "");
+                     todayWeekday = todayWeekday.replace("rs", "");
+                     */                  var day3_conditions = response.forecast.simpleforecast.forecastday[n].conditions;
+                    day5_conditions = stripper(day3_conditions);
+                    var day5_high = response.forecast.simpleforecast.forecastday[n].high.fahrenheit;
+                    var day5_low = response.forecast.simpleforecast.forecastday[n].low.fahrenheit;
+                    var day5_temp = day5_high + "\n" + day5_low;
+                    
+
+                    
+                    MessageQueue.sendAppMessage({
+                                                day5_icon: day5_icon,
+                                                day5_temp: day5_temp,
+                                                day5_conditions: day5_conditions,
+                                                day5_timestamp: day5_timestamp
+                                                });
+                    
+                    if (debug_flag > 1) {
+                        console.log("day5_high = " + day5_high + ", day5_low = " + day5_low + ", day5_temp = " + day5_temp + " day5_timestamp = " + day5_timestamp);
+                    }
+
+                    
+} else {console.log("fail if responseText.lenght > 100")}
+            } else {console.log("fail 200: fetchWeatherUndergroundForecast")}
+        } else {console.log("fail readyState == 4")}
+    };
+    req.send(null);
+}
+
+function fetchWeatherUndergroundTodayForecast(latitude, longitude) {
+    var response;
+    var req = new XMLHttpRequest();
+    //    http://api.openweathermap.org/data/2.5/forecast?lat=47.68969385897765&lon=-122.38351216622917&mode=xml
+    req.open("GET", "http://api.openweathermap.org/data/2.5/forecast?" + "lat=" + latitude + "&lon=" + longitude + "&cnt=2", true);
+    req.onload = function(e) {
+        var offset = new Date().getTimezoneOffset() / 60;
+        if (req.readyState == 4) {
+            if (req.status == 200) {
+                response = JSON.parse(req.responseText);
+				if (debug_flag > 2) {
+                    console.log("fetchWeatherTodayForecast req.responseText.length = " + req.responseText.length);
+                    console.log("fred");
+				}
+                if (req.responseText.length > 100) {
+                    if (debug_flag > 2) {
+                        console.log(response.city.name);
+                        console.log(response.list[0].dt_txt);
+                        console.log(response.list[0].weather[0].description);
+                    }
+                    
+                    if (debug_flag > 0) {
+                        
+                        for (var i = 0; i < 25; i++) {
+                            //text += cars[i];
+                            console.log("forecast description : " + response.list[i].weather[0].description);
+                        }
+                        
+                    }
+                    
+                    var n = 2;
+                    //                    list[n].dt;
+                    //                    list[n].main.temp;
+                    //                    list[n].main.weather[0]. //(icon 04n, id 803, main "Clouds");
+                    var day1_icon = iconFromWeatherId(response.list[n].weather[0].id);
+                    var day1_temp = tempGetter(response.list[n].main.temp) + getTempLabel();
+                    var day1_timestamp = response.list[n].dt;
+                    var day1_conditions = response.list[n].weather[0].description;
+					if (debug_flag > 1) {
+                        console.log(day1_timestamp);
+					}
+                    day1_timestamp = parseInt(day1_timestamp) - parseInt (offset * 3600);
+					if (debug_flag > 1) {
+                        console.log(day1_timestamp);
+                        console.log("day1_icon = " + day1_icon + " " + response.list[n].weather[0].id + " " + response.list[n].weather[0].description + " " + day1_temp + " " + day1_timestamp);
+                        console.log()
+					}
+                    /*
+                    MessageQueue.sendAppMessage({
+                                                day1_icon: day1_icon,
+                                                day1_temp: day1_temp,
+                                                day1_timestamp: day1_timestamp,
+                                                day1_conditions: day1_conditions,
+                                                });
+                    */
+                    if (debug_flag > -1) {
+                        console.log("requesting sendDayMessages(1)");
+                    }
+                    sendDayMessages(1);
+                    
+                    n = 4;
+                    var day2_icon = iconFromWeatherId(response.list[n].weather[0].id);
+                    var day2_temp = tempGetter(response.list[n].main.temp) + getTempLabel();
+                    var day2_timestamp = response.list[n].dt;
+                    var day2_conditions = response.list[n].weather[0].description;
+					if (debug_flag > 1) {
+                        console.log(day2_timestamp);
+                    }
+                    day2_timestamp = parseInt(day2_timestamp) - parseInt (offset * 3600);
+					if (debug_flag > 1) {
+                        console.log("day2_icon = " + day2_icon + " " + response.list[n].weather[0].id + " " + response.list[n].weather[0].description + " " + day2_temp + " " + day2_timestamp);
+                    }
+                    
+                    MessageQueue.sendAppMessage({
+                                                day2_icon: day2_icon,
+                                                day2_temp: day2_temp,
+                                                day2_timestamp: day2_timestamp,
+                                                day2_conditions: day2_conditions,
+                                                });
+                    //get conditions for array item 1 and array item 3, that's 3 hours out and 9 hours out
+                    // 0 is now to 3, 1 is 3 to 6, 2 is 6 to 9, 3 is 9 to 12, 4 is 12 to 15, etc.
+                    
+                    //                    var staleDate = new Date(response.dt * 1e3);
+                    //                    var days = 0;
+                    //                    var difference = 0;
+                    //                   var today = new Date();
+                    //                    difference = today - staleDate;
+                    //                    days = Math.round(difference / (1e3 * 60 * 60 * 24));
+                    //				 console.log("offset is " + offset);
+                    //var sunrise = response.sys.sunrise;
+                    //				 console.log("raw sunrise = " + sunrise);
+                    //sunrise = parseInt(sunrise) - parseInt (offset * 3600);
+                    //				 console.log("adj sunrise = " + sunrise);
+                    //var sunset = response.sys.sunset;
+                    //				 console.log("raw sunset = " + sunset);
+                    //sunset = parseInt(sunset) - parseInt (offset * 3600);
+                    //				 console.log("adgj sunset = " + sunset);
+                    
+                    
+                } else {console.log("fail if responseText.lenght > 100")}
+            } else {console.log("fail 200: fetchWeatherTodayForecast")}
+        } else {console.log("fail readyState == 4")}
+    };
+    req.send(null);
+}
+
+function fetchWeatherUndergroundConditions(latitude, longitude) {
+	var tt = new Date();
+	console.log("new Date =" + tt);
+	//var response;
+    var req = new XMLHttpRequest();
+	req.open("GET", "http://api.wunderground.com/api/d33637904b0a944c/conditions/geolookup/q/" + latitude + "," + longitude + ".json", true);
+	console.log("http://api.wunderground.com/api/d33637904b0a944c/conditions/geolookup/q/" + latitude + "," + longitude + ".json"); ;
+	req.onload = function(e) {
+		if (req.readyState == 4) {
+			if (req.status == 200) {
+				var response = JSON.parse(req.responseText);
+
+				console.log("req.responseText.length = " + req.responseText.length);
+				if (req.responseText.length > 0) {
+					day0_icon = iconFromWeatherString(response.current_observation.icon);
+					day0_temp = tempGetter(response.current_observation.temp_c + 274.15) + getTempLabel();
+					tempLabel = getTempLabel();
+
+					day0_conditions = response.current_observation.weather;
+					var day0_pressure = response.current_observation.pressure_in;
+					day0_pressure = pressureGetter(day0_pressure);
+					var pressure_trend;
+                    
+					pressure_trend = response.current_observation.pressure_trend;
+					pressure_trend = pressure_trend.replace("0", "*"); //\u219F (up) \u21A1 (down) //\u21E4 (left) \u21E5 (right) //\u22A2 (right) \u22A3 (left)
+                    var day0_timestamp = parseInt(response.current_observation.local_epoch) - (offset * 3600);
+					var day0_baro = day0_pressure + getPressureLabel + pressure_trend;
+                    
+                    MessageQueue.sendAppMessage({
+                                                //Pebble.sendAppMessage({
+                                                day0_icon: day0_icon,
+                                                day0_temp: day0_temp + "",
+                                                day0_conditions: day0_conditions,
+                                                day0_timestamp: day0_timestamp,
+                                                day0_baro: day0_baro,
+                                                });
+                    
+
+
+} else {console.log("fail if responseText.lenght > 100")}
+            } else {console.log("fail 200: fetchWeatherTodayForecast")}
+        } else {console.log("fail readyState == 4")}
+    };
+    req.send(null);
+}
+
+function fetchSunriseSunset(latitude, longitude) {
+    var response;
+    var req = new XMLHttpRequest();
+    req.open("GET", "http://api.openweathermap.org/data/2.5/weather?" + "lat=" + latitude + "&lon=" + longitude + "&cnt=2", true);
+    if (debug_flag > 1) {
+        console.log("http://api.openweathermap.org/data/2.5/weather?" + "lat=" + latitude + "&lon=" + longitude + "&cnt=2");
+    }
+    req.onload = function(e) {
+        var offset = new Date().getTimezoneOffset() / 60;
+        if (req.readyState == 4) {
+            if (req.status == 200) {
+                response = JSON.parse(req.responseText);
+                if (debug_flag > 4) {
+                    console.log("req.responseText.lenght = " + req.responseText.length);
+                    console.log("fetchWeatherConditions response = \n" + req.responseText);
+                }
+                if (req.responseText.length > 100) {
+                    var location = response.name;
+                    //location = "Kingdom of Los Angeles America";
+                    
+                    var sunrise = response.sys.sunrise;
+					if (debug_flag > 3) {
+                        console.log("raw sunrise = " + sunrise);
+                    }
+                    sunrise = parseInt(sunrise) - parseInt (offset * 3600);
+                    if (debug_flag > 3) {
+                        console.log("adj sunrise = " + sunrise);
+                    }
+                    var sunset = response.sys.sunset;
+					if (debug_flag > 3) {
+                        console.log("raw sunset = " + sunset);
+					}
+                    sunset = parseInt(sunset) - parseInt (offset * 3600);
+                    if (debug_flag > 3) {
+                        console.log("adgj sunset = " + sunset);
+                    }
+                    MessageQueue.sendAppMessage({
+                                                location: location,
+                                                sunrise: sunrise,
+                                                sunset: sunset,
+                                                });
+                } else {
+                console.log("fail > 100 in fetchSunriseSunset");
+                }
+            } else {
+                console.log("fail req 200 in fetchSunriseSunset");
+            }
+        }
+    };
+    req.send(null);
+    
+}
+
+function sendDayMessages(day) {
+    
+    
+    console.log("day = " + day);
+    n = 0;
+    k0 = day * 10
+    k1 = k0 + 1;
+    k2 = k0 + 2;
+    k3 = k0 + 3;
+    k4 = k0 + 4;
+
+    
+    if (day == 0) {
+        
+        if (debug_flag > -1) {
+            console.log("printing message values, n = " + n + ", m = " + day);
+            console.log("day0_icon " + k0 + ":" + icon);
+            console.log("day0_temp: " +  k1 + ":" + temp);
+            console.log("day0_conditions: " +  k2 + ":" + conditions);
+            console.log("day0_timestamp: " +  k3 + ":" + timestamp);
+            console.log("day0_baro: " +  k4 + ":" + baro);
+        }
+        MessageQueue.sendAppMessage({
+                                    day0_icon: icon,
+                                    day0_temp: temp + "",
+                                    day0_conditions: conditions,
+                                    day0_timestamp: timestamp,
+                                    day0_baro: baro + getPressureLabel(),
+                                    });
+        
+    }
+    
+    else if (day == 1) {
+        if (debug_flag > -1) {
+            console.log("printing message values, n = " + n + ", m = " + day);
+            console.log("day1_icon " + k0 + ":" + icon);
+            console.log("day1_temp: " +  k1 + ":" + temp);
+            console.log("day1_conditions: " +  k2 + ":" + conditions);
+            console.log("day1_timestamp: " +  k3 + ":" + timestamp);
+        }
+        
+        MessageQueue.sendAppMessage({
+                                    day1_icon: icon,
+                                    day1_temp: temp + "",
+                                    day1_conditions: conditions,
+                                    day1_timestamp: timestamp,
+                                    });
+        
+    }
+    
+
+    
+    
+    /*
+    
+    if (day == 0) {
+        
+        if (debug_flag > -1) {
+            console.log("printing message values, n = " + n + ", m = " + day);
+            console.log("day0_icon " + k0 + ":" + day0_icon);
+            console.log("day0_temp: " +  k1 + ":" + day0_temp);
+            console.log("day0_conditions: " +  k2 + ":" + day0_conditions);
+            console.log("day0_timestamp: " +  k3 + ":" + day0_timestamp);
+            console.log("day0_baro: " +  k4 + ":" + day0_baro);
+        }
+        MessageQueue.sendAppMessage({
+                                    day0_icon: day0_icon,
+                                    day0_temp: day0_temp + "",
+                                    day0_conditions: day0_conditions,
+                                    day0_timestamp: day0_timestamp,
+                                    day0_baro: day0_baro + getPressureLabel(),
+                            });
+        
+        }
+        
+    else if (day == 1) {
+        if (debug_flag > -1) {
+            console.log("printing message values, n = " + n + ", m = " + day);
+            console.log("day1_icon " + k0 + ":" + day1_icon);
+            console.log("day1_temp: " +  k1 + ":" + day1_temp);
+            console.log("day1_conditions: " +  k2 + ":" + day1_conditions);
+            console.log("day1_timestamp: " +  k3 + ":" + day1_timestamp);
+        }
+        
+        MessageQueue.sendAppMessage({
+                                    day1_icon: day1_icon,
+                                    day1_temp: day1_temp + "",
+                                    day1_conditions: day1_conditions,
+                                    day1_timestamp: day1_timestamp,
+                                    });
+        
+    }
+     
+     
+     */
+    
+    else if (day == 2) {
+        MessageQueue.sendAppMessage({
+                                    day0_icon: day0_icon,
+                                    day0_temp: day0_temp + "",
+                                    day0_conditions: day0_conditions,
+                                    day0_timestamp: day0_timestamp,
+                                    day0_baro: day0_baro + getPressureLabel(),
+                                    });
+        
+    }
+    
+    else if (day == 3) {
+        MessageQueue.sendAppMessage({
+                                    day0_icon: day0_icon,
+                                    day0_temp: day0_temp + "",
+                                    day0_conditions: day0_conditions,
+                                    day0_timestamp: day0_timestamp,
+                                    day0_baro: day0_baro + getPressureLabel(),
+                                    });
+        
+    }
+    
+    else if (day == 4) {
+        MessageQueue.sendAppMessage({
+                                    day0_icon: day0_icon,
+                                    day0_temp: day0_temp + "",
+                                    day0_conditions: day0_conditions,
+                                    day0_timestamp: day0_timestamp,
+                                    day0_baro: day0_baro + getPressureLabel(),
+                                    });
+        
+    }
+    
+    else if (day == 5) {
+        MessageQueue.sendAppMessage({
+                                    day0_icon: day0_icon,
+                                    day0_temp: day0_temp + "",
+                                    day0_conditions: day0_conditions,
+                                    day0_timestamp: day0_timestamp,
+                                    day0_baro: day0_baro + getPressureLabel(),
+                                    });
+        
+    }
+    
+
+
+}
+
+
+
 function locationSuccess(pos) {
     var coordinates = pos.coords;
     if (debug_flag > 1) {
@@ -560,9 +1071,18 @@ function locationSuccess(pos) {
     //var latitude = 41.852014;
     //var longitude = 12.577281;
     //fetchWeather(latitude, longitude);
+    if (provider_flag == 0) {
 	fetchWeatherForecast(coordinates.latitude, coordinates.longitude);
     fetchWeatherTodayForecast(coordinates.latitude, coordinates.longitude);
 	fetchWeatherConditions(coordinates.latitude, coordinates.longitude);
+    }
+    
+    else if (provider_flag == 1) {
+        fetchWeatherUndergroundForecast(coordinates.latitude, coordinates.longitude);
+        fetchWeatherUndergroundTodayForecast(coordinates.latitude, coordinates.longitude);
+        fetchWeatherUndergroundConditions(coordinates.latitude, coordinates.longitude);
+        fetchSunriseSunset(coordinates.latitude, coordinates.longitude);
+    }
     
 }
 
@@ -659,6 +1179,74 @@ Pebble.addEventListener("webviewclosed", function(e) {
                         
                         }
                         });
+
+
+function iconFromWeatherString(weatherId) {
+	
+	if (weatherId == "tstorms") {
+		console.log("weatherId = " + weatherId + ", return 6"); // 200 series - thunderstorms, // 300 to 321 defined as rain, 400-499 not defined, 500-599 is rain
+        return 6;
+    } else if (weatherId == "rain") {
+		console.log("weatherId = " + weatherId + ", return 6"); // 200 series - thunderstorms, // 300 to 321 defined as rain, 400-499 not defined, 500-599 is rain
+        return 6;
+    } else if (weatherId == "chancetstorms") {
+        console.log("weatherId = " + weatherId + ", return 12"); // 200 series - thunderstorms, // 300 to 321 defined as rain, 400-499 not defined, 500-599 is rain
+        return 12;
+    } else if (weatherId == "chancerain") {
+        console.log("weatherId = " + weatherId + ", return 6"); // 200 series - thunderstorms, // 300 to 321 defined as rain, 400-499 not defined, 500-599 is rain
+        return 6;
+    } else if (weatherId == "sleet") { 	// 600-699 defined as snow
+		console.log("weatherId = " + weatherId + ", return 8");
+        return 8;
+    } else if (weatherId == "snow") { 	// 600-699 defined as snow
+		console.log("weatherId = " + weatherId + ", return 8");
+        return 8;
+    } else if (weatherId == "flurries") { 	// 600-699 defined as snow
+		console.log("weatherId = " + weatherId + ", return 8");
+        return 8;
+    } else if (weatherId == "chancesnow") { 	// 600-699 defined as snow
+		console.log("weatherId = " + weatherId + ", return 8");
+        return 8;
+    } else if (weatherId == "chancesleet") { 	// 600-699 defined as snow
+		console.log("weatherId = " + weatherId + ", return 8");
+        return 8;
+    } else if (weatherId == "chanceflurries") { 	// 600-699 defined as snow
+		console.log("weatherId = " + weatherId + ", return 8");
+        return 8;
+    } else if (weatherId == "mostlycloudy" ) {		// 700-799 is mist, smoke, fog, etc. Return lines
+        console.log("weatherId = " + weatherId + ", return 4");
+        return 4;						// 900-99 is crazy atmospheric shit,
+    } else if (weatherId == "cloudy" ) {		// 700-799 is mist, smoke, fog, etc. Return lines
+        console.log("weatherId = " + weatherId + ", return 4");
+        return 4;						// 900-99 is crazy atmospheric shit,
+    } else if (weatherId == "clear") {		// 800 is clear
+        console.log("weatherId = " + weatherId + ", return 0");
+        return 0;
+    } else if (weatherId == "sunny") {		// 800 is clear
+        console.log("weatherId = " + weatherId + ", return 0");
+        return 0;
+    } else if (weatherId == "partlysunny") {	// 801, 802, 803 are all partly cloudy
+        console.log("weatherId = " + weatherId + ", return 2");
+        return 2;
+    } else if (weatherId == "mostlysunny") {	// 801, 802, 803 are all partly cloudy
+        console.log("weatherId = " + weatherId + ", return 2");
+        return 2;
+    } else if (weatherId == "partlycloudy") {	// 801, 802, 803 are all partly cloudy
+        console.log("weatherId = " + weatherId + ", return 2");
+        return 2;
+    } else if (weatherId == "hazy" ) {   // 804 = overcast. Should it be clouds, or lines? I love lines. So, lines. But it shoudl probably be clouds
+        console.log("weatherId = " + weatherId + ", return 10");
+        return 10;
+    } else if (weatherId == "fog" ) {   // 804 = overcast. Should it be clouds, or lines? I love lines. So, lines. But it shoudl probably be clouds
+        console.log("weatherId = " + weatherId + ", return 10");
+        return 10;
+    } else {							// 900 to 962 ranges from tornado to calm. Most strange.
+        console.log("else return 10");
+        return 10;
+    }
+}
+
+
 
 function iconFromWeatherIconCode(weatherIconCode) {
     if (weatherIconCode == "01d") {

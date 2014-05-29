@@ -427,7 +427,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         break;
             
 		case WEATHER_DAY0_ICON_KEY:
-        if (debug_flag > 1) {
+        if (debug_flag > -1) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY0_ICON_KEY %lu + night_flag %d", new_tuple->value->uint32, night_flag);
         }
         if (day0_icon_bitmap) {
@@ -438,7 +438,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         break;
         
         case WEATHER_DAY1_ICON_KEY:
-        if (debug_flag > 1) {
+        if (debug_flag > -1) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY1_ICON_KEY %lu + night_flag %d", new_tuple->value->uint32, night_flag);
         }
         if (day1_icon_bitmap) {
@@ -499,7 +499,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         break;
             
 		case WEATHER_DAY0_TEMP_KEY:
-        if (debug_flag > 9) {
+        if (debug_flag > -1) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY0_TEMP_KEY %s", new_tuple->value->cstring);
         }
         current_temperature = new_tuple->value->cstring;
@@ -507,7 +507,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         break;
         
 		case WEATHER_DAY1_TEMP_KEY:
-        if (debug_flag > 9) {
+        if (debug_flag > -1) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY1_TEMP_KEY %s", new_tuple->value->cstring);
         }
         if (night_flag == 0) {
@@ -764,10 +764,11 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
     }
 	
 	static char time_text[] = "00:00AAA"; // Needs to be static because it's used by the system later. "%l:%M %y"
-	strftime(time_text, sizeof(time_text), "%l:%M%PM", tick_time);
+//	strftime(time_text, sizeof(time_text), "%l:%M%p", tick_time);
+    strftime(time_text, sizeof(time_text), "%l:%M%p", tick_time);
 	text_layer_set_text(time_layer, time_text);
 	
-	strftime(time_text, sizeof(time_text), "%H", tick_time);
+	//strftime(time_text, sizeof(time_text), "%H", tick_time);
     //	////APP_LOG(APP_LOG_LEVEL_DEBUG, time_text);
 	
 	static char date_text[] = "00/00";
@@ -815,10 +816,10 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "day[0]text: %s", day_text);
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "day[0]Int = %lu", todayInt);
 	}
-	strftime(time_text, sizeof(time_text), "%l:%M%P", timer_tm);
+//	strftime(time_text, sizeof(time_text), "%l:%M%P", timer_tm);
 	////APP_LOG(APP_LOG_LEVEL_DEBUG, time_text);
 	timer_tm = localtime (&current);
-	strftime(time_text, sizeof(time_text), "%l:%M%P", timer_tm);
+//	strftime(time_text, sizeof(time_text), "%l:%M%P", timer_tm);
 	////APP_LOG(APP_LOG_LEVEL_DEBUG, time_text);
     
 	
