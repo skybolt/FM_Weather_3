@@ -292,110 +292,8 @@ function tempGetter(temp) {
 	}
 }
 
-function fetchWeatherForecast(latitude, longitude) {
-    var req = new XMLHttpRequest();
-    req.open("GET", "http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude + "&lon=" + longitude + "&cnt=10&APPID=9f001a597927140d919cc512193dadd2", true);
-	if (debug_flag > 1) {
-        console.log("http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude + "&lon=" + longitude + "&cnt=10&APPID=9f001a597927140d919cc512193dadd2");
-	}
-    req.onload = function(e) {
-        if (req.readyState == 4) {
-            if (req.status == 200) {
-                var response = JSON.parse(req.responseText);
-                if (debug_flag > 4) {
-                    console.log("req.responseText.lenght = " + req.responseText.length);
-                    console.log("test response dump \n" + req.responseText);
-                }
-                if (req.responseText.length > 100) {
-                    
-                    var n = m + 0;
-                    var day3_icon = iconFromWeatherId(response.list[n].weather[0].id);
-                    var day3_high	= tempGetter(response.list[n].temp.max);
-                    var day3_low = tempGetter(response.list[n].temp.min);
-                    if (tempFlag != 1 || 6) {
-                        var day3_temp = day3_high + "/\n" + day3_low + getTempLabel();
-                    } else {
-                        var day3_temp = day3_high + "/" + day3_low + getTempLabel();
-                    }
 
-                    var day3_conditions = stripper(response.list[n].weather[0].description);
-                    var day3_timestamp = parseInt(response.list[n].dt);
-                    //Pebble.sendAppMessage({
-                    MessageQueue.sendAppMessage({
-                                                day3_icon: day3_icon,
-                                                day3_temp: day3_temp,
-                                                day3_conditions: day3_conditions,
-                                                day3_timestamp: day3_timestamp
-                                                });
-                    
-                    if (debug_flag > 1) {
-                        console.log("day3_high = " + day3_high + ", day3_low = " + day3_low + ", day3_temp = " + day3_temp + "day3_timestamp = " + day3_timestamp);
-                    }
-                    
-                    n = m + 1;
-                    var day4_icon = iconFromWeatherId(response.list[n].weather[0].id);
-                    var day4_high	= tempGetter(response.list[n].temp.max);
-                    var day4_low = tempGetter(response.list[n].temp.min);
-                    if (tempFlag != 1 || 6) {
-                        var day4_temp = day4_high + "/\n" + day4_low + getTempLabel();
-                    } else {
-                        var day4_temp = day4_high + "/" + day4_low + getTempLabel();
-                    }
-                    var day4_conditions = stripper(response.list[n].weather[0].description);
-                    var day4_timestamp = parseInt(response.list[n].dt);
-
-                    //Pebble.sendAppMessage({
-                    MessageQueue.sendAppMessage({
-                                                //
-                                                day4_icon: day4_icon,
-                                                day4_temp: day4_temp,
-                                                day4_conditions: day4_conditions,
-                                                day4_timestamp: day4_timestamp
-                                                });
-                    
-                    if (debug_flag > 1) {
-                        console.log("day4_high = " + day4_high + ", day4_low = " + day4_low + ", day4_temp = " + day4_temp + "day4_timestamp = " + day4_timestamp);
-                    }
-                    
-                    n = m + 2;
-                    var day5_icon = iconFromWeatherId(response.list[n].weather[0].id);
-                    var day5_high	= tempGetter(response.list[n].temp.max);
-                    var day5_low = tempGetter(response.list[n].temp.min);
-                    if (tempFlag != 1 || 6) {
-                        var day5_temp = day5_high + "/\n" + day5_low + getTempLabel();
-                    } else {
-                        var day5_temp = day5_high + "/" + day5_low + getTempLabel();
-                    }
-                    var day5_conditions = stripper(response.list[n].weather[0].description);
-                    var day5_timestamp = parseInt(response.list[n].dt);
-
-                    MessageQueue.sendAppMessage({
-                                                //
-                                                day5_icon: day5_icon,
-                                                day5_temp: day5_temp,
-                                                day5_conditions: day5_conditions,
-                                                day5_timestamp: day5_timestamp
-                                                });
-                    
-                    if (debug_flag > 1) {
-                        console.log("day5_high = " + day5_high + ", day5_low = " + day5_low + ", day5_temp = " + day5_temp + "day5_timestamp = " + day5_timestamp);
-                    }
-                    
-                    
-                } else {console.log("fail length not zero");}
-            } else {console.log("fail 200: fetchWeatherForecast");}
-		} else{console.log("fail 4"); }
-	    if (debug_flag > 1) {
-            console.log("end onload");
-	    }
-    };
-    req.send(null);
-	if (debug_flag > 1) {
-        console.log("end function");
-	}
-}
-
-function fetchWeatherConditions(latitude, longitude) {
+function fetchWeatherConditions(latitude, longitude) {  //sends day0
     var response;
     var req = new XMLHttpRequest();
     req.open("GET", "http://api.openweathermap.org/data/2.5/weather?" + "lat=" + latitude + "&lon=" + longitude + "&cnt=2", true);
@@ -492,7 +390,7 @@ function fetchWeatherConditions(latitude, longitude) {
     req.send(null);
 }
 
-function fetchWeatherTodayForecast(latitude, longitude) {
+function fetchWeatherTodayForecast(latitude, longitude) {  //sends days 1, 2
     var response;
     var req = new XMLHttpRequest();
     //    http://api.openweathermap.org/data/2.5/forecast?lat=47.68969385897765&lon=-122.38351216622917&mode=xml
@@ -564,6 +462,19 @@ function fetchWeatherTodayForecast(latitude, longitude) {
                     sendDayMessages(1);
                     
                     n = 4;
+                    day = 2;
+                    icon = iconFromWeatherId(response.list[n].weather[0].id);
+                    temp = tempGetter(response.list[n].main.temp) + getTempLabel();
+                    timestamp = response.list[n].dt;
+                    conditions = response.list[n].weather[0].description;
+                    timestamp = parseInt(timestamp) - parseInt (offset * 3600);
+                    
+                    if (debug_flag > 1) {
+                        console.log("requesting sendDayMessages(" + day + ")");
+                    }
+                    sendDayMessages(day);
+                    
+                    /*
                     var day2_icon = iconFromWeatherId(response.list[n].weather[0].id);
                     var day2_temp = tempGetter(response.list[n].main.temp) + getTempLabel();
                     var day2_timestamp = response.list[n].dt;
@@ -576,12 +487,18 @@ function fetchWeatherTodayForecast(latitude, longitude) {
                         console.log("day2_icon = " + day2_icon + " " + response.list[n].weather[0].id + " " + response.list[n].weather[0].description + " " + day2_temp + " " + day2_timestamp);
                     }
                     
+                    */
+                    
+                    
+                    /*
                     MessageQueue.sendAppMessage({
                                                 day2_icon: day2_icon,
                                                 //day2_temp: day2_temp,
                                                 day2_timestamp: day2_timestamp,
                                                 day2_conditions: day2_conditions,
                                                 });
+                    
+                    */
                     //get conditions for array item 1 and array item 3, that's 3 hours out and 9 hours out
                     // 0 is now to 3, 1 is 3 to 6, 2 is 6 to 9, 3 is 9 to 12, 4 is 12 to 15, etc.
                     
@@ -608,6 +525,134 @@ function fetchWeatherTodayForecast(latitude, longitude) {
     };
     req.send(null);
 }
+
+function fetchWeatherForecast(latitude, longitude) {       // sends days 3, 4, 5
+    var req = new XMLHttpRequest();
+    req.open("GET", "http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude + "&lon=" + longitude + "&cnt=10&APPID=9f001a597927140d919cc512193dadd2", true);
+	if (debug_flag > 1) {
+        console.log("http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude + "&lon=" + longitude + "&cnt=10&APPID=9f001a597927140d919cc512193dadd2");
+	}
+    req.onload = function(e) {
+        if (req.readyState == 4) {
+            if (req.status == 200) {
+                var response = JSON.parse(req.responseText);
+                if (debug_flag > 4) {
+                    console.log("req.responseText.lenght = " + req.responseText.length);
+                    console.log("test response dump \n" + req.responseText);
+                }
+                if (req.responseText.length > 100) {
+                    
+                    n = m + 0;
+                    icon = iconFromWeatherId(response.list[n].weather[0].id);
+                    high	= tempGetter(response.list[n].temp.max);
+                    low = tempGetter(response.list[n].temp.min);
+                    temp = high + "/\n" + low + getTempLabel();
+                    conditions = stripper(response.list[n].weather[0].description);
+                    timestamp = parseInt(response.list[n].dt);
+                    
+                    sendDayMessages(3);
+                    /*
+                     //Pebble.sendAppMessage({
+                     MessageQueue.sendAppMessage({
+                     day3_icon: day3_icon,
+                     day3_temp: day3_temp,
+                     day3_conditions: day3_conditions,
+                     day3_timestamp: day3_timestamp
+                     });
+                     
+                     if (debug_flag > 1) {
+                     console.log("day3_high = " + day3_high + ", day3_low = " + day3_low + ", day3_temp = " + day3_temp + "day3_timestamp = " + day3_timestamp);
+                     } */
+                    
+                    
+                    n = m + 1;
+                    icon = iconFromWeatherId(response.list[n].weather[0].id);
+                    high	= tempGetter(response.list[n].temp.max);
+                    low = tempGetter(response.list[n].temp.min);
+                    temp = high + "/\n" + low + getTempLabel();
+                    conditions = stripper(response.list[n].weather[0].description);
+                    timestamp = parseInt(response.list[n].dt);
+                    
+                    sendDayMessages(4);
+                    
+                    
+                    /*
+                     var day4_icon = iconFromWeatherId(response.list[n].weather[0].id);
+                     var day4_high	= tempGetter(response.list[n].temp.max);
+                     var day4_low = tempGetter(response.list[n].temp.min);
+                     if (tempFlag != 1 || 6) {
+                     var day4_temp = day4_high + "/\n" + day4_low + getTempLabel();
+                     } else {
+                     var day4_temp = day4_high + "/" + day4_low + getTempLabel();
+                     }
+                     var day4_conditions = stripper(response.list[n].weather[0].description);
+                     var day4_timestamp = parseInt(response.list[n].dt);
+                     
+                     //Pebble.sendAppMessage({
+                     MessageQueue.sendAppMessage({
+                     //
+                     day4_icon: day4_icon,
+                     day4_temp: day4_temp,
+                     day4_conditions: day4_conditions,
+                     day4_timestamp: day4_timestamp
+                     });
+                     
+                     if (debug_flag > 1) {
+                     console.log("day4_high = " + day4_high + ", day4_low = " + day4_low + ", day4_temp = " + day4_temp + "day4_timestamp = " + day4_timestamp);
+                     }  */
+                    
+                    n = m + 2;
+                    icon = iconFromWeatherId(response.list[n].weather[0].id);
+                    high	= tempGetter(response.list[n].temp.max);
+                    low = tempGetter(response.list[n].temp.min);
+                    temp = high + "/\n" + low + getTempLabel();
+                    conditions = stripper(response.list[n].weather[0].description);
+                    timestamp = parseInt(response.list[n].dt);
+                    
+                    sendDayMessages(5);
+                    
+                    /*
+                     var day5_icon = iconFromWeatherId(response.list[n].weather[0].id);
+                     var day5_high	= tempGetter(response.list[n].temp.max);
+                     var day5_low = tempGetter(response.list[n].temp.min);
+                     if (tempFlag != 1 || 6) {
+                     var day5_temp = day5_high + "/\n" + day5_low + getTempLabel();
+                     } else {
+                     var day5_temp = day5_high + "/" + day5_low + getTempLabel();
+                     }
+                     var day5_conditions = stripper(response.list[n].weather[0].description);
+                     var day5_timestamp = parseInt(response.list[n].dt);
+                     
+                     MessageQueue.sendAppMessage({
+                     //
+                     day5_icon: day5_icon,
+                     day5_temp: day5_temp,
+                     day5_conditions: day5_conditions,
+                     day5_timestamp: day5_timestamp
+                     });
+                     
+                     if (debug_flag > 1) {
+                     console.log("day5_high = " + day5_high + ", day5_low = " + day5_low + ", day5_temp = " + day5_temp + "day5_timestamp = " + day5_timestamp);
+                     }
+                     */
+                    
+                    
+                } else {console.log("fail length not zero");}
+            } else {console.log("fail 200: fetchWeatherForecast");}
+		} else{console.log("fail 4"); }
+	    if (debug_flag > 1) {
+            console.log("end onload");
+	    }
+    };
+    req.send(null);
+	if (debug_flag > 1) {
+        console.log("end function");
+	}
+}
+
+
+
+/*NEXT SECTION IS FOR WEATHER UNDERGROUND*/
 
 function fetchWeatherUndergroundForecast(latitude, longitude) {
     var response;
@@ -967,95 +1012,81 @@ function sendDayMessages(day) {
         
     }
     
-
-    
-    
-    /*
-    
-    if (day == 0) {
-        
-        if (debug_flag > -1) {
-            console.log("printing message values, n = " + n + ", m = " + day);
-            console.log("day0_icon " + k0 + ":" + day0_icon);
-            console.log("day0_temp: " +  k1 + ":" + day0_temp);
-            console.log("day0_conditions: " +  k2 + ":" + day0_conditions);
-            console.log("day0_timestamp: " +  k3 + ":" + day0_timestamp);
-            console.log("day0_baro: " +  k4 + ":" + day0_baro);
-        }
-        MessageQueue.sendAppMessage({
-                                    day0_icon: day0_icon,
-                                    day0_temp: day0_temp + "",
-                                    day0_conditions: day0_conditions,
-                                    day0_timestamp: day0_timestamp,
-                                    day0_baro: day0_baro + getPressureLabel(),
-                            });
-        
-        }
-        
-    else if (day == 1) {
-        if (debug_flag > -1) {
-            console.log("printing message values, n = " + n + ", m = " + day);
-            console.log("day1_icon " + k0 + ":" + day1_icon);
-            console.log("day1_temp: " +  k1 + ":" + day1_temp);
-            console.log("day1_conditions: " +  k2 + ":" + day1_conditions);
-            console.log("day1_timestamp: " +  k3 + ":" + day1_timestamp);
-        }
-        
-        MessageQueue.sendAppMessage({
-                                    day1_icon: day1_icon,
-                                    day1_temp: day1_temp + "",
-                                    day1_conditions: day1_conditions,
-                                    day1_timestamp: day1_timestamp,
-                                    });
-        
-    }
-     
-     
-     */
-    
     else if (day == 2) {
+        if (debug_flag > -1) {
+            console.log("printing message values, n = " + n + ", m = " + day);
+            console.log("day2_icon " + k0 + ":" + icon);
+            console.log("day2_temp: " +  k1 + ":" + temp);
+            console.log("day2_conditions: " +  k2 + ":" + conditions);
+            console.log("day2_timestamp: " +  k3 + ":" + timestamp);
+        }
+        
         MessageQueue.sendAppMessage({
-                                    day0_icon: day0_icon,
-                                    day0_temp: day0_temp + "",
-                                    day0_conditions: day0_conditions,
-                                    day0_timestamp: day0_timestamp,
-                                    day0_baro: day0_baro + getPressureLabel(),
+                                    day2_icon: icon,
+                                    day2_temp: temp + "",
+                                    day2_conditions: conditions,
+                                    day2_timestamp: timestamp,
                                     });
         
     }
     
     else if (day == 3) {
+        if (debug_flag > -1) {
+            console.log("printing message values, n = " + n + ", m = " + day);
+            console.log("day3_icon " + k0 + ":" + icon);
+            console.log("day3_temp: " +  k1 + ":" + temp);
+            console.log("day3_conditions: " +  k2 + ":" + conditions);
+            console.log("day3_timestamp: " +  k3 + ":" + timestamp);
+        }
+        
         MessageQueue.sendAppMessage({
-                                    day0_icon: day0_icon,
-                                    day0_temp: day0_temp + "",
-                                    day0_conditions: day0_conditions,
-                                    day0_timestamp: day0_timestamp,
-                                    day0_baro: day0_baro + getPressureLabel(),
+                                    day3_icon: icon,
+                                    day3_temp: temp + "",
+                                    day3_conditions: conditions,
+                                    day3_timestamp: timestamp,
                                     });
         
     }
     
     else if (day == 4) {
+        if (debug_flag > -1) {
+            console.log("printing message values, n = " + n + ", m = " + day);
+            console.log("day4_icon " + k0 + ":" + icon);
+            console.log("day4_temp: " +  k1 + ":" + temp);
+            console.log("day4_conditions: " +  k2 + ":" + conditions);
+            console.log("day4_timestamp: " +  k3 + ":" + timestamp);
+        }
+        
         MessageQueue.sendAppMessage({
-                                    day0_icon: day0_icon,
-                                    day0_temp: day0_temp + "",
-                                    day0_conditions: day0_conditions,
-                                    day0_timestamp: day0_timestamp,
-                                    day0_baro: day0_baro + getPressureLabel(),
+                                    day4_icon: icon,
+                                    day4_temp: temp + "",
+                                    day4_conditions: conditions,
+                                    day4_timestamp: timestamp,
                                     });
         
     }
     
     else if (day == 5) {
+        if (debug_flag > -1) {
+            console.log("printing message values, n = " + n + ", m = " + day);
+            console.log("day5_icon " + k0 + ":" + icon);
+            console.log("day5_temp: " +  k1 + ":" + temp);
+            console.log("day5_conditions: " +  k2 + ":" + conditions);
+            console.log("day5_timestamp: " +  k3 + ":" + timestamp);
+        }
+        
         MessageQueue.sendAppMessage({
-                                    day0_icon: day0_icon,
-                                    day0_temp: day0_temp + "",
-                                    day0_conditions: day0_conditions,
-                                    day0_timestamp: day0_timestamp,
-                                    day0_baro: day0_baro + getPressureLabel(),
+                                    day5_icon: icon,
+                                    day5_temp: temp + "",
+                                    day5_conditions: conditions,
+                                    day5_timestamp: timestamp,
                                     });
         
     }
+    
+
+
+
     
 
 
