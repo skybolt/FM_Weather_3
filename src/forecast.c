@@ -22,15 +22,18 @@ BitmapLayer *date_border_layer;
 
 const char *new_location;
 
-TextLayer *today_day_layer;
-TextLayer *tomorrow_day_layer;
-TextLayer *nextday_day_layer;
-TextLayer *today_cond_layer;
-TextLayer *today_temp_layer;
-TextLayer *tomorrow_cond_layer;
-TextLayer *tomorrow_temp_layer;
-TextLayer *nextday_cond_layer;
-TextLayer *nextday_temp_layer;
+TextLayer *day3_time_layer;
+TextLayer *day4_time_layer;
+TextLayer *day5_time_layer;
+
+TextLayer *day3_cond_layer;
+TextLayer *day4_cond_layer;
+TextLayer *day5_cond_layer;
+
+TextLayer *day3_temp_layer;
+TextLayer *day4_temp_layer;
+TextLayer *day5_temp_layer;
+
 TextLayer *time_layer;
 TextLayer *date_layer;
 TextLayer *location_layer;
@@ -49,15 +52,15 @@ int w = 144;
 int h = 2;
 
 Layer *todayForecastLayer;
-BitmapLayer *todayForecastIconLayer;
-BitmapLayer *tonightForecastIconLayer;
-TextLayer *todayForecastTextLayer;
-TextLayer *tonightForecastTextLayer;
-TextLayer *todayForecastTempLayer;
-TextLayer *tonightForecastTempLayer;
-TextLayer *todayForecastStatusLayer;
-TextLayer *tonightForecastStatusLayer;
-InverterLayer *tonight_forecast_inverter_layer;
+BitmapLayer *day1_icon_layer;
+BitmapLayer *day2_icon_layer;
+TextLayer *day1_cond_layer;
+TextLayer *day2_cond_layer;
+TextLayer *day1_temp_layer;
+TextLayer *day2_temp_layer;
+TextLayer *day1_time_layer;
+TextLayer *day2_time_layer;
+InverterLayer *day2_time_layer_inverter_layer;
 
 
 Layer *currentConditionsLayer;
@@ -329,7 +332,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             time_t timeStamp   		= todayForecastTimeInt;
             timer_tm = localtime (&timeStamp);
             strftime(day_text, sizeof(day_text), "%l%P\n %a", timer_tm);
-            text_layer_set_text(todayForecastStatusLayer, day_text);
+            text_layer_set_text(day1_time_layer, day_text);
             if (debug_flag > 2) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY1_TIMESTAMP_KEY %lu", new_tuple->value->uint32);
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY2_TIMESTAMP_KEY day_text %s", day_text);
@@ -341,7 +344,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             time_t nightStamp   		= tonightForecastTimeInt;
             timer_tm = localtime (&nightStamp);
             strftime(night_text, sizeof(night_text), "%l%P\n %a", timer_tm);
-            text_layer_set_text(tonightForecastStatusLayer, night_text);
+            text_layer_set_text(day2_time_layer, night_text);
             
             if (debug_flag > 2) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY2_TIMESTAMP_KEY %lu", new_tuple->value->uint32);
@@ -387,7 +390,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             break;
             
 		case WEATHER_DAY1_CONDITIONS_KEY:
-            text_layer_set_text(todayForecastTextLayer, new_tuple->value->cstring);
+            text_layer_set_text(day1_cond_layer, new_tuple->value->cstring);
             //        today_conditions = new_tuple->value->cstring;
             if (debug_flag > 2) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY1_CONDITIONS_KEY %s", new_tuple->value->cstring);
@@ -395,7 +398,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             break;
             
 		case WEATHER_DAY2_CONDITIONS_KEY:
-            text_layer_set_text(tonightForecastTextLayer, new_tuple->value->cstring);
+            text_layer_set_text(day2_cond_layer, new_tuple->value->cstring);
             //        today_conditions = new_tuple->value->cstring;
             if (debug_flag > 2) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY2_CONDITIONS_KEY %s", new_tuple->value->cstring);
@@ -403,7 +406,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             break;
             
 		case WEATHER_DAY3_CONDITIONS_KEY:
-            text_layer_set_text(today_cond_layer, new_tuple->value->cstring);
+            text_layer_set_text(day3_cond_layer, new_tuple->value->cstring);
             today_conditions = new_tuple->value->cstring;
             if (debug_flag > 2) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY3_CONDITIONS_KEY %s", new_tuple->value->cstring);
@@ -411,7 +414,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             break;
             
 		case WEATHER_DAY4_CONDITIONS_KEY:
-            text_layer_set_text(tomorrow_cond_layer, new_tuple->value->cstring);
+            text_layer_set_text(day4_cond_layer, new_tuple->value->cstring);
             tomorrow_conditions = new_tuple->value->cstring;
             if (debug_flag > 2) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY4_CONDITIONS_KEY %s", new_tuple->value->cstring);
@@ -419,7 +422,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             break;
             
 		case WEATHER_DAY5_CONDITIONS_KEY:
-            text_layer_set_text(nextday_cond_layer, new_tuple->value->cstring);
+            text_layer_set_text(day5_cond_layer, new_tuple->value->cstring);
             nextday_conditions = new_tuple->value->cstring;
             if (debug_flag > 2) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY5_CONDITIONS_KEY %s", new_tuple->value->cstring);
@@ -444,7 +447,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             if (day1_icon_bitmap) {
                 gbitmap_destroy(day1_icon_bitmap);
             }
-            bitmap_layer_set_bitmap(todayForecastIconLayer, day1_icon_bitmap);
+            bitmap_layer_set_bitmap(day1_icon_layer, day1_icon_bitmap);
             day1_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + night_flag]);
             break;
             
@@ -457,11 +460,11 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             }
             if (night_flag == 0) {
                 day2_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + 1]);
-                bitmap_layer_set_bitmap(tonightForecastIconLayer, day2_icon_bitmap);
+                bitmap_layer_set_bitmap(day2_icon_layer, day2_icon_bitmap);
             }
             else if (night_flag == 1) {
                 day2_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + 0]);
-                bitmap_layer_set_bitmap(tonightForecastIconLayer, day2_icon_bitmap);
+                bitmap_layer_set_bitmap(day2_icon_layer, day2_icon_bitmap);
             }
             break;
             
@@ -511,9 +514,9 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY1_TEMP_KEY %s", new_tuple->value->cstring);
             }
             if (night_flag == 0) {
-                text_layer_set_text(todayForecastTempLayer, new_tuple->value->cstring);
+                text_layer_set_text(day1_temp_layer, new_tuple->value->cstring);
             } else if (night_flag == 1) {
-                text_layer_set_text(tonightForecastTempLayer, new_tuple->value->cstring);
+                text_layer_set_text(day2_temp_layer, new_tuple->value->cstring);
             }
             break;
             
@@ -522,9 +525,9 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY2_TEMP_KEY %s", new_tuple->value->cstring);
             }
             if (night_flag == 1) {
-                text_layer_set_text(todayForecastTempLayer, new_tuple->value->cstring);
+                text_layer_set_text(day1_temp_layer, new_tuple->value->cstring);
             } else if (night_flag == 0) {
-                text_layer_set_text(tonightForecastTempLayer, new_tuple->value->cstring);
+                text_layer_set_text(day2_temp_layer, new_tuple->value->cstring);
             }        break;
             
 		case WEATHER_DAY3_TEMP_KEY:
@@ -532,26 +535,26 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             static char todayHiLoCounter[32];
             strcpy(todayHiLoCounter, today_hilo);
             int today_hilo_count = countChar(todayHiLoCounter);
-            text_layer_set_text(today_temp_layer, new_tuple->value->cstring);
+            text_layer_set_text(day3_temp_layer, new_tuple->value->cstring);
             if (debug_flag > 5) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY3_TEMP_KEY %s", new_tuple->value->cstring);
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "STRING %s has %d characters", today_hilo, today_hilo_count);
             }
             
             if (today_hilo_count > 9) {
-                text_layer_set_font(today_temp_layer, custom_font_tinytemp);
-                text_layer_set_font(tomorrow_temp_layer, custom_font_tinytemp);
-                text_layer_set_font(nextday_temp_layer, custom_font_tinytemp);
+                text_layer_set_font(day3_temp_layer, custom_font_tinytemp);
+                text_layer_set_font(day4_temp_layer, custom_font_tinytemp);
+                text_layer_set_font(day5_temp_layer, custom_font_tinytemp);
             } else if (today_hilo_count <= 9) {
-                text_layer_set_font(today_temp_layer, custom_font_temp);
-                text_layer_set_font(tomorrow_temp_layer, custom_font_temp);
-                text_layer_set_font(nextday_temp_layer, custom_font_temp);
+                text_layer_set_font(day3_temp_layer, custom_font_temp);
+                text_layer_set_font(day4_temp_layer, custom_font_temp);
+                text_layer_set_font(day5_temp_layer, custom_font_temp);
             }
             break;
             
 		case WEATHER_DAY4_TEMP_KEY:
             tomorrow_hilo = new_tuple->value->cstring;
-            text_layer_set_text(tomorrow_temp_layer, new_tuple->value->cstring);
+            text_layer_set_text(day4_temp_layer, new_tuple->value->cstring);
             if (debug_flag > 5) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY4_TEMP_KEY %s", new_tuple->value->cstring);
             }
@@ -559,7 +562,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             
 		case WEATHER_DAY5_TEMP_KEY:
             nextday_hilo = new_tuple->value->cstring;
-            text_layer_set_text(nextday_temp_layer, new_tuple->value->cstring);
+            text_layer_set_text(day5_temp_layer, new_tuple->value->cstring);
             if (debug_flag > 5) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY5_TEMP_KEY %s", new_tuple->value->cstring);
             }
@@ -811,7 +814,7 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
 	struct tm *timer_tm;
 	timer_tm = localtime (&today);
 	strftime(day_text, sizeof(day_text), "%a", timer_tm);
-	text_layer_set_text(today_day_layer, day_text);
+	text_layer_set_text(day3_time_layer, day_text);
 	if (debug_flag > 8) {
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "day[0]text: %s", day_text);
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "day[0]Int = %lu", todayInt);
@@ -825,7 +828,7 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
 	
 	timer_tm = localtime (&inOneDay);
 	strftime(day1_text, sizeof(day1_text), "%a", timer_tm);
-	text_layer_set_text(tomorrow_day_layer, day1_text);
+	text_layer_set_text(day4_time_layer, day1_text);
     
 	if (debug_flag > 8) {
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "day[1]text: %s", day1_text);
@@ -833,7 +836,7 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
 	}
 	timer_tm = localtime (&inTwoDays);
 	strftime(day2_text, sizeof(day2_text), "%a", timer_tm);
-	text_layer_set_text(nextday_day_layer, day2_text);
+	text_layer_set_text(day5_time_layer, day2_text);
 	if (debug_flag > 8) {
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "day[2]text %s", day2_text);
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "day[2]Int = %lu", nextdayInt);
@@ -857,22 +860,22 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
 		if (debug_flag > 8) {
 			APP_LOG(APP_LOG_LEVEL_DEBUG, "show day!");
 		}
-		layer_set_hidden(text_layer_get_layer(todayForecastTempLayer), true);
-		layer_set_hidden(text_layer_get_layer(tonightForecastTempLayer), true);
-        layer_set_hidden(text_layer_get_layer(todayForecastTextLayer), true);
-		layer_set_hidden(text_layer_get_layer(tonightForecastTextLayer), true);
-        layer_set_hidden(text_layer_get_layer(todayForecastStatusLayer), false);
-		layer_set_hidden(text_layer_get_layer(tonightForecastStatusLayer), false);
+		layer_set_hidden(text_layer_get_layer(day1_temp_layer), true);
+		layer_set_hidden(text_layer_get_layer(day2_temp_layer), true);
+        layer_set_hidden(text_layer_get_layer(day1_cond_layer), true);
+		layer_set_hidden(text_layer_get_layer(day2_cond_layer), true);
+        layer_set_hidden(text_layer_get_layer(day1_time_layer), false);
+		layer_set_hidden(text_layer_get_layer(day2_time_layer), false);
         
-        layer_set_hidden(text_layer_get_layer(today_temp_layer), true);
-		layer_set_hidden(text_layer_get_layer(tomorrow_temp_layer), true);
-		layer_set_hidden(text_layer_get_layer(nextday_temp_layer), true);
-		layer_set_hidden(text_layer_get_layer(today_cond_layer), true);
-		layer_set_hidden(text_layer_get_layer(tomorrow_cond_layer), true);
-		layer_set_hidden(text_layer_get_layer(nextday_cond_layer), true);
-		layer_set_hidden(text_layer_get_layer(today_day_layer), false);
-		layer_set_hidden(text_layer_get_layer(tomorrow_day_layer), false);
-		layer_set_hidden(text_layer_get_layer(nextday_day_layer), false);
+        layer_set_hidden(text_layer_get_layer(day3_temp_layer), true);
+		layer_set_hidden(text_layer_get_layer(day4_temp_layer), true);
+		layer_set_hidden(text_layer_get_layer(day5_temp_layer), true);
+		layer_set_hidden(text_layer_get_layer(day3_cond_layer), true);
+		layer_set_hidden(text_layer_get_layer(day4_cond_layer), true);
+		layer_set_hidden(text_layer_get_layer(day5_cond_layer), true);
+		layer_set_hidden(text_layer_get_layer(day3_time_layer), false);
+		layer_set_hidden(text_layer_get_layer(day4_time_layer), false);
+		layer_set_hidden(text_layer_get_layer(day5_time_layer), false);
         
         layer_set_hidden(text_layer_get_layer(current_status_layer), false);
         layer_set_hidden(text_layer_get_layer(current_conditions_layer), true);
@@ -883,22 +886,22 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
 		if (debug_flag > 8) {
 			APP_LOG(APP_LOG_LEVEL_DEBUG, "show conditions!");
 		}
-		layer_set_hidden(text_layer_get_layer(todayForecastTempLayer), true);
-		layer_set_hidden(text_layer_get_layer(tonightForecastTempLayer), true);
-        layer_set_hidden(text_layer_get_layer(todayForecastTextLayer), false);
-		layer_set_hidden(text_layer_get_layer(tonightForecastTextLayer), false);
-        layer_set_hidden(text_layer_get_layer(todayForecastStatusLayer), true);
-		layer_set_hidden(text_layer_get_layer(tonightForecastStatusLayer), true);
+		layer_set_hidden(text_layer_get_layer(day1_temp_layer), true);
+		layer_set_hidden(text_layer_get_layer(day2_temp_layer), true);
+        layer_set_hidden(text_layer_get_layer(day1_cond_layer), false);
+		layer_set_hidden(text_layer_get_layer(day2_cond_layer), false);
+        layer_set_hidden(text_layer_get_layer(day1_time_layer), true);
+		layer_set_hidden(text_layer_get_layer(day2_time_layer), true);
         
-		layer_set_hidden(text_layer_get_layer(today_temp_layer), true);
-		layer_set_hidden(text_layer_get_layer(tomorrow_temp_layer), true);
-		layer_set_hidden(text_layer_get_layer(nextday_temp_layer), true);
-		layer_set_hidden(text_layer_get_layer(today_cond_layer), false);
-		layer_set_hidden(text_layer_get_layer(tomorrow_cond_layer), false);
-		layer_set_hidden(text_layer_get_layer(nextday_cond_layer), false);
-		layer_set_hidden(text_layer_get_layer(today_day_layer), true);
-		layer_set_hidden(text_layer_get_layer(tomorrow_day_layer), true);
-		layer_set_hidden(text_layer_get_layer(nextday_day_layer), true);
+		layer_set_hidden(text_layer_get_layer(day3_temp_layer), true);
+		layer_set_hidden(text_layer_get_layer(day4_temp_layer), true);
+		layer_set_hidden(text_layer_get_layer(day5_temp_layer), true);
+		layer_set_hidden(text_layer_get_layer(day3_cond_layer), false);
+		layer_set_hidden(text_layer_get_layer(day4_cond_layer), false);
+		layer_set_hidden(text_layer_get_layer(day5_cond_layer), false);
+		layer_set_hidden(text_layer_get_layer(day3_time_layer), true);
+		layer_set_hidden(text_layer_get_layer(day4_time_layer), true);
+		layer_set_hidden(text_layer_get_layer(day5_time_layer), true);
         layer_set_hidden(text_layer_get_layer(current_status_layer), true);
         layer_set_hidden(text_layer_get_layer(current_conditions_layer), false);
         layer_set_hidden(text_layer_get_layer(current_barometer_layer), true);
@@ -907,22 +910,22 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
 		if (debug_flag > 8) {
 			APP_LOG(APP_LOG_LEVEL_DEBUG, "show temperature!");
 		}
-		layer_set_hidden(text_layer_get_layer(todayForecastTempLayer), false);
-		layer_set_hidden(text_layer_get_layer(tonightForecastTempLayer), false);
-        layer_set_hidden(text_layer_get_layer(todayForecastTextLayer), true);
-		layer_set_hidden(text_layer_get_layer(tonightForecastTextLayer), true);
-        layer_set_hidden(text_layer_get_layer(todayForecastStatusLayer), true);
-		layer_set_hidden(text_layer_get_layer(tonightForecastStatusLayer), true);
+		layer_set_hidden(text_layer_get_layer(day1_temp_layer), false);
+		layer_set_hidden(text_layer_get_layer(day2_temp_layer), false);
+        layer_set_hidden(text_layer_get_layer(day1_cond_layer), true);
+		layer_set_hidden(text_layer_get_layer(day2_cond_layer), true);
+        layer_set_hidden(text_layer_get_layer(day1_time_layer), true);
+		layer_set_hidden(text_layer_get_layer(day2_time_layer), true);
         
-		layer_set_hidden(text_layer_get_layer(today_temp_layer), false);
-		layer_set_hidden(text_layer_get_layer(tomorrow_temp_layer), false);
-		layer_set_hidden(text_layer_get_layer(nextday_temp_layer), false);
-		layer_set_hidden(text_layer_get_layer(today_cond_layer), true);
-		layer_set_hidden(text_layer_get_layer(tomorrow_cond_layer), true);
-		layer_set_hidden(text_layer_get_layer(nextday_cond_layer), true);
-		layer_set_hidden(text_layer_get_layer(today_day_layer), true);
-		layer_set_hidden(text_layer_get_layer(tomorrow_day_layer), true);
-		layer_set_hidden(text_layer_get_layer(nextday_day_layer), true);
+		layer_set_hidden(text_layer_get_layer(day3_temp_layer), false);
+		layer_set_hidden(text_layer_get_layer(day4_temp_layer), false);
+		layer_set_hidden(text_layer_get_layer(day5_temp_layer), false);
+		layer_set_hidden(text_layer_get_layer(day3_cond_layer), true);
+		layer_set_hidden(text_layer_get_layer(day4_cond_layer), true);
+		layer_set_hidden(text_layer_get_layer(day5_cond_layer), true);
+		layer_set_hidden(text_layer_get_layer(day3_time_layer), true);
+		layer_set_hidden(text_layer_get_layer(day4_time_layer), true);
+		layer_set_hidden(text_layer_get_layer(day5_time_layer), true);
         
         layer_set_hidden(text_layer_get_layer(current_status_layer), true);
         layer_set_hidden(text_layer_get_layer(current_conditions_layer), true);
@@ -1068,35 +1071,35 @@ static void window_load(Window *window) {
 	today_icon_layer 		= bitmap_layer_create(GRect(0, hite, w_size, h_size));
 	tomorrow_icon_layer		= bitmap_layer_create(GRect(48, hite, w_size, h_size));
 	nextday_icon_layer 		= bitmap_layer_create(GRect(96, hite, w_size, h_size));
-	today_day_layer 		= text_layer_create(GRect(0, hite + h_size + downset, w_size, h_size));
-	tomorrow_day_layer 		= text_layer_create(GRect(48, hite + h_size + downset, w_size, h_size));
-	nextday_day_layer 		= text_layer_create(GRect(96, hite + h_size + downset, w_size, h_size));
+	day3_time_layer 		= text_layer_create(GRect(0, hite + h_size + downset, w_size, h_size));
+	day4_time_layer 		= text_layer_create(GRect(48, hite + h_size + downset, w_size, h_size));
+	day5_time_layer 		= text_layer_create(GRect(96, hite + h_size + downset, w_size, h_size));
 	
-	today_cond_layer 		= text_layer_create(GRect(0, hite + h_size + downset, w_size, h_size));
-	tomorrow_cond_layer		= text_layer_create(GRect(48, hite + h_size + downset, w_size, h_size));
-	nextday_cond_layer 		= text_layer_create(GRect(96, hite + h_size + downset, w_size, h_size));
+	day3_cond_layer 		= text_layer_create(GRect(0, hite + h_size + downset, w_size, h_size));
+	day4_cond_layer		= text_layer_create(GRect(48, hite + h_size + downset, w_size, h_size));
+	day5_cond_layer 		= text_layer_create(GRect(96, hite + h_size + downset, w_size, h_size));
     
-	today_temp_layer 		= text_layer_create(GRect(0-50, hite + h_size + downTempSet, w_size+100, h_size+100));
-	tomorrow_temp_layer		= text_layer_create(GRect(48-50, hite + h_size + downTempSet, w_size+100, h_size));
-	nextday_temp_layer 		= text_layer_create(GRect(96-50, hite + h_size + downTempSet, w_size+100, h_size));
+	day3_temp_layer 		= text_layer_create(GRect(0-50, hite + h_size + downTempSet, w_size+100, h_size+100));
+	day4_temp_layer		= text_layer_create(GRect(48-50, hite + h_size + downTempSet, w_size+100, h_size));
+	day5_temp_layer 		= text_layer_create(GRect(96-50, hite + h_size + downTempSet, w_size+100, h_size));
 	
-	text_layer_set_text_alignment(today_temp_layer, GTextAlignmentCenter);
-	text_layer_set_text_alignment(tomorrow_temp_layer, GTextAlignmentCenter);
-	text_layer_set_text_alignment(nextday_temp_layer, GTextAlignmentCenter);
+	text_layer_set_text_alignment(day3_temp_layer, GTextAlignmentCenter);
+	text_layer_set_text_alignment(day4_temp_layer, GTextAlignmentCenter);
+	text_layer_set_text_alignment(day5_temp_layer, GTextAlignmentCenter);
 	
-    //	text_layer_set_overflow_mode(today_temp_layer, GTextOverflowModeFill);
-	text_layer_set_overflow_mode(today_cond_layer, GTextOverflowModeWordWrap);
-	text_layer_set_overflow_mode(tomorrow_cond_layer, GTextOverflowModeWordWrap);
-	text_layer_set_overflow_mode(nextday_cond_layer, GTextOverflowModeWordWrap);
+    //	text_layer_set_overflow_mode(day3_temp_layer, GTextOverflowModeFill);
+	text_layer_set_overflow_mode(day3_cond_layer, GTextOverflowModeWordWrap);
+	text_layer_set_overflow_mode(day4_cond_layer, GTextOverflowModeWordWrap);
+	text_layer_set_overflow_mode(day5_cond_layer, GTextOverflowModeWordWrap);
     
-    text_layer_set_overflow_mode(today_temp_layer, GTextOverflowModeWordWrap);
-	text_layer_set_overflow_mode(tomorrow_temp_layer, GTextOverflowModeWordWrap);
-	text_layer_set_overflow_mode(nextday_temp_layer, GTextOverflowModeWordWrap);
+    text_layer_set_overflow_mode(day3_temp_layer, GTextOverflowModeWordWrap);
+	text_layer_set_overflow_mode(day4_temp_layer, GTextOverflowModeWordWrap);
+	text_layer_set_overflow_mode(day5_temp_layer, GTextOverflowModeWordWrap);
     
 	
-	text_layer_set_background_color(today_temp_layer, GColorClear);
-	text_layer_set_background_color(tomorrow_temp_layer, GColorClear);
-	text_layer_set_background_color(nextday_temp_layer, GColorClear);
+	text_layer_set_background_color(day3_temp_layer, GColorClear);
+	text_layer_set_background_color(day4_temp_layer, GColorClear);
+	text_layer_set_background_color(day5_temp_layer, GColorClear);
 	
 	date_border_layer 		= bitmap_layer_create(GRect(99+4, 1, 38, 35));
 	
@@ -1121,36 +1124,36 @@ static void window_load(Window *window) {
 	bitmap_layer_set_bitmap(nextday_icon_layer, day5_icon_bitmap);
 	bitmap_layer_set_bitmap(date_border_layer, date_layer_bitmap);
 	
-	text_layer_set_text_alignment(today_cond_layer, GTextAlignmentCenter);
-	text_layer_set_text_alignment(tomorrow_cond_layer, GTextAlignmentCenter);
-	text_layer_set_text_alignment(nextday_cond_layer, GTextAlignmentCenter);
-	text_layer_set_text_alignment(today_day_layer, GTextAlignmentCenter);
-	text_layer_set_text_alignment(tomorrow_day_layer, GTextAlignmentCenter);
-	text_layer_set_text_alignment(nextday_day_layer, GTextAlignmentCenter);
+	text_layer_set_text_alignment(day3_cond_layer, GTextAlignmentCenter);
+	text_layer_set_text_alignment(day4_cond_layer, GTextAlignmentCenter);
+	text_layer_set_text_alignment(day5_cond_layer, GTextAlignmentCenter);
+	text_layer_set_text_alignment(day3_time_layer, GTextAlignmentCenter);
+	text_layer_set_text_alignment(day4_time_layer, GTextAlignmentCenter);
+	text_layer_set_text_alignment(day5_time_layer, GTextAlignmentCenter);
 	
-	text_layer_set_overflow_mode(today_cond_layer, GTextOverflowModeFill);
-	text_layer_set_overflow_mode(tomorrow_cond_layer, GTextOverflowModeFill);
-	text_layer_set_overflow_mode(nextday_cond_layer, GTextOverflowModeFill);
-	text_layer_set_background_color(today_cond_layer, GColorClear);
-	text_layer_set_background_color(tomorrow_cond_layer, GColorClear);
-	text_layer_set_background_color(nextday_cond_layer, GColorClear);
+	text_layer_set_overflow_mode(day3_cond_layer, GTextOverflowModeFill);
+	text_layer_set_overflow_mode(day4_cond_layer, GTextOverflowModeFill);
+	text_layer_set_overflow_mode(day5_cond_layer, GTextOverflowModeFill);
+	text_layer_set_background_color(day3_cond_layer, GColorClear);
+	text_layer_set_background_color(day4_cond_layer, GColorClear);
+	text_layer_set_background_color(day5_cond_layer, GColorClear);
 	
 	//GFont custom_font_status = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_17));
 	GFont custom_font_temp 		= fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
-	text_layer_set_font(today_cond_layer, custom_font_status);
-	text_layer_set_font(tomorrow_cond_layer, custom_font_status);
-	text_layer_set_font(nextday_cond_layer, custom_font_status);
-	text_layer_set_font(today_temp_layer, custom_font_temp);
-	text_layer_set_font(tomorrow_temp_layer, custom_font_temp);
-	text_layer_set_font(nextday_temp_layer, custom_font_temp);
-	text_layer_set_font(today_day_layer, custom_font_status);
-	text_layer_set_font(tomorrow_day_layer, custom_font_status);
-	text_layer_set_font(nextday_day_layer, custom_font_status);
+	text_layer_set_font(day3_cond_layer, custom_font_status);
+	text_layer_set_font(day4_cond_layer, custom_font_status);
+	text_layer_set_font(day5_cond_layer, custom_font_status);
+	text_layer_set_font(day3_temp_layer, custom_font_temp);
+	text_layer_set_font(day4_temp_layer, custom_font_temp);
+	text_layer_set_font(day5_temp_layer, custom_font_temp);
+	text_layer_set_font(day3_time_layer, custom_font_status);
+	text_layer_set_font(day4_time_layer, custom_font_status);
+	text_layer_set_font(day5_time_layer, custom_font_status);
     
     
-    text_layer_set_text_alignment(today_cond_layer, GTextAlignmentCenter);
-    text_layer_set_text_alignment(tomorrow_cond_layer, GTextAlignmentCenter);
-    text_layer_set_text_alignment(nextday_cond_layer, GTextAlignmentCenter);
+    text_layer_set_text_alignment(day3_cond_layer, GTextAlignmentCenter);
+    text_layer_set_text_alignment(day4_cond_layer, GTextAlignmentCenter);
+    text_layer_set_text_alignment(day5_cond_layer, GTextAlignmentCenter);
 	
 	text_layer_set_background_color(time_layer, GColorClear);
 	text_layer_set_text_alignment(time_layer, GTextAlignmentLeft);
@@ -1167,17 +1170,17 @@ static void window_load(Window *window) {
 	text_layer_set_font(location_layer, custom_font_time);
   	text_layer_set_text_alignment(location_layer, GTextAlignmentCenter);
     
-	layer_add_child(window_layer, text_layer_get_layer(today_cond_layer));
-	layer_add_child(window_layer, text_layer_get_layer(tomorrow_cond_layer));
-	layer_add_child(window_layer, text_layer_get_layer(nextday_cond_layer));
+	layer_add_child(window_layer, text_layer_get_layer(day3_cond_layer));
+	layer_add_child(window_layer, text_layer_get_layer(day4_cond_layer));
+	layer_add_child(window_layer, text_layer_get_layer(day5_cond_layer));
 	
-	layer_add_child(window_layer, text_layer_get_layer(today_temp_layer));
-	layer_add_child(window_layer, text_layer_get_layer(tomorrow_temp_layer));
-	layer_add_child(window_layer, text_layer_get_layer(nextday_temp_layer));
+	layer_add_child(window_layer, text_layer_get_layer(day3_temp_layer));
+	layer_add_child(window_layer, text_layer_get_layer(day4_temp_layer));
+	layer_add_child(window_layer, text_layer_get_layer(day5_temp_layer));
 	
-	layer_add_child(window_layer, text_layer_get_layer(today_day_layer));
-	layer_add_child(window_layer, text_layer_get_layer(tomorrow_day_layer));
-	layer_add_child(window_layer, text_layer_get_layer(nextday_day_layer));
+	layer_add_child(window_layer, text_layer_get_layer(day3_time_layer));
+	layer_add_child(window_layer, text_layer_get_layer(day4_time_layer));
+	layer_add_child(window_layer, text_layer_get_layer(day5_time_layer));
 	
 	layer_add_child(window_layer, text_layer_get_layer(time_layer));
 	layer_add_child(window_layer, bitmap_layer_get_layer(date_border_layer));
@@ -1196,46 +1199,46 @@ static void window_load(Window *window) {
     
     todayForecastLayer = layer_create(GRect(0, 43, 144, 85));
 	layer_set_update_proc(todayForecastLayer, white_layer_update_callback);
-    todayForecastIconLayer = bitmap_layer_create(GRect(0, 0, 72, 50));
-    tonightForecastIconLayer = bitmap_layer_create(GRect(72, 0, 72, 50));
-    todayForecastTextLayer = text_layer_create(GRect(0, 51-2, 72, 38));
-    tonightForecastTextLayer = text_layer_create(GRect(72, 51-2, 72, 38));
-    todayForecastTempLayer = text_layer_create(GRect(0, 51, 72, 38));
-    tonightForecastTempLayer = text_layer_create(GRect(72, 51, 72, 38));
-    todayForecastStatusLayer = text_layer_create(GRect(5, 51, 72-10, 38));
-    tonightForecastStatusLayer = text_layer_create(GRect(72+5, 51, 72-10, 38));
+    day1_icon_layer = bitmap_layer_create(GRect(0, 0, 72, 50));
+    day2_icon_layer = bitmap_layer_create(GRect(72, 0, 72, 50));
+    day1_cond_layer = text_layer_create(GRect(0, 51-2, 72, 38));
+    day2_cond_layer = text_layer_create(GRect(72, 51-2, 72, 38));
+    day1_temp_layer = text_layer_create(GRect(0, 51, 72, 38));
+    day2_temp_layer = text_layer_create(GRect(72, 51, 72, 38));
+    day1_time_layer = text_layer_create(GRect(5, 51, 72-10, 38));
+    day2_time_layer = text_layer_create(GRect(72+5, 51, 72-10, 38));
     
     currentConditionsLayer = layer_create(GRect(0, 43, 144, 85));
 	layer_set_update_proc(currentConditionsLayer, white_layer_update_callback);
     
-    text_layer_set_text_alignment(todayForecastTextLayer, GTextAlignmentCenter);
-    text_layer_set_text_alignment(tonightForecastTextLayer, GTextAlignmentCenter);
-    text_layer_set_text_alignment(todayForecastStatusLayer, GTextAlignmentCenter);
-    text_layer_set_text_alignment(tonightForecastStatusLayer, GTextAlignmentCenter);
-    text_layer_set_font(todayForecastTextLayer, custom_font_status);
-    text_layer_set_font(tonightForecastTextLayer, custom_font_status);
-    text_layer_set_font(todayForecastStatusLayer, custom_font_status);
-    text_layer_set_font(tonightForecastStatusLayer, custom_font_status);
-    text_layer_set_overflow_mode(todayForecastStatusLayer, GTextOverflowModeWordWrap);
-    text_layer_set_overflow_mode(tonightForecastStatusLayer, GTextOverflowModeWordWrap);
+    text_layer_set_text_alignment(day1_cond_layer, GTextAlignmentCenter);
+    text_layer_set_text_alignment(day2_cond_layer, GTextAlignmentCenter);
+    text_layer_set_text_alignment(day1_time_layer, GTextAlignmentCenter);
+    text_layer_set_text_alignment(day2_time_layer, GTextAlignmentCenter);
+    text_layer_set_font(day1_cond_layer, custom_font_status);
+    text_layer_set_font(day2_cond_layer, custom_font_status);
+    text_layer_set_font(day1_time_layer, custom_font_status);
+    text_layer_set_font(day2_time_layer, custom_font_status);
+    text_layer_set_overflow_mode(day1_time_layer, GTextOverflowModeWordWrap);
+    text_layer_set_overflow_mode(day2_time_layer, GTextOverflowModeWordWrap);
     
-    text_layer_set_text_alignment(todayForecastTempLayer, GTextAlignmentCenter);
-    text_layer_set_text_alignment(tonightForecastTempLayer, GTextAlignmentCenter);
-    text_layer_set_font(todayForecastTempLayer, custom_font_status);
-    text_layer_set_font(tonightForecastTempLayer, custom_font_status);
+    text_layer_set_text_alignment(day1_temp_layer, GTextAlignmentCenter);
+    text_layer_set_text_alignment(day2_temp_layer, GTextAlignmentCenter);
+    text_layer_set_font(day1_temp_layer, custom_font_status);
+    text_layer_set_font(day2_temp_layer, custom_font_status);
     
-    tonight_forecast_inverter_layer = inverter_layer_create(GRect(72+ 3, 0, 72 - (3*2), 50));
+    day2_time_layer_inverter_layer = inverter_layer_create(GRect(72+ 3, 0, 72 - (3*2), 50));
     
     layer_add_child(window_layer, todayForecastLayer);
-    layer_add_child(todayForecastLayer, bitmap_layer_get_layer(todayForecastIconLayer));
-    layer_add_child(todayForecastLayer, bitmap_layer_get_layer(tonightForecastIconLayer));
-    layer_add_child(todayForecastLayer, text_layer_get_layer(todayForecastTextLayer));
-    layer_add_child(todayForecastLayer, text_layer_get_layer(tonightForecastTextLayer));
-    layer_add_child(todayForecastLayer, text_layer_get_layer(tonightForecastTempLayer));
-    layer_add_child(todayForecastLayer, text_layer_get_layer(todayForecastTempLayer));
-    layer_add_child(todayForecastLayer, text_layer_get_layer(todayForecastStatusLayer));
-    layer_add_child(todayForecastLayer, text_layer_get_layer(tonightForecastStatusLayer));
-    layer_add_child(todayForecastLayer, inverter_layer_get_layer(tonight_forecast_inverter_layer));
+    layer_add_child(todayForecastLayer, bitmap_layer_get_layer(day1_icon_layer));
+    layer_add_child(todayForecastLayer, bitmap_layer_get_layer(day2_icon_layer));
+    layer_add_child(todayForecastLayer, text_layer_get_layer(day1_cond_layer));
+    layer_add_child(todayForecastLayer, text_layer_get_layer(day2_cond_layer));
+    layer_add_child(todayForecastLayer, text_layer_get_layer(day2_temp_layer));
+    layer_add_child(todayForecastLayer, text_layer_get_layer(day1_temp_layer));
+    layer_add_child(todayForecastLayer, text_layer_get_layer(day1_time_layer));
+    layer_add_child(todayForecastLayer, text_layer_get_layer(day2_time_layer));
+    layer_add_child(todayForecastLayer, inverter_layer_get_layer(day2_time_layer_inverter_layer));
     
     layer_add_child(window_layer, currentConditionsLayer);
     layer_add_child(currentConditionsLayer, bitmap_layer_get_layer(current_icon_layer));
@@ -1286,25 +1289,25 @@ static void window_unload(Window *window) {
     bitmap_layer_destroy(date_border_layer);
 //	inverter_layer_destroy(inverter_layer);
 //  inverter_layer_destroy(inverter_layer);
-//  inverter_layer_destroy(tonight_forecast_inverter_layer);
+//  inverter_layer_destroy(day2_time_layer_inverter_layer);
 
-/*  text_layer_destroy(tonightForecastStatusLayer);
-    text_layer_destroy(todayForecastStatusLayer);
-    text_layer_destroy(tonightForecastTempLayer);
-    text_layer_destroy(todayForecastTempLayer);
-    text_layer_destroy(tonightForecastTextLayer);
-    text_layer_destroy(todayForecastTextLayer);
+/*  text_layer_destroy(day1_time_layer);
+    text_layer_destroy(day2_time_layer);
+    text_layer_destroy(day2_temp_layer);
+    text_layer_destroy(day1_temp_layer);
+    text_layer_destroy(day2_cond_layer);
+    text_layer_destroy(day1_cond_layer);
 
 */
-    text_layer_destroy(nextday_temp_layer);
-    text_layer_destroy(tomorrow_temp_layer);
-    text_layer_destroy(today_temp_layer);
-    text_layer_destroy(nextday_cond_layer);
-    text_layer_destroy(tomorrow_cond_layer);
-    text_layer_destroy(today_cond_layer);
-    text_layer_destroy(nextday_day_layer);
-    text_layer_destroy(tomorrow_day_layer);
-    text_layer_destroy(today_day_layer);
+    text_layer_destroy(day5_temp_layer);
+    text_layer_destroy(day4_temp_layer);
+    text_layer_destroy(day3_temp_layer);
+    text_layer_destroy(day5_cond_layer);
+    text_layer_destroy(day4_cond_layer);
+    text_layer_destroy(day3_cond_layer);
+    text_layer_destroy(day5_time_layer);
+    text_layer_destroy(day4_time_layer);
+    text_layer_destroy(day3_time_layer);
     
     text_layer_destroy(current_barometer_layer);
     
@@ -1312,8 +1315,8 @@ static void window_unload(Window *window) {
 //    text_layer_destroy(current_temperature_layer);
 
 //    bitmap_layer_destroy(current_icon_layer);
-//    bitmap_layer_destroy(tonightForecastIconLayer);
-//    bitmap_layer_destroy(todayForecastIconLayer);
+//    bitmap_layer_destroy(day2_icon_layer);
+//    bitmap_layer_destroy(day1_icon_layer);
 //    bitmap_layer_destroy(nextday_icon_layer);
 //    bitmap_layer_destroy(tomorrow_icon_layer);
 //    bitmap_layer_destroy(today_icon_layer);
