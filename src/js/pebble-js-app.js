@@ -1,5 +1,4 @@
 /*jshint smarttabs:true*/
-/*global day0_icon:true*/
 
 var setPebbleToken = 'JUCP'; //    'XPGE'; 'JUCP is FM Forecast, XPGE is WU Forecast
 
@@ -8,13 +7,15 @@ var setPebbleToken = 'JUCP'; //    'XPGE'; 'JUCP is FM Forecast, XPGE is WU Fore
 //console.log("request.open( http://x.SetPebble.com/api/" + setPebbleToken + '/' + Pebble.getAccountToken());
 //Pebble.addEventListener('ready', function(e) {
 //});
-var debug_flag = 3;
+var debug_flag = 0;
 var m = 0;
+var n = 0;
+var day; 
 var provider_flag = 0;
 //var tempFlag = 7; //0F, 1C, 2K, 3Ra, 4Re, 5Ro, 6N, 7De
 var offset = new Date().getTimezoneOffset() / 60;
 
-
+/*
 var day0_icon;  //= iconFromWeatherId(response.weather[0].id);
 var day0_temp;  //= tempGetter(response.main.temp) + getTempLabel();
 var day0_high;  //= tempGetter(response.main.temp_max) + getTempLabel();
@@ -22,7 +23,7 @@ var day0_low;  //= tempGetter(response.main.temp_min) + getTempLabel();
 var day0_conditions;  //= response.weather[0].main;
 var day0_baro;  //= pressureGetter(response.main.pressure * 0.0295301);
 var day0_timestamp; //= response.dt - (offset * 3600);
-
+*/
 var icon;  //= iconFromWeatherId(response.weather[0].id);
 var temp;  //= tempGetter(response.main.temp) + getTempLabel();
 var high;  //= tempGetter(response.main.temp_max) + getTempLabel();
@@ -39,7 +40,7 @@ if (debug_flag > 1) {
     console.log("tempFlag found, " + tempFlag);
     console.log("tempFlag without parseInt " + localStorage.getItem("tempFlag"));
 }
-if (tempFlag != 0) {
+if (tempFlag !== 0) {
     if (!tempFlag) {
         var tempFlag = 6; //0F, 1C, 2K, 3Ra, 4Re, 5Ro, 6N, 7De
         if (debug_flag > 1) {
@@ -52,7 +53,7 @@ var pressureFlag = parseInt(localStorage.getItem("pressureFlag"));
 if (debug_flag > 2) {
     console.log("pressureFlag found, " + pressureFlag);
 }
-if (pressureFlag != 0 ) {
+if (pressureFlag !== 0 ) {
     if (!pressureFlag) {
         var pressureFlag = 0; //0 inHg, 1 mb, 2 PSI, 3 Pa, 4 Tech Atm, 5 Std Atm, 6 Torr
         if (debug_flag > 2) {
@@ -128,7 +129,7 @@ function tempShower(inTemp) {
 }
 
 function getTempLabel() {
-    if (tempFlag == 0 ) {
+    if (tempFlag === 0 ) {
         //temp = "°F";
         return "°F";
     } else if (tempFlag == 1) {
@@ -157,7 +158,7 @@ function getTempLabel() {
 
 //inHg|mb|PSI|Pa|Technical Atmosphere|Standard Atmosphere|Torr
 function getPressureLabel() {
-    if (pressureFlag == 0 ) {
+    if (pressureFlag === 0 ) {
 		// Inches of Mercury, base unit, eg 29.92
 		return "Hg";
 	} else if (pressureFlag == 1) {
@@ -182,7 +183,7 @@ function getPressureLabel() {
 }
 
 function pressureGetter(pressure) {
-    if (pressureFlag == 0 ) {
+    if (pressureFlag === 0 ) {
 		//inHG, base unit
         pressure = Math.round(pressure * 100);
         pressure = pressure / 100;
@@ -226,7 +227,7 @@ function pressureGetter(pressure) {
 }
 
 function tempGetter(temp) {
-	if (tempFlag == 0 ) {
+	if (tempFlag === 0 ) {
 		//Fahrenheit °F
 		//[°F] = [K] × 9/5 − 459.67
 		temp = (temp * (9/5)) - 459.67;
@@ -363,7 +364,7 @@ function fetchWeatherConditions(latitude, longitude) {  //sends day0, day1 temp 
                                                 sunrise: sunrise,
                                                 sunset: sunset,
                                                 });
-                    if (debug_flag > -1) {
+                    if (debug_flag > 1) {
                         console.log("location: " + location + " sunrise: " + sunrise + " sunset: " + sunset);
                     }
                 } else {}
@@ -407,7 +408,7 @@ function fetchWeatherTodayForecast(latitude, longitude) {  //sends days 1, 2
                     day = 1;
                     icon = iconFromWeatherId(response.list[n].weather[0].id);
                     //temp = "oH: " + tempGetter(response.list[0].main.temp) + getTempLabel();
-                    temp = "oH: " + day1_high;
+                    temp = "H: " + day1_high;
                     timestamp = response.list[n].dt;
                     timestamp = parseInt(timestamp) - parseInt (offset * 3600);
                     conditions = response.list[n].weather[0].description;
@@ -421,7 +422,7 @@ function fetchWeatherTodayForecast(latitude, longitude) {  //sends days 1, 2
                     day = 2;
                     icon = iconFromWeatherId(response.list[n].weather[0].id);
                     //temp = "oL: " + tempGetter(response.list[0].main.temp) + getTempLabel();
-                    temp = "oL: " + day2_low;
+                    temp = "L: " + day2_low;
                     timestamp = response.list[n].dt;
                     timestamp = parseInt(timestamp) - parseInt (offset * 3600);
                     conditions = response.list[n].weather[0].description;
@@ -431,9 +432,9 @@ function fetchWeatherTodayForecast(latitude, longitude) {  //sends days 1, 2
                     }
                     sendDayMessages(day);
                     
-                } else {console.log("fail if responseText.lenght > 100")}
-            } else {console.log("fail 200: fetchWeatherTodayForecast")}
-        } else {console.log("fail readyState == 4")}
+                } else {console.log("fail if responseText.lenght > 100");}
+            } else {console.log("fail 200: fetchWeatherTodayForecast");}
+        } else {console.log("fail readyState == 4");}
     };
     req.send(null);
 }
@@ -531,7 +532,7 @@ function fetchWeatherUndergroundConditions(latitude, longitude) { // gets day 0
         console.log("Weather Underground app key request!! d33637904b0a944c");
 
     }
-	console.log("http://api.wunderground.com/api/d33637904b0a944c/conditions/geolookup/q/" + latitude + "," + longitude + ".json"); ;
+	console.log("http://api.wunderground.com/api/d33637904b0a944c/conditions/geolookup/q/" + latitude + "," + longitude + ".json");
 
 	req.onload = function(e) {
 		if (req.readyState == 4) {
@@ -553,9 +554,9 @@ function fetchWeatherUndergroundConditions(latitude, longitude) { // gets day 0
                     }
                     sendDayMessages(day);
                     
-                } else {console.log("fail if responseText.lenght > 100")}
-            } else {console.log("fail 200")}
-        } else {console.log("fail readyState == 4")}
+                } else {console.log("fail if responseText.lenght > 100");}
+            } else {console.log("fail 200");}
+        } else {console.log("fail readyState == 4");}
     };
     req.send(null);
 }
@@ -565,7 +566,7 @@ function fetchWeatherUndergroundTodayForecast(latitude, longitude) { // gets day
     var req = new XMLHttpRequest();
     console.log("http://api.wunderground.com/api/25604a92d894df0e/hourly/geolookup/q/" + latitude + "," + longitude + ".json");
     req.open("GET", "http://api.wunderground.com/api/25604a92d894df0e/hourly/geolookup/q/" + latitude + "," + longitude + ".json", true);
-    if (debug_flag > -1) {
+    if (debug_flag > 1) {
         console.log("Weather Underground app key request!! 25604a92d894df0e");
     }
     req.onload = function(e) {
@@ -596,7 +597,7 @@ function fetchWeatherUndergroundTodayForecast(latitude, longitude) { // gets day
                     n = 1;
                     day = 1;
                     icon = iconFromWeatherString(response.hourly_forecast[n].icon);
-                    temp = "wH:" + (tempGetter(parseInt(response.hourly_forecast[n].temp.metric) + 273.15)) + getTempLabel();
+                    temp = (tempGetter(parseInt(response.hourly_forecast[n].temp.metric) + 273.15)) + getTempLabel();
                     //temp = response.hourly_forecast[n].temp.metric;
                     timestamp = response.hourly_forecast[n].FCTTIME.epoch;
                     conditions = response.hourly_forecast[n].wx;
@@ -616,7 +617,7 @@ function fetchWeatherUndergroundTodayForecast(latitude, longitude) { // gets day
                     n = 15;
                     day = 2;
                     icon = iconFromWeatherString(response.hourly_forecast[n].icon);
-                    temp = "wL:" + tempGetter(parseInt(response.hourly_forecast[n].temp.metric) + 273.15) + getTempLabel();
+                    temp = tempGetter(parseInt(response.hourly_forecast[n].temp.metric) + 273.15) + getTempLabel();
                     //temp = response.hourly_forecast[n].temp.metric;
                     timestamp = response.hourly_forecast[n].FCTTIME.epoch;
                     conditions = response.hourly_forecast[n].wx;
@@ -634,9 +635,9 @@ function fetchWeatherUndergroundTodayForecast(latitude, longitude) { // gets day
                     sendDayMessages(day);
                     
                     
-                } else {console.log("fail if responseText.lenght > 100")}
-            } else {console.log("fail 200: fetchWeatherTodayForecast")}
-        } else {console.log("fail readyState == 4")}
+                } else {console.log("fail if responseText.lenght > 100");}
+            } else {console.log("fail 200: fetchWeatherTodayForecast");}
+        } else {console.log("fail readyState == 4");}
     };
     req.send(null);
 }
@@ -656,7 +657,7 @@ function fetchWeatherUnderground3DayForecast(latitude, longitude) { // gets day 
                 response = JSON.parse(req.responseText);
                 if (req.responseText.length > 0) {
                     
-                    n = m;
+                    n = m;// array is day and night, in text rollup odd numbers night (contain low in temp), days (even numbers) contain high
                     day = 3;
                     icon = iconFromWeatherString(response.forecast.simpleforecast.forecastday[n].icon);
                     timestamp = parseInt(response.forecast.simpleforecast.forecastday[n].date.epoch);
@@ -698,9 +699,9 @@ function fetchWeatherUnderground3DayForecast(latitude, longitude) { // gets day 
                     }
                     sendDayMessages(day);
                     
-                } else {console.log("fail if responseText.lenght > 100")}
-            } else {console.log("fail 200: fetchWeatherUndergroundForecast")}
-        } else {console.log("fail readyState == 4")}
+                } else {console.log("fail if responseText.lenght > 100");}
+            } else {console.log("fail 200: fetchWeatherUndergroundForecast");}
+        } else {console.log("fail readyState == 4");}
     };
     req.send(null);
 }
@@ -764,14 +765,14 @@ function sendDayMessages(day) {
         console.log("day = " + day);
     }
     n = 0;
-    k0 = day * 10
-    k1 = k0 + 1;
-    k2 = k0 + 2;
-    k3 = k0 + 3;
-    k4 = k0 + 4;
+    var k0 = day * 10; 
+    var k1 = k0 + 1;
+    var k2 = k0 + 2;
+    var k3 = k0 + 3;
+    var k4 = k0 + 4;
 
     
-    if (day == 0) {
+    if (day === 0) {
         if (debug_flag > 1) {
             console.log("day0_icon " + k0 + ":" + icon);
             console.log("day0_temp: " +  k1 + ":" + temp);
@@ -790,7 +791,7 @@ function sendDayMessages(day) {
     }
     
     else if (day == 1) {
-        if (debug_flag > -1) {
+        if (debug_flag > 1) {
             console.log("day1_icon " + k0 + ":" + icon);
             console.log("day1_temp: " +  k1 + ":" + temp);
             console.log("day1_conditions: " +  k2 + ":" + conditions);
@@ -806,7 +807,7 @@ function sendDayMessages(day) {
     }
     
     else if (day == 2) {
-        if (debug_flag > -1) {
+        if (debug_flag > 1) {
             console.log("day2_icon " + k0 + ":" + icon);
             console.log("day2_temp: " +  k1 + ":" + temp);
             console.log("day2_conditions: " +  k2 + ":" + conditions);
@@ -880,7 +881,7 @@ function locationSuccess(pos) {
     //var latitude = 41.852014;
     //var longitude = 12.577281;
     //fetchWeather(latitude, longitude);
-    if (provider_flag == 0) {
+    if (provider_flag === 0) {
         fetchWeatherConditions(coordinates.latitude, coordinates.longitude);
         fetchWeatherTodayForecast(coordinates.latitude, coordinates.longitude);
         fetchWeather3DayForecast(coordinates.latitude, coordinates.longitude);
@@ -955,9 +956,9 @@ Pebble.addEventListener("webviewclosed", function(e) {
                         if ((typeof(e.response) == 'string') && (e.response.length > 0)) {
                         //set local value tempFlag to return value
                         //Pebble.sendAppMessage(JSON.parse(e.response));
-                        var responseTextJSON 	= JSON.parse(e.response);
-                        var responseText		= e.response;
-                        var item = "1";
+					    var responseTextJSON = JSON.parse(e.response);
+					    var responseText		= e.response;
+					    //var item = "1";
                         
                         if (debug_flag > 3) {
                         console.log("raw e.response (no JSON.parse) = " + e.response);
@@ -980,7 +981,7 @@ Pebble.addEventListener("webviewclosed", function(e) {
                         //var location = config.location;
                         MessageQueue.sendAppMessage({
                         location: config.location,
-                                })
+                                }); 
                         
                         //localStorage.setItem("tempFlag", JSON.parse(e.response));
                         //console.log("e.response " + e.response);
@@ -1007,22 +1008,22 @@ function iconFromWeatherString(weatherId) {
     } else if (weatherId == "chancerain") {
         console.log("weatherId = " + weatherId + ", return 6"); // 200 series - thunderstorms, // 300 to 321 defined as rain, 400-499 not defined, 500-599 is rain
         return 6;
-    } else if (weatherId == "sleet") { 	// 600-699 defined as snow
+    } else if (weatherId == "sleet") {// 600-699 defined as snow
 		console.log("weatherId = " + weatherId + ", return 8");
         return 8;
-    } else if (weatherId == "snow") { 	// 600-699 defined as snow
+    } else if (weatherId == "snow") {// 600-699 defined as snow
 		console.log("weatherId = " + weatherId + ", return 8");
         return 8;
-    } else if (weatherId == "flurries") { 	// 600-699 defined as snow
+    } else if (weatherId == "flurries") {// 600-699 defined as snow
 		console.log("weatherId = " + weatherId + ", return 8");
         return 8;
-    } else if (weatherId == "chancesnow") { 	// 600-699 defined as snow
+    } else if (weatherId == "chancesnow") {// 600-699 defined as snow
 		console.log("weatherId = " + weatherId + ", return 8");
         return 8;
-    } else if (weatherId == "chancesleet") { 	// 600-699 defined as snow
+    } else if (weatherId == "chancesleet") {// 600-699 defined as snow
 		console.log("weatherId = " + weatherId + ", return 8");
         return 8;
-    } else if (weatherId == "chanceflurries") { 	// 600-699 defined as snow
+    } else if (weatherId == "chanceflurries") {// 600-699 defined as snow
 		console.log("weatherId = " + weatherId + ", return 8");
         return 8;
     } else if (weatherId == "mostlycloudy" ) {		// 700-799 is mist, smoke, fog, etc. Return lines
@@ -1110,7 +1111,7 @@ function iconFromWeatherId(weatherId) {
         return 12;
     } else if (weatherId < 600) {      // 300 to 321 defined as rain, 400-499 not defined, 500-599 is rain
         return 6;
-    } else if (weatherId < 700) { 	// 600-699 defined as snow
+    } else if (weatherId < 700) { // 600-699 defined as snow
         return 8;
     } else if (weatherId < 800) {		// 700-799 is mist, smoke, fog, etc. Return lines
         return 10;						// 900-99 is crazy atmospheric shit,
@@ -1118,7 +1119,8 @@ function iconFromWeatherId(weatherId) {
         return 0;
     } else if (weatherId < 804 ) {	// 801, 802, 803 are all partly cloudy
         return 2;
-    } else if (weatherId = 804 ) {   // 804 = overcast. Should it be clouds, or lines? I love lines. So, lines. But it shoudl probably be clouds
+    } else if (weatherId == 804 ){
+	    // 804 = overcast. Should it be clouds, or lines? I love lines. So, lines. But it shoudl probably be clouds
         return 10;
     } else {							// 900 to 962 ranges from tornado to calm. Most strange.
         return 10;
