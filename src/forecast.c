@@ -3,6 +3,7 @@
 #include "forecast.h"
 
 //native background white
+	//extra comment for GIT
 //inverted background black
 
 // weather underground fm_forecast_stable
@@ -1197,12 +1198,12 @@ static void window_load(Window *window) {
 	layer_set_update_proc(todayForecastLayer, white_layer_update_callback);
     todayForecastIconLayer = bitmap_layer_create(GRect(0, 0, 72, 50));
     tonightForecastIconLayer = bitmap_layer_create(GRect(72, 0, 72, 50));
-    todayForecastTextLayer = text_layer_create(GRect(0, 51-2, 72, 35));
-    tonightForecastTextLayer = text_layer_create(GRect(72, 51-2, 72, 35));
-    todayForecastTempLayer = text_layer_create(GRect(0, 51, 72, 35));
-    tonightForecastTempLayer = text_layer_create(GRect(72, 51, 72, 35));
-    todayForecastStatusLayer = text_layer_create(GRect(5, 51, 72-10, 35));
-    tonightForecastStatusLayer = text_layer_create(GRect(72+5, 51, 72-10, 35));
+    todayForecastTextLayer = text_layer_create(GRect(0, 51-2, 72, 38));
+    tonightForecastTextLayer = text_layer_create(GRect(72, 51-2, 72, 38));
+    todayForecastTempLayer = text_layer_create(GRect(0, 51, 72, 38));
+    tonightForecastTempLayer = text_layer_create(GRect(72, 51, 72, 38));
+    todayForecastStatusLayer = text_layer_create(GRect(5, 51, 72-10, 38));
+    tonightForecastStatusLayer = text_layer_create(GRect(72+5, 51, 72-10, 38));
     
     currentConditionsLayer = layer_create(GRect(0, 43, 144, 85));
 	layer_set_update_proc(currentConditionsLayer, white_layer_update_callback);
