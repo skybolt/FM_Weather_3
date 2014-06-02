@@ -8,7 +8,7 @@ var setPebbleToken = 'JUCP'; //    'XPGE'; 'JUCP is FM Forecast, XPGE is WU Fore
 //Pebble.addEventListener('ready', function(e) {
 //});
 var debug_flag = 0;
-var m = 0;
+var m = 1;
 var n = 0;
 var day; 
 var provider_flag = 0;
@@ -72,7 +72,7 @@ function stripper(stripped) {
     }
     stripped = stripped.replace("moderate rain", "mod rain");
     stripped = stripped.replace("scattered clouds", "sctd clds");
-    stripped = stripped.replace("sky is clear", "clear sky");
+    stripped = stripped.replace("sky is clear", "sky clear");
     stripped = stripped.replace("Thunderstorm", "ThStr");
     stripped = stripped.replace("Rain Showers", "rain shwrs");
     stripped = stripped.replace("Partly Cloudy", "part cldy");

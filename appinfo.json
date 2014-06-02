@@ -9,49 +9,54 @@
     "resources": {
         "media": [
             {
-                "type": "font",
-                "file": "fonts/Arial Bold.ttf",
-                "name": "FONT_ARIAL_BOLD_16"
+                "type": "png",
+                "file": "images/sun v3.png",
+                "name": "IMAGE_SUN"
             },
             {
                 "type": "png",
-                "file": "images/vNext thunder.png",
-                "name": "IMAGE_TSTORM"
-            },
-            {
-                "type": "font",
-                "file": "fonts/Arial.ttf",
-                "name": "FONT_ARIAL_16"
-            },
-            {
-                "type": "font",
-                "file": "fonts/Arial.ttf",
-                "name": "FONT_ARIAL_17"
-            },
-            {
-                "type": "font",
-                "file": "fonts/Arial.ttf",
-                "name": "FONT_ARIAL_15"
-            },
-            {
-                "type": "font",
-                "file": "fonts/Arial.ttf",
-                "name": "FONT_ARIAL_18"
+                "file": "images/unknown.png",
+                "name": "IMAGE_UNKNOWN"
             },
             {
                 "type": "png",
-                "file": "images/DateBorderSquare.png",
-                "name": "IMAGE_DATE_BORDER"
+                "file": "images/moonv3.png",
+                "name": "IMAGE_MOON"
+            },
+            {
+                "type": "png",
+                "file": "images/pcloudyv2.png",
+                "name": "IMAGE_PCLOUDY"
+            },
+            {
+                "type": "png",
+                "file": "images/pcloudy_moonV3.png",
+                "name": "IMAGE_PCLOUDY_MOON"
+            },
+            {
+                "type": "png",
+                "file": "images/cloud.png",
+                "name": "IMAGE_CLOUD"
+            },
+            {
+                "type": "png",
+                "file": "images/rain.png",
+                "name": "IMAGE_RAIN"
+            },
+            {
+                "type": "png",
+                "file": "images/snow.png",
+                "name": "IMAGE_SNOW"
+            },
+            {
+                "type": "png",
+                "file": "images/haze_lines_3_block.png",
+                "name": "IMAGE_FOG"
             },
             {
                 "type": "font",
                 "file": "fonts/Tahoma Bold.ttf",
-                "name": "FONT_TAHOMA_BOLD_28"
-            },
-            {
-                "type": "font",
-                "file": "fonts/Tahoma Bold.ttf",
-                "name": "FONT_TAHOMA_BOLD_27"
+                "name": "FONT_TAHOMA_BOLD_18"
             },
             {
                 "type": "font",
@@ -61,52 +66,47 @@
             {
                 "type": "font",
                 "file": "fonts/Tahoma Bold.ttf",
-                "name": "FONT_TAHOMA_BOLD_18"
+                "name": "FONT_TAHOMA_BOLD_27"
+            },
+            {
+                "type": "font",
+                "file": "fonts/Tahoma Bold.ttf",
+                "name": "FONT_TAHOMA_BOLD_28"
             },
             {
                 "type": "png",
-                "file": "images/haze_lines_3_block.png",
-                "name": "IMAGE_FOG"
+                "file": "images/DateBorderSquare.png",
+                "name": "IMAGE_DATE_BORDER"
+            },
+            {
+                "type": "font",
+                "file": "fonts/Arial.ttf",
+                "name": "FONT_ARIAL_18"
+            },
+            {
+                "type": "font",
+                "file": "fonts/Arial.ttf",
+                "name": "FONT_ARIAL_15"
+            },
+            {
+                "type": "font",
+                "file": "fonts/Arial.ttf",
+                "name": "FONT_ARIAL_17"
+            },
+            {
+                "type": "font",
+                "file": "fonts/Arial.ttf",
+                "name": "FONT_ARIAL_16"
             },
             {
                 "type": "png",
-                "file": "images/snow.png",
-                "name": "IMAGE_SNOW"
+                "file": "images/vNext thunder.png",
+                "name": "IMAGE_TSTORM"
             },
             {
-                "type": "png",
-                "file": "images/rain.png",
-                "name": "IMAGE_RAIN"
-            },
-            {
-                "type": "png",
-                "file": "images/cloud.png",
-                "name": "IMAGE_CLOUD"
-            },
-            {
-                "type": "png",
-                "file": "images/pcloudy_moonV3.png",
-                "name": "IMAGE_PCLOUDY_MOON"
-            },
-            {
-                "type": "png",
-                "file": "images/pcloudyv2.png",
-                "name": "IMAGE_PCLOUDY"
-            },
-            {
-                "type": "png",
-                "file": "images/moonv3.png",
-                "name": "IMAGE_MOON"
-            },
-            {
-                "type": "png",
-                "file": "images/unknown.png",
-                "name": "IMAGE_UNKNOWN"
-            },
-            {
-                "type": "png",
-                "file": "images/sun v3.png",
-                "name": "IMAGE_SUN"
+                "type": "font",
+                "file": "fonts/Arial Bold.ttf",
+                "name": "FONT_ARIAL_BOLD_16"
             }
         ]
     },
