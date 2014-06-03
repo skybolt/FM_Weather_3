@@ -686,7 +686,7 @@ function fetchWeatherUnderground3DayForecast(latitude, longitude) { // gets day 
     if (debug_flag > 2) {
 	    console.log("Weather Underground app key request!! 6fe6c99a5d7df975");
 	    console.log("http://api.wunderground.com/api/6fe6c99a5d7df975/forecast/geolookup/q/" + latitude + "," + longitude + ".json");
-        
+
     }
     req.onload = function(e) {
         if (req.readyState == 4) {
@@ -1034,6 +1034,7 @@ Pebble.addEventListener("webviewclosed", function(e) {
 
 
 function iconFromWeatherString(weatherId) {
+	var debug_flag = 3; 
 	
 	if (weatherId == "tstorms") {
 		if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 6"); // 200 series - thunderstorms, // 300 to 321 defined as rain, 400-499 not defined, 500-599 is rain
