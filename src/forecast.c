@@ -3,7 +3,6 @@
 #include "forecast.h"
 
 //native background white
-	//extra comment for GIT
 //inverted background black
 
 // weather underground fm_forecast_stable
@@ -184,19 +183,17 @@ void black_layer_update_callback(Layer *layer, GContext* ctx) {
 }
 
 static void fetch_message(void) {
-    
-    //	layer_set_hidden(text_layer_get_layer(build_layer), false);
-    //	layer_set_hidden(bitmap_layer_get_layer(comm_status_layer), false);
-	
-    //	refresh_counter = 0;
-    DictionaryIterator *iter;
-    app_message_outbox_begin(&iter);
+	Tuplet value = TupletInteger(1, 1); 
+
+	DictionaryIterator *iter;
+	app_message_outbox_begin(&iter);
     
     if (iter == NULL) {
         //		layer_set_hidden(text_layer_get_layer(build_layer), false);
         return;
 	}
-    //	dict_write_end(iter);
+	dict_write_tuplet(iter, &value);
+	dict_write_end(iter);
 	app_message_outbox_send();
 }
 
@@ -211,13 +208,6 @@ void config_provider(void *context) {
 
 
 void windowSwitch(void) {
-    //    if (switchFlag == 0) {
-    //		switchFlag = 1;
-    //	} else
-    
-    /*    if (counter_one == 0) {
-     counter_one = 15;
-     }  */
     
     if (switchFlag == 0) {
         // show today_forecast
@@ -253,29 +243,16 @@ static void handle_battery(BatteryChargeState charge_state) {
     APP_LOG(APP_LOG_LEVEL_INFO, "battery handler invoked");
 	int xPos = charge_state.charge_percent;
 	xPos = (144 * xPos) / 100;
-	layer_set_frame(power_bar_layer, GRect(xPos, 37, 1, 2));
-    
-    /*int xPos = charge_state.charge_percent;
-     xPos = (144 * xPos) / 100;
-     layer_set_frame(power_bar_layer, GRect(xPos, 97, 1, 2));
-     //	layer_set_update_proc(power_bar_layer, black_layer_update_callback);
-     */
-    /*	if (charge_state.is_charging) {
-     
-     } else {
-     
-     }  */
-	
+	layer_set_frame(power_bar_layer, GRect(xPos, 37, 1, 2));	
 }
 
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
-    //APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %d", app_message_error);
-	//APP_LOG(APP_LOG_LEVEL_DEBUG, "Got error: %s", translate_error(app_message_error));
+	APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %d", app_message_error);
+	APP_LOG(APP_LOG_LEVEL_DEBUG, "Got error: %s", translate_error(app_message_error));
 }
 
 static void send_cmd(void) {
     Tuplet value = TupletInteger(1, 1);
-    
     DictionaryIterator *iter;
     app_message_outbox_begin(&iter);
     
@@ -285,7 +262,6 @@ static void send_cmd(void) {
     
     dict_write_tuplet(iter, &value);
     dict_write_end(iter);
-    
     app_message_outbox_send();
 }
 
@@ -298,10 +274,9 @@ int countChar(char *s)
 
 
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
-	//GFont custom_font_temp		= fonts_get_system_font(FONT_KEY_FONT_FALLBACK);
 	GFont custom_font_tinytemp 	= fonts_get_system_font(FONT_KEY_GOTHIC_18);
 	GFont custom_font_temp 		= fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
-    GFont custom_font_large_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
+     GFont custom_font_large_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
     
 	
 	switch (key) {
@@ -315,8 +290,8 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             
             
 		case WEATHER_DAY0_TIMESTAMP_KEY:
-            //        todayInt = new_tuple->value->uint32;
-            current_conditions_time_int = new_tuple->value->uint32;
+
+		  current_conditions_time_int = new_tuple->value->uint32;
             time_t currentStamp     = current_conditions_time_int;
             timer_tm = localtime (&currentStamp);
             strftime(current_text, sizeof(current_text), "%l:%M%P", timer_tm);
@@ -328,7 +303,6 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             
 		case WEATHER_DAY1_TIMESTAMP_KEY:
             todayForecastTimeInt = new_tuple->value->uint32;
-            //
             time_t timeStamp   		= todayForecastTimeInt;
             timer_tm = localtime (&timeStamp);
             strftime(day_text, sizeof(day_text), "%l%P\n %a", timer_tm);
@@ -391,7 +365,6 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             
 		case WEATHER_DAY1_CONDITIONS_KEY:
             text_layer_set_text(day1_cond_layer, new_tuple->value->cstring);
-            //        today_conditions = new_tuple->value->cstring;
             if (debug_flag > 2) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY1_CONDITIONS_KEY %s", new_tuple->value->cstring);
             }
@@ -399,7 +372,6 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             
 		case WEATHER_DAY2_CONDITIONS_KEY:
             text_layer_set_text(day2_cond_layer, new_tuple->value->cstring);
-            //        today_conditions = new_tuple->value->cstring;
             if (debug_flag > 2) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY2_CONDITIONS_KEY %s", new_tuple->value->cstring);
             }
@@ -510,7 +482,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             break;
             
 		case WEATHER_DAY1_TEMP_KEY:
-            if (debug_flag > 2) {
+            if (debug_flag > -1) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY1_TEMP_KEY %s", new_tuple->value->cstring);
             }
             if (night_flag == 0) {
@@ -521,7 +493,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             break;
             
 		case WEATHER_DAY2_TEMP_KEY:
-            if (debug_flag > 2) {
+            if (debug_flag > -1) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY2_TEMP_KEY %s", new_tuple->value->cstring);
             }
             if (night_flag == 1) {
@@ -719,38 +691,19 @@ void handle_minute_tick() {
 	} else {		//it must be daytime! Hide inverter layer
     	layer_set_hidden((inverter_layer_get_layer(inverter_layer)), true);
 		night_flag = 0; //set night flag to day
-		////APP_LOG(APP_LOG_LEVEL_DEBUG, "must be day!");
-        //APP_LOG(APP_LOG_LEVEL_DEBUG, "sunrise %lu < now %lu > sunset %lu",
-        //				(sunriseInt - (3600*offsetInt)) % 86400 / 3600,
-        //				(lclTimeInt % 86400) / 3600,
-        //				(sunsetInt - (3600*offsetInt)) % 86400 / 3600 );
-		//APP_LOG(APP_LOG_LEVEL_DEBUG, "sunrise %lu < now %lu > sunset %lu", (localSunriseInt % 86400) / 3600, (lclTimeInt % 86400) / 3600, (localSunsetInt % 86400) / 3600);
-        
-        /*	if (sunInt <= 7) {
-         ////APP_LOG(APP_LOG_LEVEL_DEBUG, "sunInt %d <= 7", sunInt);
-         night_flag = 1;
-         layer_set_hidden(inverter_layer_get_layer(inverter_layer), false);
-         
-         } else if (sunInt >= 19) {
-         ////APP_LOG(APP_LOG_LEVEL_DEBUG, "sunInt %d >= 19", sunInt);
-         night_flag = 1;
-         layer_set_hidden(inverter_layer_get_layer(inverter_layer), false);
-         } else {
-         ////APP_LOG(APP_LOG_LEVEL_DEBUG, "7 <= sunInt %d >= 19", sunInt);
-         night_flag = 0;
-         layer_set_hidden(inverter_layer_get_layer(inverter_layer), true);
-         
-         } */
+
 		if (lclTimeInt % 3600 == 0) {
 			handle_hour_tick();
         }
+		if (debug_flag > 0) {
+		APP_LOG(APP_LOG_LEVEL_DEBUG, "Fetch Message"); 			
+		}
 		fetch_message();
     }
 }
 
 static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
     
-    //	handle_battery(battery_state_service_peek());
     if (counter_one == 0) {
         if (debug_flag > 8) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "counter_one = 0");
@@ -767,47 +720,22 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
     }
 	
 	static char time_text[] = "00:00AAA"; // Needs to be static because it's used by the system later. "%l:%M %y"
-    //	strftime(time_text, sizeof(time_text), "%l:%M%p", tick_time);
     strftime(time_text, sizeof(time_text), "%l:%M%p", tick_time);
 	text_layer_set_text(time_layer, time_text);
-	
-	//strftime(time_text, sizeof(time_text), "%H", tick_time);
-    //	////APP_LOG(APP_LOG_LEVEL_DEBUG, time_text);
-	
+		
 	static char date_text[] = "00/00";
 	strftime(date_text, sizeof(date_text), "%d", tick_time);
 	text_layer_set_text(date_layer, date_text);
     
-    //snip begin
-    
-    //	static char date_text[] = "00/00";
 	strftime(date_text, sizeof(date_text), "%d", tick_time);
 	text_layer_set_text(date_layer, date_text);
 	
-    //	static int sunInt = atoi(time_text);
-    //	////APP_LOG(APP_LOG_LEVEL_DEBUG, "sunInt");
-    //	////APP_LOG(APP_LOG_LEVEL_DEBUG, "%d", sunInt);
-    //	static char date_text[] = "00/00";
 	static char day_text[] = "aaa";
 	static char day1_text[] = "aaa";
 	static char day2_text[] = "aaa";
 	
 	time_t current   = time(0);
-    //	time_t inOneDay = current + (60*60*24); // 60 minutes of 60 sec.
-    //	time_t inTwoDays = current + (60*60*48);
-	
-    //uint32_t todayInt = 1395345600;
-    //uint32_t tomorrowInt = 1395432000;
-    //uint32_t nextdayInt = 1395518400;
-	
-    //	time_t current   = time(1395345600);
-    //	time_t inOneDay = time(1395432000); // 60 minutes of 60 sec.
-    //	time_t inTwoDays = time(1395432000);
-    
-    //	time_t current   	= 1395345600 + (offset*3600);
-    //	time_t inOneDay 	= 1395432000 + (offset*3600); // 60 minutes of 60 sec.
-    //	time_t inTwoDays 	= 1395432000 + (offset*3600);
-	
+
 	time_t today   		= todayInt 		- (offsetInt*3600);
 	time_t inOneDay 	= tomorrowInt	- (offsetInt*3600); // 60 minutes of 60 sec.
 	time_t inTwoDays 	= nextdayInt	- (offsetInt*3600);
@@ -819,13 +747,8 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "day[0]text: %s", day_text);
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "day[0]Int = %lu", todayInt);
 	}
-    //	strftime(time_text, sizeof(time_text), "%l:%M%P", timer_tm);
-	////APP_LOG(APP_LOG_LEVEL_DEBUG, time_text);
 	timer_tm = localtime (&current);
-    //	strftime(time_text, sizeof(time_text), "%l:%M%P", timer_tm);
-	////APP_LOG(APP_LOG_LEVEL_DEBUG, time_text);
-    
-	
+
 	timer_tm = localtime (&inOneDay);
 	strftime(day1_text, sizeof(day1_text), "%a", timer_tm);
 	text_layer_set_text(day4_time_layer, day1_text);
@@ -841,8 +764,7 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "day[2]text %s", day2_text);
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "day[2]Int = %lu", nextdayInt);
 	}
-	//snip end
-    
+
 	time_t nowInt = time(NULL);
 	if (nowInt % 60 == 0 ) {
 		handle_minute_tick();
@@ -1286,19 +1208,12 @@ static void window_unload(Window *window) {
 	text_layer_destroy(time_layer);
 	text_layer_destroy(date_layer);
 	text_layer_destroy(location_layer);
-    bitmap_layer_destroy(date_border_layer);
+     bitmap_layer_destroy(date_border_layer);
 //	inverter_layer_destroy(inverter_layer);
 //  inverter_layer_destroy(inverter_layer);
 //  inverter_layer_destroy(day2_time_layer_inverter_layer);
 
-/*  text_layer_destroy(day1_time_layer);
-    text_layer_destroy(day2_time_layer);
-    text_layer_destroy(day2_temp_layer);
-    text_layer_destroy(day1_temp_layer);
-    text_layer_destroy(day2_cond_layer);
-    text_layer_destroy(day1_cond_layer);
 
-*/
     text_layer_destroy(day5_temp_layer);
     text_layer_destroy(day4_temp_layer);
     text_layer_destroy(day3_temp_layer);
@@ -1322,9 +1237,7 @@ static void window_unload(Window *window) {
 //    bitmap_layer_destroy(today_icon_layer);
     
 //    layer_destroy(todayForecastLayer);
-//    layer_destroy(currentConditionsLayer);
-
-    
+//    layer_destroy(currentConditionsLayer);  
 }
 
 
