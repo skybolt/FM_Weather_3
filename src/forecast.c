@@ -510,7 +510,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             break;
             
 		case WEATHER_DAY1_TEMP_KEY:
-            if (debug_flag > -1) {
+            if (debug_flag > 2) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY1_TEMP_KEY %s", new_tuple->value->cstring);
             }
             if (night_flag == 0) {
@@ -521,7 +521,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             break;
             
 		case WEATHER_DAY2_TEMP_KEY:
-            if (debug_flag > -1) {
+            if (debug_flag > 2) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY2_TEMP_KEY %s", new_tuple->value->cstring);
             }
             if (night_flag == 1) {

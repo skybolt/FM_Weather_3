@@ -524,22 +524,25 @@ function fetchWeather3DayForecast(latitude, longitude) {       // sends days 3, 
 
 function fetchWeatherUndergroundConditions(latitude, longitude) { // gets day 0
 	var tt = new Date();
-	console.log("new Date =" + tt);
-	//var response;
+	if (debug_flag > 3) {
+	console.log("new Date =" + tt);		
+	}
     var req = new XMLHttpRequest();
 	req.open("GET", "http://api.wunderground.com/api/d33637904b0a944c/conditions/geolookup/q/" + latitude + "," + longitude + ".json", true);
     if (debug_flag > 2) {
-        console.log("Weather Underground app key request!! d33637904b0a944c");
+	    console.log("Weather Underground app key request!! d33637904b0a944c");
+	    console.log("http://api.wunderground.com/api/d33637904b0a944c/conditions/geolookup/q/" + latitude + "," + longitude + ".json");
 
     }
-	console.log("http://api.wunderground.com/api/d33637904b0a944c/conditions/geolookup/q/" + latitude + "," + longitude + ".json");
-
+	
 	req.onload = function(e) {
 		if (req.readyState == 4) {
 			if (req.status == 200) {
 				var response = JSON.parse(req.responseText);
+				if (debug_flag > 2) {
+				console.log("req.responseText.length = " + req.responseText.length);					
+				}
                 
-				console.log("req.responseText.length = " + req.responseText.length);
 				if (req.responseText.length > 0) {
                     
                     day = 0;
@@ -564,10 +567,10 @@ function fetchWeatherUndergroundConditions(latitude, longitude) { // gets day 0
 function fetchWeatherUndergroundTodayForecast(latitude, longitude) { // gets day 1, 2
     var response;
     var req = new XMLHttpRequest();
-    console.log("http://api.wunderground.com/api/25604a92d894df0e/hourly/geolookup/q/" + latitude + "," + longitude + ".json");
     req.open("GET", "http://api.wunderground.com/api/25604a92d894df0e/hourly/geolookup/q/" + latitude + "," + longitude + ".json", true);
     if (debug_flag > 1) {
-        console.log("Weather Underground app key request!! 25604a92d894df0e");
+	    console.log("Weather Underground app key request!! 25604a92d894df0e");
+	    console.log("http://api.wunderground.com/api/25604a92d894df0e/hourly/geolookup/q/" + latitude + "," + longitude + ".json");
     }
     req.onload = function(e) {
         var offset = new Date().getTimezoneOffset() / 60;
@@ -576,7 +579,6 @@ function fetchWeatherUndergroundTodayForecast(latitude, longitude) { // gets day
                 response = JSON.parse(req.responseText);
 				if (debug_flag > 2) {
                     console.log("fetchWeatherTodayForecast req.responseText.length = " + req.responseText.length);
-                    console.log("fred");
 				}
                 if (req.responseText.length > 100) {
                     if (debug_flag > 2) {
@@ -586,10 +588,9 @@ function fetchWeatherUndergroundTodayForecast(latitude, longitude) { // gets day
                     }
                     
                     if (debug_flag > 5) {
-                        
                         for (var i = 0; i < 7; i++) {
-                            //text += cars[i];
-                            console.log("forecast description[" + i + "]: " + stripper(response.list[i].weather[0].description));
+					    //text += cars[i];
+					    console.log("forecast description[" + i + "]: " + stripper(response.list[i].weather[0].description));
                         }
                         
                     }
@@ -602,15 +603,15 @@ function fetchWeatherUndergroundTodayForecast(latitude, longitude) { // gets day
                     timestamp = response.hourly_forecast[n].FCTTIME.epoch;
                     conditions = response.hourly_forecast[n].wx;
 					if (debug_flag > 1) {
-                        console.log("raw timestamp: " + timestamp);
+						console.log("raw timestamp: " + timestamp);
 					}
                     timestamp = parseInt(timestamp) - parseInt (offset * 3600);
 					if (debug_flag > 1) {
-                        console.log("parseInt timestamp: " + timestamp);
+						console.log("parseInt timestamp: " + timestamp);
 					}
 
                     if (debug_flag > 1) {
-                        console.log("requesting sendDayMessages(" + day + ")");
+					console.log("requesting sendDayMessages(" + day + ")");
                     }
                     sendDayMessages(day);
                     
@@ -622,17 +623,17 @@ function fetchWeatherUndergroundTodayForecast(latitude, longitude) { // gets day
                     timestamp = response.hourly_forecast[n].FCTTIME.epoch;
                     conditions = response.hourly_forecast[n].wx;
 					if (debug_flag > 1) {
-                        console.log("raw timestamp: " + timestamp);
+						console.log("raw timestamp: " + timestamp);
 					}
                     timestamp = parseInt(timestamp) - parseInt (offset * 3600);
 					if (debug_flag > 1) {
-                        console.log("parseInt timestamp: " + timestamp);
+						console.log("parseInt timestamp: " + timestamp);
 					}
-                    
-                    if (debug_flag > 1) {
-                        console.log("requesting sendDayMessages(" + day + ")");
-                    }
-                    sendDayMessages(day);
+				 
+				 if (debug_flag > 1) {
+					 console.log("requesting sendDayMessages(" + day + ")");
+				 }
+				 sendDayMessages(day);
                     
                     
                 } else {console.log("fail if responseText.lenght > 100");}
@@ -645,10 +646,10 @@ function fetchWeatherUndergroundTodayForecast(latitude, longitude) { // gets day
 function fetchWeatherUnderground3DayForecast(latitude, longitude) { // gets day 3, 4, 5
     var response;
     var req = new XMLHttpRequest();
-    console.log("http://api.wunderground.com/api/6fe6c99a5d7df975/forecast/geolookup/q/" + latitude + "," + longitude + ".json");
     req.open("GET", "http://api.wunderground.com/api/6fe6c99a5d7df975/forecast/geolookup/q/" + latitude + "," + longitude + ".json", true);
     if (debug_flag > 2) {
-        console.log("Weather Underground app key request!! 6fe6c99a5d7df975");
+	    console.log("Weather Underground app key request!! 6fe6c99a5d7df975");
+	    console.log("http://api.wunderground.com/api/6fe6c99a5d7df975/forecast/geolookup/q/" + latitude + "," + longitude + ".json");
         
     }
     req.onload = function(e) {
@@ -753,7 +754,7 @@ function fetchSunriseSunset(latitude, longitude) {
             } else {
                 console.log("fail req 200 in fetchSunriseSunset");
             }
-        }
+	   } else {console.log("fail 4");}
     };
     req.send(null);
     
