@@ -998,65 +998,84 @@ Pebble.addEventListener("webviewclosed", function(e) {
 function iconFromWeatherString(weatherId) {
 	
 	if (weatherId == "tstorms") {
-		console.log("weatherId = " + weatherId + ", return 6"); // 200 series - thunderstorms, // 300 to 321 defined as rain, 400-499 not defined, 500-599 is rain
+		if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 6"); // 200 series - thunderstorms, // 300 to 321 defined as rain, 400-499 not defined, 500-599 is rain
         return 6;
+        }
     } else if (weatherId == "rain") {
-		console.log("weatherId = " + weatherId + ", return 6"); // 200 series - thunderstorms, // 300 to 321 defined as rain, 400-499 not defined, 500-599 is rain
+		if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 6"); // 200 series - thunderstorms, // 300 to 321 defined as rain, 400-499 not defined, 500-599 is rain
         return 6;
+        }
     } else if (weatherId == "chancetstorms") {
-        console.log("weatherId = " + weatherId + ", return 12"); // 200 series - thunderstorms, // 300 to 321 defined as rain, 400-499 not defined, 500-599 is rain
+        if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 12"); // 200 series - thunderstorms, // 300 to 321 defined as rain, 400-499 not defined, 500-599 is rain
         return 12;
+        }
     } else if (weatherId == "chancerain") {
-        console.log("weatherId = " + weatherId + ", return 6"); // 200 series - thunderstorms, // 300 to 321 defined as rain, 400-499 not defined, 500-599 is rain
+        if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 6"); // 200 series - thunderstorms, // 300 to 321 defined as rain, 400-499 not defined, 500-599 is rain
         return 6;
+        }
     } else if (weatherId == "sleet") {// 600-699 defined as snow
-		console.log("weatherId = " + weatherId + ", return 8");
+		if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 8");
         return 8;
+        }
     } else if (weatherId == "snow") {// 600-699 defined as snow
-		console.log("weatherId = " + weatherId + ", return 8");
+		if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 8");
         return 8;
+        }
     } else if (weatherId == "flurries") {// 600-699 defined as snow
-		console.log("weatherId = " + weatherId + ", return 8");
+		if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 8");
         return 8;
+        }
     } else if (weatherId == "chancesnow") {// 600-699 defined as snow
-		console.log("weatherId = " + weatherId + ", return 8");
+		if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 8");
         return 8;
+        }
     } else if (weatherId == "chancesleet") {// 600-699 defined as snow
-		console.log("weatherId = " + weatherId + ", return 8");
+		if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 8");
         return 8;
+        }
     } else if (weatherId == "chanceflurries") {// 600-699 defined as snow
-		console.log("weatherId = " + weatherId + ", return 8");
+		if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 8");
         return 8;
+        }
     } else if (weatherId == "mostlycloudy" ) {		// 700-799 is mist, smoke, fog, etc. Return lines
-        console.log("weatherId = " + weatherId + ", return 4");
-        return 4;						// 900-99 is crazy atmospheric shit,
+        if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 4");
+        return 4;// 900-99 is crazy atmospheric shit,
+        }
     } else if (weatherId == "cloudy" ) {		// 700-799 is mist, smoke, fog, etc. Return lines
-        console.log("weatherId = " + weatherId + ", return 4");
+        if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 4");
         return 4;						// 900-99 is crazy atmospheric shit,
+        }
     } else if (weatherId == "clear") {		// 800 is clear
-        console.log("weatherId = " + weatherId + ", return 0");
+        if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 0");
         return 0;
+        }
     } else if (weatherId == "sunny") {		// 800 is clear
-        console.log("weatherId = " + weatherId + ", return 0");
+        if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 0");
         return 0;
+        }
     } else if (weatherId == "partlysunny") {	// 801, 802, 803 are all partly cloudy
-        console.log("weatherId = " + weatherId + ", return 2");
-        return 2;
+        if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 2");
+            return 2;}
     } else if (weatherId == "mostlysunny") {	// 801, 802, 803 are all partly cloudy
-        console.log("weatherId = " + weatherId + ", return 2");
+        if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 2");
         return 2;
+        }
     } else if (weatherId == "partlycloudy") {	// 801, 802, 803 are all partly cloudy
-        console.log("weatherId = " + weatherId + ", return 2");
+        if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 2");
         return 2;
+        }
     } else if (weatherId == "hazy" ) {   // 804 = overcast. Should it be clouds, or lines? I love lines. So, lines. But it shoudl probably be clouds
-        console.log("weatherId = " + weatherId + ", return 10");
+        if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 10");
         return 10;
+        }
     } else if (weatherId == "fog" ) {   // 804 = overcast. Should it be clouds, or lines? I love lines. So, lines. But it shoudl probably be clouds
-        console.log("weatherId = " + weatherId + ", return 10");
+        if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 10");
         return 10;
+        }
     } else {							// 900 to 962 ranges from tornado to calm. Most strange.
-        console.log("else return 10");
+        if (debug_flag > 2) { console.log("else return 10");
         return 10;
+        }
     }
 }
 
