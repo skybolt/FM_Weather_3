@@ -3,7 +3,6 @@
 #include "forecast.h"
 
 //native background white
-	//extra comment for GIT
 //inverted background black
 
 // weather underground fm_forecast_stable
