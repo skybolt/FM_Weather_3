@@ -7,7 +7,7 @@ var setPebbleToken = 'JUCP'; //    'XPGE'; 'JUCP is FM Forecast, XPGE is WU Fore
 //console.log("request.open( http://x.SetPebble.com/api/" + setPebbleToken + '/' + Pebble.getAccountToken());
 //Pebble.addEventListener('ready', function(e) {
 //});
-var debug_flag = 0;
+var debug_flag = 2;
 var m = 1;
 var n = 0;
 var day; 
@@ -303,6 +303,13 @@ function tempGetter(temp) {
 
 
 function fetchWeatherConditions(latitude, longitude) {  //sends day0, day1 temp (high), day2 temp (low);
+	var ownName = arguments.callee.toString(); 
+	ownName = ownName.substr('function '.length);        // trim off "function "
+	ownName = ownName.substr(0, ownName.indexOf('('));        // trim off everything after the function name
+	if (debug_flag > 1) {
+	console.log("FUNCTION NAME = " + ownName); 
+	}
+
     var response;
     var req = new XMLHttpRequest();
     req.open("GET", "http://api.openweathermap.org/data/2.5/weather?" + "lat=" + latitude + "&lon=" + longitude + "&cnt=2", true);
@@ -367,14 +374,21 @@ function fetchWeatherConditions(latitude, longitude) {  //sends day0, day1 temp 
                     if (debug_flag > 1) {
                         console.log("location: " + location + " sunrise: " + sunrise + " sunset: " + sunset);
                     }
-                } else {}
-            } else {}
-        }
+                } else {console.log("fail responseText.lenght > 100 -" + ownName);}
+            } else {console.log("fail 200: " + ownName);}
+        } else {console.log("fail readyState == 4 " + ownName);}
     };
     req.send(null);
 }
 
 function fetchWeatherTodayForecast(latitude, longitude) {  //sends days 1, 2
+	var ownName = arguments.callee.toString(); 
+	ownName = ownName.substr('function '.length);        // trim off "function "
+	ownName = ownName.substr(0, ownName.indexOf('('));        // trim off everything after the function name
+	if (debug_flag > 1) {
+	console.log("FUNCTION NAME = " + ownName); 
+	}
+
     var response;
     var req = new XMLHttpRequest();
     //    http://api.openweathermap.org/data/2.5/forecast?lat=47.68969385897765&lon=-122.38351216622917&mode=xml
@@ -432,15 +446,22 @@ function fetchWeatherTodayForecast(latitude, longitude) {  //sends days 1, 2
                     }
                     sendDayMessages(day);
                     
-                } else {console.log("fail if responseText.lenght > 100");}
-            } else {console.log("fail 200: fetchWeatherTodayForecast");}
-        } else {console.log("fail readyState == 4");}
+                } else {console.log("fail responseText.lenght > 100 -" + ownName);}
+            } else {console.log("fail 200: " + ownName);}
+        } else {console.log("fail readyState == 4 " + ownName);}
     };
     req.send(null);
 }
 
 function fetchWeather3DayForecast(latitude, longitude) {       // sends days 3, 4, 5
-    var req = new XMLHttpRequest();
+	var ownName = arguments.callee.toString(); 
+	ownName = ownName.substr('function '.length);        // trim off "function "
+	ownName = ownName.substr(0, ownName.indexOf('('));        // trim off everything after the function name
+	if (debug_flag > 1) {
+	console.log("FUNCTION NAME = " + ownName); 
+	}
+
+	var req = new XMLHttpRequest();
     req.open("GET", "http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude + "&lon=" + longitude + "&cnt=10&APPID=9f001a597927140d919cc512193dadd2", true);
 	if (debug_flag > 1) {
         console.log("http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude + "&lon=" + longitude + "&cnt=10&APPID=9f001a597927140d919cc512193dadd2");
@@ -505,17 +526,11 @@ function fetchWeather3DayForecast(latitude, longitude) {       // sends days 3, 
                     }
                     sendDayMessages(day);
                     
-                } else {console.log("fail length not zero");}
-            } else {console.log("fail 200: fetchWeatherForecast");}
-		} else{console.log("fail 4"); }
-	    if (debug_flag > 1) {
-            console.log("end onload");
-	    }
+                } else {console.log("fail responseText.lenght > 100 -" + ownName);}
+            } else {console.log("fail 200: " + ownName);}
+        } else {console.log("fail readyState == 4 " + ownName);}
     };
     req.send(null);
-	if (debug_flag > 1) {
-        console.log("end function");
-	}
 }
 
 
@@ -523,6 +538,13 @@ function fetchWeather3DayForecast(latitude, longitude) {       // sends days 3, 
 /*NEXT SECTION IS FOR WEATHER UNDERGROUND*/
 
 function fetchWeatherUndergroundConditions(latitude, longitude) { // gets day 0
+	var ownName = arguments.callee.toString(); 
+	ownName = ownName.substr('function '.length);        // trim off "function "
+	ownName = ownName.substr(0, ownName.indexOf('('));        // trim off everything after the function name
+	if (debug_flag > 1) {
+	console.log("FUNCTION NAME = " + ownName); 
+	}
+	
 	var tt = new Date();
 	if (debug_flag > 3) {
 	console.log("new Date =" + tt);		
@@ -557,14 +579,21 @@ function fetchWeatherUndergroundConditions(latitude, longitude) { // gets day 0
                     }
                     sendDayMessages(day);
                     
-                } else {console.log("fail if responseText.lenght > 100");}
-            } else {console.log("fail 200");}
-        } else {console.log("fail readyState == 4");}
+                } else {console.log("fail responseText.lenght > 100 -" + ownName);}
+            } else {console.log("fail 200: " + ownName);}
+        } else {console.log("fail readyState == 4 " + ownName);}
     };
     req.send(null);
 }
 
 function fetchWeatherUndergroundTodayForecast(latitude, longitude) { // gets day 1, 2
+	var ownName = arguments.callee.toString(); 
+	ownName = ownName.substr('function '.length);        // trim off "function "
+	ownName = ownName.substr(0, ownName.indexOf('('));        // trim off everything after the function name
+	if (debug_flag > 1) {
+	console.log("FUNCTION NAME = " + ownName); 
+	}
+	
     var response;
     var req = new XMLHttpRequest();
     req.open("GET", "http://api.wunderground.com/api/25604a92d894df0e/hourly/geolookup/q/" + latitude + "," + longitude + ".json", true);
@@ -636,14 +665,21 @@ function fetchWeatherUndergroundTodayForecast(latitude, longitude) { // gets day
 				 sendDayMessages(day);
                     
                     
-                } else {console.log("fail if responseText.lenght > 100");}
-            } else {console.log("fail 200: fetchWeatherTodayForecast");}
-        } else {console.log("fail readyState == 4");}
+                } else {console.log("fail responseText.lenght > 100 -" + ownName);}
+            } else {console.log("fail 200: " + ownName);}
+        } else {console.log("fail readyState == 4 " + ownName);}
     };
     req.send(null);
 }
 
 function fetchWeatherUnderground3DayForecast(latitude, longitude) { // gets day 3, 4, 5
+	var ownName = arguments.callee.toString(); 
+	ownName = ownName.substr('function '.length);        // trim off "function "
+	ownName = ownName.substr(0, ownName.indexOf('('));        // trim off everything after the function name
+	if (debug_flag > 1) {
+	console.log("FUNCTION NAME = " + ownName); 
+	}
+
     var response;
     var req = new XMLHttpRequest();
     req.open("GET", "http://api.wunderground.com/api/6fe6c99a5d7df975/forecast/geolookup/q/" + latitude + "," + longitude + ".json", true);
@@ -665,7 +701,7 @@ function fetchWeatherUnderground3DayForecast(latitude, longitude) { // gets day 
                     conditions = stripper(response.forecast.simpleforecast.forecastday[n].conditions);
                     high = response.forecast.simpleforecast.forecastday[n].high.fahrenheit;
                     low = response.forecast.simpleforecast.forecastday[n].low.fahrenheit;
-                    temp = high + "/\n" + low + getTempLabel();
+                    temp = "u" + high + "/\n" + low + getTempLabel();
                     
                     if (debug_flag > 1) {
                         console.log("requesting sendDayMessages(" + day + ")");
@@ -700,14 +736,20 @@ function fetchWeatherUnderground3DayForecast(latitude, longitude) { // gets day 
                     }
                     sendDayMessages(day);
                     
-                } else {console.log("fail if responseText.lenght > 100");}
-            } else {console.log("fail 200: fetchWeatherUndergroundForecast");}
-        } else {console.log("fail readyState == 4");}
+                } else {console.log("fail responseText.lenght > 100 -" + ownName);}
+            } else {console.log("fail 200: " + ownName);}
+        } else {console.log("fail readyState == 4 " + ownName);}
     };
     req.send(null);
 }
 
 function fetchSunriseSunset(latitude, longitude) {
+	var ownName = arguments.callee.toString(); 
+	ownName = ownName.substr('function '.length);        // trim off "function "
+	ownName = ownName.substr(0, ownName.indexOf('('));        // trim off everything after the function name
+	if (debug_flag > 1) {
+	console.log("FUNCTION NAME = " + ownName); 
+	}
     var response;
     var req = new XMLHttpRequest();
     req.open("GET", "http://api.openweathermap.org/data/2.5/weather?" + "lat=" + latitude + "&lon=" + longitude + "&cnt=2", true);
@@ -748,13 +790,9 @@ function fetchSunriseSunset(latitude, longitude) {
                                                 sunrise: sunrise,
                                                 sunset: sunset,
                                                 });
-                } else {
-                console.log("fail > 100 in fetchSunriseSunset");
-                }
-            } else {
-                console.log("fail req 200 in fetchSunriseSunset");
-            }
-	   } else {console.log("fail 4");}
+                } else {console.log("fail responseText.lenght > 100 -" + ownName);}
+            } else {console.log("fail 200: " + ownName);}
+        } else {console.log("fail readyState == 4 " + ownName);}
     };
     req.send(null);
     
@@ -956,16 +994,12 @@ Pebble.addEventListener("showConfiguration", function() {
 Pebble.addEventListener("webviewclosed", function(e) {
                         if ((typeof(e.response) == 'string') && (e.response.length > 0)) {
                         //set local value tempFlag to return value
-                        //Pebble.sendAppMessage(JSON.parse(e.response));
-					    var responseTextJSON = JSON.parse(e.response);
+                        //Pebble.sendAppMessage(JSON.parse(e.response));se);
 					    var responseText		= e.response;
 					    //var item = "1";
                         
-                        if (debug_flag > 3) {
+                        if (debug_flag > -1) {
                         console.log("raw e.response (no JSON.parse) = " + e.response);
-                        console.log("1 of 3 payload = " + e.response.item);
-                        console.log("2 of 3 responseText = " + responseText);
-                        console.log("3 of 3 responseTextJSON = " + responseTextJSON);
                         console.log("responseText.replace = " + responseText);
                         console.log("tempFlag = " + tempFlag);
                         }
@@ -973,6 +1007,10 @@ Pebble.addEventListener("webviewclosed", function(e) {
                         responseText = responseText.replace("\"2\"", "\"pressUnits\"");
                         responseText = responseText.replace("\"3\"", "\"location\"");
                         responseText = responseText.replace("\"4\"", "\"provider\"");
+					    
+                        if (debug_flag > -1) {
+                        console.log("responseText.replace = " + responseText);
+				    }
                         var config = JSON.parse(responseText);
                         tempFlag = config.tempUnits;
                         localStorage.setItem("tempFlag", tempFlag);
