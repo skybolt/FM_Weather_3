@@ -7,7 +7,7 @@ var setPebbleToken = 'JUCP'; //    'XPGE'; 'JUCP is FM Forecast, XPGE is WU Fore
 //console.log("request.open( http://x.SetPebble.com/api/" + setPebbleToken + '/' + Pebble.getAccountToken());
 //Pebble.addEventListener('ready', function(e) {
 //});
-var debug_flag = 2;
+var debug_flag = 0;
 var m = 1;
 var n = 0;
 var day; 
@@ -694,21 +694,21 @@ function fetchWeatherUnderground3DayForecast(latitude, longitude) { // gets day 
                 response = JSON.parse(req.responseText);
                 if (req.responseText.length > 0) {
                     
-                    n = m;// array is day and night, in text rollup odd numbers night (contain low in temp), days (even numbers) contain high
+                    n = m -1 ;// array is day and night, in text rollup odd numbers night (contain low in temp), days (even numbers) contain high
                     day = 3;
                     icon = iconFromWeatherString(response.forecast.simpleforecast.forecastday[n].icon);
                     timestamp = parseInt(response.forecast.simpleforecast.forecastday[n].date.epoch);
                     conditions = stripper(response.forecast.simpleforecast.forecastday[n].conditions);
                     high = response.forecast.simpleforecast.forecastday[n].high.fahrenheit;
                     low = response.forecast.simpleforecast.forecastday[n].low.fahrenheit;
-                    temp = "u" + high + "/\n" + low + getTempLabel();
+                    temp = high + "/\n" + low + getTempLabel();
                     
                     if (debug_flag > 1) {
                         console.log("requesting sendDayMessages(" + day + ")");
                     }
                     sendDayMessages(day);
                     
-                    n = m + 1;
+                    n = m;
                     day = 4;
                     icon = iconFromWeatherString(response.forecast.simpleforecast.forecastday[n].icon);
                     timestamp = parseInt(response.forecast.simpleforecast.forecastday[n].date.epoch);
@@ -722,7 +722,7 @@ function fetchWeatherUnderground3DayForecast(latitude, longitude) { // gets day 
                     }
                     sendDayMessages(day);
 
-                    n = m + 2;
+                    n = m + 1;
                     day = 5;
                     icon = iconFromWeatherString(response.forecast.simpleforecast.forecastday[n].icon);
                     timestamp = parseInt(response.forecast.simpleforecast.forecastday[n].date.epoch);

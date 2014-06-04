@@ -15,25 +15,46 @@ int                     switchFlag = 0;
 Window *window;
 //Layer *window_layer; // = window_get_root_layer(window);
 
-BitmapLayer *today_icon_layer;
-BitmapLayer *tomorrow_icon_layer;
-BitmapLayer *nextday_icon_layer;
 BitmapLayer *date_border_layer;
 
 const char *new_location;
 
+static BitmapLayer *current_icon_layer;
+BitmapLayer *day1_icon_layer;
+BitmapLayer *day2_icon_layer;
+BitmapLayer *today_icon_layer;
+BitmapLayer *tomorrow_icon_layer;
+BitmapLayer *nextday_icon_layer;
+
+GBitmap *day0_icon_bitmap = NULL;
+GBitmap *day1_icon_bitmap = NULL;
+GBitmap *day2_icon_bitmap = NULL;
+GBitmap *day3_icon_bitmap = NULL;
+GBitmap *day4_icon_bitmap = NULL;
+GBitmap *day5_icon_bitmap = NULL;
+
+static TextLayer *current_status_layer;
+TextLayer *day1_time_layer;
+TextLayer *day2_time_layer;
 TextLayer *day3_time_layer;
 TextLayer *day4_time_layer;
 TextLayer *day5_time_layer;
 
+static TextLayer *current_conditions_layer;
+TextLayer *day1_cond_layer;
+TextLayer *day2_cond_layer;
 TextLayer *day3_cond_layer;
 TextLayer *day4_cond_layer;
 TextLayer *day5_cond_layer;
 
+static TextLayer *current_temperature_layer;
+TextLayer *day1_temp_layer;
+TextLayer *day2_temp_layer;
 TextLayer *day3_temp_layer;
 TextLayer *day4_temp_layer;
 TextLayer *day5_temp_layer;
 
+static TextLayer *current_barometer_layer;
 TextLayer *time_layer;
 TextLayer *date_layer;
 TextLayer *location_layer;
@@ -52,32 +73,12 @@ int w = 144;
 int h = 2;
 
 Layer *todayForecastLayer;
-BitmapLayer *day1_icon_layer;
-BitmapLayer *day2_icon_layer;
-TextLayer *day1_cond_layer;
-TextLayer *day2_cond_layer;
-TextLayer *day1_temp_layer;
-TextLayer *day2_temp_layer;
-TextLayer *day1_time_layer;
-TextLayer *day2_time_layer;
-InverterLayer *day2_time_layer_inverter_layer;
-
-
 Layer *currentConditionsLayer;
-static BitmapLayer *current_icon_layer;
-static TextLayer *current_temperature_layer;
-static TextLayer *current_status_layer;
-static TextLayer *current_conditions_layer;
-static TextLayer *current_barometer_layer;
 
-
+InverterLayer *day2_time_layer_inverter_layer;
 InverterLayer *inverter_layer;
-GBitmap *day0_icon_bitmap = NULL;
-GBitmap *day1_icon_bitmap = NULL;
-GBitmap *day2_icon_bitmap = NULL;
-GBitmap *day3_icon_bitmap = NULL;
-GBitmap *day4_icon_bitmap = NULL;
-GBitmap *day5_icon_bitmap = NULL;
+
+
 GBitmap *date_layer_bitmap = NULL;
 uint32_t offsetInt = 0;
 
@@ -742,9 +743,12 @@ void handle_minute_tick() {
          
          } */
 		if (lclTimeInt % 3600 == 0) {
-			handle_hour_tick();
+			handle_hour_tick();		
+			APP_LOG(APP_LOG_LEVEL_INFO, "hour tick");
+
         }
 		fetch_message();
+		APP_LOG(APP_LOG_LEVEL_INFO, "minute tick");
     }
 }
 
