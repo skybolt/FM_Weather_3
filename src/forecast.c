@@ -744,7 +744,7 @@ void handle_minute_tick() {
 		if (lclTimeInt % 3600 == 0) {
 			handle_hour_tick();
         }
-		fetch_message();
+		// fetch_message(); -- commenting this out disables auto updates
     }
 }
 

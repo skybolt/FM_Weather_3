@@ -592,7 +592,7 @@ function fetchWeatherUndergroundConditions(latitude, longitude) { // gets day 0
 				 }
 					icon = iconFromWeatherString(response.current_observation.icon);
 					temp = tempGetter(response.current_observation.temp_c + 273.15) + getTempLabel();
-					conditions = response.current_observation.weather;
+					conditions = response.current_observation.weather.replace(" ", "\n");
                     timestamp = parseInt(response.current_observation.local_epoch) - (offset * 3600);
                     baro = pressureGetter(response.current_observation.pressure_in) + getPressureLabel() + response.current_observation.pressure_trend.replace("0", "*").replace("-", "÷");
                     
@@ -731,8 +731,8 @@ function fetchWeatherUnderground3DayForecast(latitude, longitude) { // gets day 
                     icon = iconFromWeatherString(response.forecast.simpleforecast.forecastday[n].icon);
                     timestamp = parseInt(response.forecast.simpleforecast.forecastday[n].date.epoch);
                     conditions = stripper(response.forecast.simpleforecast.forecastday[n].conditions);
-                    high = response.forecast.simpleforecast.forecastday[n].high.celsius;
-                    low = response.forecast.simpleforecast.forecastday[n].low.celsius;
+                    high = tempGetter(parseInt(response.forecast.simpleforecast.forecastday[n].high.celsius) + 273.15);
+                    low = tempGetter(parseInt(response.forecast.simpleforecast.forecastday[n].low.celsius) + 273.15);
                     temp = high + "/\n" + low + getTempLabel();
                     
                     if (debug_flag > 1) {
@@ -748,8 +748,8 @@ function fetchWeatherUnderground3DayForecast(latitude, longitude) { // gets day 
                     icon = iconFromWeatherString(response.forecast.simpleforecast.forecastday[n].icon);
                     timestamp = parseInt(response.forecast.simpleforecast.forecastday[n].date.epoch);
                     conditions = stripper(response.forecast.simpleforecast.forecastday[n].conditions);
-                    high = response.forecast.simpleforecast.forecastday[n].high.fahrenheit;
-                    low = response.forecast.simpleforecast.forecastday[n].low.fahrenheit;
+                    high = tempGetter(parseInt(response.forecast.simpleforecast.forecastday[n].high.celsius) + 273.15);
+                    low = tempGetter(parseInt(response.forecast.simpleforecast.forecastday[n].low.celsius) + 273.15);
                     temp = high + "/\n" + low + getTempLabel();
                     
                     if (debug_flag > 1) {
@@ -765,8 +765,8 @@ function fetchWeatherUnderground3DayForecast(latitude, longitude) { // gets day 
 				 icon = iconFromWeatherString(response.forecast.simpleforecast.forecastday[n].icon);
                     timestamp = parseInt(response.forecast.simpleforecast.forecastday[n].date.epoch);
                     conditions = stripper(response.forecast.simpleforecast.forecastday[n].conditions);
-                    high = response.forecast.simpleforecast.forecastday[n].high.fahrenheit;
-                    low = response.forecast.simpleforecast.forecastday[n].low.fahrenheit;
+                    high = tempGetter(parseInt(response.forecast.simpleforecast.forecastday[n].high.celsius) + 273.15);
+                    low = tempGetter(parseInt(response.forecast.simpleforecast.forecastday[n].low.celsius) + 273.15);
                     temp = high + "/\n" + low + getTempLabel();
                     
                     if (debug_flag > 1) {
