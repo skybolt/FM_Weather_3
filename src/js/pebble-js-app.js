@@ -85,6 +85,7 @@ function stripper(stripped) {
 }
 
 function tempShower(inTemp) {
+	debug_flag = 2; 
 	if (debug_flag > 1) {
 		temp = (inTemp * (9/5)) - 459.67;
 		temp = Math.round(temp);
@@ -99,6 +100,7 @@ function tempShower(inTemp) {
 		temp = Math.round(inTemp);
 		if (debug_flag > 1) {
             console.log("temp is " + temp + "K" );
+			console.log("base calc unit is K"); 
         }
 		temp = inTemp * (9/5);
 		temp = Math.round(temp);
@@ -330,11 +332,12 @@ function fetchWeatherConditions(latitude, longitude) {  //sends day0, day1 temp 
                     
                     n = 0;
                     day = 0;
+				 if (debug_flag > 1) {
+				console.log("n " + n + " (array), m " + m + " (base), day = " + day);					 
+				 }
  
                     icon            = iconFromWeatherId(response.weather[0].id);
                     temp            = tempGetter(response.main.temp) + getTempLabel();
-                    //day1_high       = tempGetter(response.main.temp_max) + getTempLabel();
-                    //day2_low        = tempGetter(response.main.temp_min) + getTempLabel();
                     conditions      = response.weather[0].main;
                     baro = pressureGetter(response.main.pressure * 0.0295301) + getPressureLabel();
                     //baro = "+-*";
@@ -420,12 +423,15 @@ function fetchWeatherTodayForecast(latitude, longitude) {  //sends days 1, 2
             */
                     var n = 2;
                     day = 1;
+				 if (debug_flag > 1) {
+				console.log("n " + n + " (array), m " + m + " (base), day = " + day);					 
+				 }
                     icon = iconFromWeatherId(response.list[n].weather[0].id);
                     //temp = "oH: " + tempGetter(response.list[0].main.temp) + getTempLabel();
                     temp = "H: " + day1_high;
                     timestamp = response.list[n].dt;
                     timestamp = parseInt(timestamp) - parseInt (offset * 3600);
-                    conditions = response.list[n].weather[0].description;
+                    conditions = stripper(response.list[n].weather[0].description);
 					               
                     if (debug_flag > 1) {
                         console.log("requesting sendDayMessages(" + day + ")");
@@ -434,12 +440,15 @@ function fetchWeatherTodayForecast(latitude, longitude) {  //sends days 1, 2
                     
                     n = 5;
                     day = 2;
+				 if (debug_flag > 1) {
+				console.log("n " + n + " (array), m " + m + " (base), day = " + day);					 
+				 }
                     icon = iconFromWeatherId(response.list[n].weather[0].id);
                     //temp = "oL: " + tempGetter(response.list[0].main.temp) + getTempLabel();
                     temp = "L: " + day2_low;
                     timestamp = response.list[n].dt;
                     timestamp = parseInt(timestamp) - parseInt (offset * 3600);
-                    conditions = response.list[n].weather[0].description;
+                    conditions = stripper(response.list[n].weather[0].description);
                     
                     if (debug_flag > 1) {
                         console.log("requesting sendDayMessages(" + day + ")");
@@ -479,9 +488,11 @@ function fetchWeather3DayForecast(latitude, longitude) {       // sends days 3, 
                     day1_high = tempGetter(response.list[0].temp.max) + getTempLabel();
                     day2_low = tempGetter(response.list[0].temp.min) + getTempLabel();
 
-                    
                     n = m + 0;
                     day = 3;
+				 if (debug_flag > 1) {
+				console.log("n " + n + " (array), m " + m + " (base), day = " + day);					 
+				 }
                     icon = iconFromWeatherId(response.list[n].weather[0].id);
                     high	= tempGetter(response.list[n].temp.max);
                     low = tempGetter(response.list[n].temp.min);
@@ -498,6 +509,9 @@ function fetchWeather3DayForecast(latitude, longitude) {       // sends days 3, 
                     
                     n = m + 1;
                     day = 4;
+				 if (debug_flag > 1) {
+				console.log("n " + n + " (array), m " + m + " (base), day = " + day);					 
+				 }
                     icon = iconFromWeatherId(response.list[n].weather[0].id);
                     high	= tempGetter(response.list[n].temp.max);
                     low = tempGetter(response.list[n].temp.min);
@@ -514,6 +528,10 @@ function fetchWeather3DayForecast(latitude, longitude) {       // sends days 3, 
                     
                     n = m + 2;
                     day = 5;
+				 
+				 if (debug_flag > 1) {
+				console.log("n " + n + " (array), m " + m + " (base), day = " + day);					 
+				 }
                     icon = iconFromWeatherId(response.list[n].weather[0].id);
                     high	= tempGetter(response.list[n].temp.max);
                     low = tempGetter(response.list[n].temp.min);
@@ -568,11 +586,15 @@ function fetchWeatherUndergroundConditions(latitude, longitude) { // gets day 0
 				if (req.responseText.length > 0) {
                     
                     day = 0;
+					
+				 if (debug_flag > 1) {
+				console.log("n " + n + " (array), m " + m + " (base), day = " + day);					 
+				 }
 					icon = iconFromWeatherString(response.current_observation.icon);
 					temp = tempGetter(response.current_observation.temp_c + 273.15) + getTempLabel();
 					conditions = response.current_observation.weather;
                     timestamp = parseInt(response.current_observation.local_epoch) - (offset * 3600);
-                    baro = pressureGetter(response.current_observation.pressure_in) + getPressureLabel() + response.current_observation.pressure_trend.replace("0", "*");
+                    baro = pressureGetter(response.current_observation.pressure_in) + getPressureLabel() + response.current_observation.pressure_trend.replace("0", "*").replace("-", "÷");
                     
                     if (debug_flag > 1) {
                         console.log("requesting sendDayMessages(" + day + ")");
@@ -626,9 +648,11 @@ function fetchWeatherUndergroundTodayForecast(latitude, longitude) { // gets day
                     
                     n = 1;
                     day = 1;
+				 if (debug_flag > 1) {
+				console.log("n " + n + " (array), m " + m + " (base), day = " + day);					 
+				 }
                     icon = iconFromWeatherString(response.hourly_forecast[n].icon);
-                    temp = (tempGetter(parseInt(response.hourly_forecast[n].temp.metric) + 273.15)) + getTempLabel();
-                    //temp = response.hourly_forecast[n].temp.metric;
+				 temp = "H: " + day1_high;  
                     timestamp = response.hourly_forecast[n].FCTTIME.epoch;
                     conditions = response.hourly_forecast[n].wx;
 					if (debug_flag > 1) {
@@ -638,7 +662,6 @@ function fetchWeatherUndergroundTodayForecast(latitude, longitude) { // gets day
 					if (debug_flag > 1) {
 						console.log("parseInt timestamp: " + timestamp);
 					}
-
                     if (debug_flag > 1) {
 					console.log("requesting sendDayMessages(" + day + ")");
                     }
@@ -646,8 +669,11 @@ function fetchWeatherUndergroundTodayForecast(latitude, longitude) { // gets day
                     
                     n = 15;
                     day = 2;
+				 if (debug_flag > 1) {
+				console.log("n " + n + " (array), m " + m + " (base), day = " + day);					 
+				 }
                     icon = iconFromWeatherString(response.hourly_forecast[n].icon);
-                    temp = tempGetter(parseInt(response.hourly_forecast[n].temp.metric) + 273.15) + getTempLabel();
+				 temp = "L: " + day2_low; 
                     //temp = response.hourly_forecast[n].temp.metric;
                     timestamp = response.hourly_forecast[n].FCTTIME.epoch;
                     conditions = response.hourly_forecast[n].wx;
@@ -663,7 +689,6 @@ function fetchWeatherUndergroundTodayForecast(latitude, longitude) { // gets day
 					 console.log("requesting sendDayMessages(" + day + ")");
 				 }
 				 sendDayMessages(day);
-                    
                     
                 } else {console.log("fail responseText.lenght > 100 -" + ownName);}
             } else {console.log("fail 200: " + ownName);}
@@ -693,14 +718,21 @@ function fetchWeatherUnderground3DayForecast(latitude, longitude) { // gets day 
             if (req.status == 200) {
                 response = JSON.parse(req.responseText);
                 if (req.responseText.length > 0) {
-                    
-                    n = m -1 ;// array is day and night, in text rollup odd numbers night (contain low in temp), days (even numbers) contain high
+
+				 day1_high = tempGetter(parseInt(response.forecast.simpleforecast.forecastday[0].high.celsius) + 273.15) + getTempLabel();
+				 
+				 day2_low = tempGetter(parseInt(response.forecast.simpleforecast.forecastday[0].low.celsius) + 273.15) + getTempLabel();
+				 
+				 n = m -1 ;// array is day and night, in text rollup odd numbers night (contain low in temp), days (even numbers) contain high
                     day = 3;
+				 if (debug_flag > 1) {
+				console.log("n " + n + " (array), m " + m + " (base), day = " + day);					 
+				 }
                     icon = iconFromWeatherString(response.forecast.simpleforecast.forecastday[n].icon);
                     timestamp = parseInt(response.forecast.simpleforecast.forecastday[n].date.epoch);
                     conditions = stripper(response.forecast.simpleforecast.forecastday[n].conditions);
-                    high = response.forecast.simpleforecast.forecastday[n].high.fahrenheit;
-                    low = response.forecast.simpleforecast.forecastday[n].low.fahrenheit;
+                    high = response.forecast.simpleforecast.forecastday[n].high.celsius;
+                    low = response.forecast.simpleforecast.forecastday[n].low.celsius;
                     temp = high + "/\n" + low + getTempLabel();
                     
                     if (debug_flag > 1) {
@@ -710,6 +742,9 @@ function fetchWeatherUnderground3DayForecast(latitude, longitude) { // gets day 
                     
                     n = m;
                     day = 4;
+				 if (debug_flag > 1) {
+				console.log("n " + n + " (array), m " + m + " (base), day = " + day);					 
+				 }
                     icon = iconFromWeatherString(response.forecast.simpleforecast.forecastday[n].icon);
                     timestamp = parseInt(response.forecast.simpleforecast.forecastday[n].date.epoch);
                     conditions = stripper(response.forecast.simpleforecast.forecastday[n].conditions);
@@ -723,8 +758,11 @@ function fetchWeatherUnderground3DayForecast(latitude, longitude) { // gets day 
                     sendDayMessages(day);
 
                     n = m + 1;
-                    day = 5;
-                    icon = iconFromWeatherString(response.forecast.simpleforecast.forecastday[n].icon);
+                    day = 5;	
+				 if (debug_flag > 1) {
+				console.log("n " + n + " (array), m " + m + " (base), day = " + day);					 
+				 }
+				 icon = iconFromWeatherString(response.forecast.simpleforecast.forecastday[n].icon);
                     timestamp = parseInt(response.forecast.simpleforecast.forecastday[n].date.epoch);
                     conditions = stripper(response.forecast.simpleforecast.forecastday[n].conditions);
                     high = response.forecast.simpleforecast.forecastday[n].high.fahrenheit;
@@ -922,15 +960,15 @@ function locationSuccess(pos) {
     //fetchWeather(latitude, longitude);
     if (provider_flag === 0) {
         fetchWeatherConditions(coordinates.latitude, coordinates.longitude);
-        fetchWeatherTodayForecast(coordinates.latitude, coordinates.longitude);
         fetchWeather3DayForecast(coordinates.latitude, coordinates.longitude);
+        fetchWeatherTodayForecast(coordinates.latitude, coordinates.longitude);
         fetchSunriseSunset(coordinates.latitude, coordinates.longitude);
     }
     
     else if (provider_flag == 1) {
         fetchWeatherUndergroundConditions(coordinates.latitude, coordinates.longitude);
-        fetchWeatherUndergroundTodayForecast(coordinates.latitude, coordinates.longitude);
         fetchWeatherUnderground3DayForecast(coordinates.latitude, coordinates.longitude);
+        fetchWeatherUndergroundTodayForecast(coordinates.latitude, coordinates.longitude);
         fetchSunriseSunset(coordinates.latitude, coordinates.longitude);
     }
     
