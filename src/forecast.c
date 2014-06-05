@@ -301,7 +301,8 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 	//GFont custom_font_temp		= fonts_get_system_font(FONT_KEY_FONT_FALLBACK);
 	GFont custom_font_tinytemp 	= fonts_get_system_font(FONT_KEY_GOTHIC_18);
 	GFont custom_font_temp 		= fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
-    GFont custom_font_large_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
+	GFont custom_font_large_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
+	debug_flag = 1; 
     
 	
 	switch (key) {
@@ -321,7 +322,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             timer_tm = localtime (&currentStamp);
             strftime(current_text, sizeof(current_text), "%l:%M%P", timer_tm);
             text_layer_set_text(current_status_layer, current_text);
-            if (debug_flag > 2) {
+            if (debug_flag == 1) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY0_TIMESTAMP_KEY %lu", new_tuple->value->uint32);
             }
             break;
@@ -333,7 +334,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             timer_tm = localtime (&timeStamp);
             strftime(day_text, sizeof(day_text), "%l%P\n %a", timer_tm);
             text_layer_set_text(day1_time_layer, day_text);
-            if (debug_flag > 2) {
+            if (debug_flag  == 2) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY1_TIMESTAMP_KEY %lu", new_tuple->value->uint32);
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY2_TIMESTAMP_KEY day_text %s", day_text);
             }
@@ -346,7 +347,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             strftime(night_text, sizeof(night_text), "%l%P\n %a", timer_tm);
             text_layer_set_text(day2_time_layer, night_text);
             
-            if (debug_flag > 2) {
+            if (debug_flag == 3) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY2_TIMESTAMP_KEY %lu", new_tuple->value->uint32);
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY2_TIMESTAMP_KEY night_text %s", night_text);
             }
@@ -354,21 +355,21 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             
 		case WEATHER_DAY3_TIMESTAMP_KEY:
             todayInt = new_tuple->value->uint32;
-            if (debug_flag > 0) {
+            if (debug_flag == 4) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY3_TIMESTAMP_KEY %lu", new_tuple->value->uint32);
             }
             break;
             
 		case WEATHER_DAY4_TIMESTAMP_KEY:
             tomorrowInt = new_tuple->value->uint32;
-            if (debug_flag > 0) {
+            if (debug_flag == 5) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY4_TIMESTAMP_KEY %lu", new_tuple->value->uint32);
             }
             break;
             
 		case WEATHER_DAY5_TIMESTAMP_KEY:
             nextdayInt = new_tuple->value->uint32;
-            if (debug_flag > 0) {
+            if (debug_flag == 6) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY5_TIMESTAMP_KEY %lu", new_tuple->value->uint32);
             }
             break;
@@ -376,7 +377,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         case WEATHER_DAY0_BARO_KEY:
             current_barometer = new_tuple->value->cstring;
             text_layer_set_text(current_barometer_layer, current_barometer);
-            if (debug_flag > 2) {
+            if (debug_flag == 1) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY0_BARO_KEY %s", new_tuple->value->cstring);
             }
             break;
@@ -384,7 +385,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 		case WEATHER_DAY0_CONDITIONS_KEY:
             current_conditions = new_tuple->value->cstring;
             text_layer_set_text(current_conditions_layer, current_conditions);
-            if (debug_flag > 2) {
+            if (debug_flag == 1) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY0_CONDITIONS_KEY %s", new_tuple->value->cstring);
             }
             break;
@@ -392,7 +393,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 		case WEATHER_DAY1_CONDITIONS_KEY:
             text_layer_set_text(day1_cond_layer, new_tuple->value->cstring);
             //        today_conditions = new_tuple->value->cstring;
-            if (debug_flag > 2) {
+            if (debug_flag == 2) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY1_CONDITIONS_KEY %s", new_tuple->value->cstring);
             }
             break;
@@ -400,7 +401,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 		case WEATHER_DAY2_CONDITIONS_KEY:
             text_layer_set_text(day2_cond_layer, new_tuple->value->cstring);
             //        today_conditions = new_tuple->value->cstring;
-            if (debug_flag > 2) {
+            if (debug_flag == 3) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY2_CONDITIONS_KEY %s", new_tuple->value->cstring);
             }
             break;
@@ -408,7 +409,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 		case WEATHER_DAY3_CONDITIONS_KEY:
             text_layer_set_text(day3_cond_layer, new_tuple->value->cstring);
             today_conditions = new_tuple->value->cstring;
-            if (debug_flag > 2) {
+            if (debug_flag == 4) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY3_CONDITIONS_KEY %s", new_tuple->value->cstring);
             }
             break;
@@ -416,7 +417,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 		case WEATHER_DAY4_CONDITIONS_KEY:
             text_layer_set_text(day4_cond_layer, new_tuple->value->cstring);
             tomorrow_conditions = new_tuple->value->cstring;
-            if (debug_flag > 2) {
+            if (debug_flag == 5) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY4_CONDITIONS_KEY %s", new_tuple->value->cstring);
             }
             break;
@@ -424,13 +425,13 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 		case WEATHER_DAY5_CONDITIONS_KEY:
             text_layer_set_text(day5_cond_layer, new_tuple->value->cstring);
             nextday_conditions = new_tuple->value->cstring;
-            if (debug_flag > 2) {
+            if (debug_flag == 6) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY5_CONDITIONS_KEY %s", new_tuple->value->cstring);
             }
             break;
             
 		case WEATHER_DAY0_ICON_KEY:
-            if (debug_flag > 2) {
+            if (debug_flag == 1) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY0_ICON_KEY %lu + night_flag %d", new_tuple->value->uint32, night_flag);
             }
             if (day0_icon_bitmap) {
@@ -441,7 +442,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             break;
             
         case WEATHER_DAY1_ICON_KEY:
-            if (debug_flag > 2) {
+            if (debug_flag == 2) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY1_ICON_KEY %lu + night_flag %d", new_tuple->value->uint32, night_flag);
             }
             if (day1_icon_bitmap) {
@@ -452,7 +453,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             break;
             
 		case WEATHER_DAY2_ICON_KEY:
-            if (debug_flag > 2) {
+            if (debug_flag == 3) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY2_ICON_KEY %lu + night_flag %d", new_tuple->value->uint32, night_flag);
             }
             if (day2_icon_bitmap) {
@@ -474,7 +475,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             }
             bitmap_layer_set_bitmap(today_icon_layer, day3_icon_bitmap);
             day3_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + night_flag]);
-            if (debug_flag > 2) {
+            if (debug_flag == 4) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY3_ICON_KEY %lu + night_flag %d", new_tuple->value->uint32, night_flag);
             }
             break;
@@ -485,7 +486,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             }
             bitmap_layer_set_bitmap(tomorrow_icon_layer, day4_icon_bitmap);
             day4_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + night_flag]);
-            if (debug_flag > 2) {
+            if (debug_flag == 5) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY4_ICON_KEY %lu + night_flag %d", new_tuple->value->uint32, night_flag);
             }
             break;
@@ -496,13 +497,13 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             }
             bitmap_layer_set_bitmap(nextday_icon_layer, day5_icon_bitmap);
             day5_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + night_flag]);
-            if (debug_flag > 2) {
+            if (debug_flag == 6) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY5_ICON_KEY %lu + night_flag %d", new_tuple->value->uint32, night_flag);
             }
             break;
             
 		case WEATHER_DAY0_TEMP_KEY:
-            if (debug_flag > 5) {
+            if (debug_flag == 1) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY0_TEMP_KEY %s", new_tuple->value->cstring);
             }
             current_temperature = new_tuple->value->cstring;
@@ -510,7 +511,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             break;
             
 		case WEATHER_DAY1_TEMP_KEY:
-            if (debug_flag > 2) {
+            if (debug_flag == 2) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY1_TEMP_KEY %s", new_tuple->value->cstring);
             }
             if (night_flag == 0) {
@@ -521,7 +522,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             break;
             
 		case WEATHER_DAY2_TEMP_KEY:
-            if (debug_flag > 2) {
+            if (debug_flag == 3) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY2_TEMP_KEY %s", new_tuple->value->cstring);
             }
             if (night_flag == 1) {
@@ -536,7 +537,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             strcpy(todayHiLoCounter, today_hilo);
             int today_hilo_count = countChar(todayHiLoCounter);
             text_layer_set_text(day3_temp_layer, new_tuple->value->cstring);
-            if (debug_flag > 5) {
+            if (debug_flag == 4) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY3_TEMP_KEY %s", new_tuple->value->cstring);
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "STRING %s has %d characters", today_hilo, today_hilo_count);
             }
@@ -555,7 +556,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 		case WEATHER_DAY4_TEMP_KEY:
             tomorrow_hilo = new_tuple->value->cstring;
             text_layer_set_text(day4_temp_layer, new_tuple->value->cstring);
-            if (debug_flag > 5) {
+            if (debug_flag == 5) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY4_TEMP_KEY %s", new_tuple->value->cstring);
             }
             break;
@@ -563,7 +564,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 		case WEATHER_DAY5_TEMP_KEY:
             nextday_hilo = new_tuple->value->cstring;
             text_layer_set_text(day5_temp_layer, new_tuple->value->cstring);
-            if (debug_flag > 5) {
+            if (debug_flag == 6) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY5_TEMP_KEY %s", new_tuple->value->cstring);
             }
             break;
@@ -571,14 +572,14 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 		case WEATHER_LOCATION_KEY:
             new_location = new_tuple->value->cstring;
             text_layer_set_text(location_layer, new_location);
-            if (debug_flag > 2) {
+            if (debug_flag == 1) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_LOCATION_KEY %s", new_tuple->value->cstring);
             }
             static char location_counter[32];  //= "White Center";
             strcpy(location_counter, new_location);
             int charCount = countChar(location_counter);
             int changer = 10;
-            if (debug_flag > 4) {
+            if (debug_flag > 6) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "STRING [02] %s has %d characters", location_counter, charCount);
             }
             
@@ -586,7 +587,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
                 //GFont custom_font_large_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
                 //text_layer_set_font(location_layer, custom_font_large_location);
                 //text_layer_set_font(location_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
-                if (debug_flag > 4) {
+                if (debug_flag > 6) {
                     APP_LOG(APP_LOG_LEVEL_DEBUG, "charCount %d reads less than 10", charCount);
                     APP_LOG(APP_LOG_LEVEL_DEBUG, "setting location_layer, custom_font_large_location");
                     APP_LOG(APP_LOG_LEVEL_DEBUG, "setting ocation_layer, GTextOverflowModeTrailingEllipsis");
@@ -594,7 +595,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
                 //layer_set_frame(text_layer_get_layer(location_layer), (GRect(-10, 115+changer, 164, 35)));
                 //text_layer_set_overflow_mode(location_layer, GTextOverflowModeTrailingEllipsis);
             } else if (charCount < 16) {
-                if (debug_flag > 4) {
+                if (debug_flag > 6) {
                     APP_LOG(APP_LOG_LEVEL_DEBUG, "charCount %d reads greater than 10 less than 16", charCount);
                 }
                 text_layer_set_overflow_mode(location_layer, GTextOverflowModeWordWrap);
@@ -604,13 +605,13 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
                 //text_layer_set_font(location_layer, custom_font_small_location);
                 text_layer_set_font(location_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
                 //layer_set_frame(text_layer_get_layer(location_layer), (GRect(0, 122+changer, 144, 100)));
-                if (debug_flag > 4) {
+                if (debug_flag > 6) {
                     APP_LOG(APP_LOG_LEVEL_DEBUG, "setting location_layer, custom_font_small_location");
                     APP_LOG(APP_LOG_LEVEL_DEBUG, "setting ocation_layer, GTextOverflowModeWordWrap");
                 }
             } else
             {
-                if (debug_flag > 4) {
+                if (debug_flag > 6) {
                     APP_LOG(APP_LOG_LEVEL_DEBUG, "charCount %d reads 17 or more", charCount);
                     APP_LOG(APP_LOG_LEVEL_DEBUG, "setting location_layer, custom_font_tiny_location");
                     APP_LOG(APP_LOG_LEVEL_DEBUG, "setting ocation_layer, GTextOverflowModeWordWrap");
@@ -621,21 +622,21 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
                 //layer_set_frame(text_layer_get_layer(location_layer), (GRect(0, 125+changer, 144, 100)));
                 text_layer_set_overflow_mode(location_layer, GTextOverflowModeWordWrap);
             }
-            if (debug_flag > 4) {
+            if (debug_flag > 6) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "exiting location charCount if/then stack");
             }
             break;
             
 		case WEATHER_SUNRISE_KEY:
             sunriseInt = new_tuple->value->uint32;
-            if (debug_flag > 2) {
+            if (debug_flag == 1) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_SUNRISE_KEY sunriseInt: %lu", sunriseInt);
             }
             break;
             
 		case WEATHER_SUNSET_KEY:
             sunsetInt = new_tuple->value->uint32;
-            if (debug_flag > 2) {
+            if (debug_flag == 1) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_SUNSET_KEY sunsetInt: %lu", sunsetInt);
             }
             break;
@@ -744,7 +745,7 @@ void handle_minute_tick() {
 		if (lclTimeInt % 3600 == 0) {
 			handle_hour_tick();
         }
-		// fetch_message(); -- commenting this out disables auto updates
+		fetch_message(); // commenting this out disables auto updates
     }
 }
 

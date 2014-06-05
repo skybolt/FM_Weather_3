@@ -1,5 +1,6 @@
 /*jshint smarttabs:true*/
 
+
 var setPebbleToken = 'JUCP'; //    'XPGE'; 'JUCP is FM Forecast, XPGE is WU Forecast
 
 // //mine  //settings Key  http://setpebble.com/api/8BES
@@ -7,11 +8,11 @@ var setPebbleToken = 'JUCP'; //    'XPGE'; 'JUCP is FM Forecast, XPGE is WU Fore
 //console.log("request.open( http://x.SetPebble.com/api/" + setPebbleToken + '/' + Pebble.getAccountToken());
 //Pebble.addEventListener('ready', function(e) {
 //});
-var debug_flag = 0;
+var debug_flag = 3;
 var m = 1;
 var n = 0;
 var day; 
-var provider_flag = 0;
+var provider_flag = 1;
 //var tempFlag = 7; //0F, 1C, 2K, 3Ra, 4Re, 5Ro, 6N, 7De
 var offset = new Date().getTimezoneOffset() / 60;
 
@@ -346,11 +347,11 @@ function fetchWeatherConditions(latitude, longitude) {  //sends day0, day1 temp 
                     if (debug_flag > 1) {
                         console.log("requesting sendDayMessages(" + day + ")");
                     }
-                    sendDayMessages(day);
                     if (debug_flag > 1) {
                         console.log("requesting sendDayMessages(" + day + ")");
                     }
-                    sendDayMessages(day);
+				storePersistent(day, icon, temp, conditions, timestamp, baro);
+                    sendDayMessages(day, icon, temp, conditions, timestamp, baro);
                     
                     
                     var sunrise = response.sys.sunrise;
@@ -369,7 +370,9 @@ function fetchWeatherConditions(latitude, longitude) {  //sends day0, day1 temp 
                     if (debug_flag > 3) {
                         console.log("adgj sunset = " + sunset);
                     }
-                    MessageQueue.sendAppMessage({
+				 storePersistentAlmanac(location, sunrise, sunset); 
+				 MessageQueue.sendAppMessage({
+
                                                 location: location,
                                                 sunrise: sunrise,
                                                 sunset: sunset,
@@ -436,7 +439,8 @@ function fetchWeatherTodayForecast(latitude, longitude) {  //sends days 1, 2
                     if (debug_flag > 1) {
                         console.log("requesting sendDayMessages(" + day + ")");
                     }
-                    sendDayMessages(day);
+				storePersistent(day, icon, temp, conditions, timestamp, baro);
+                    sendDayMessages(day, icon, temp, conditions, timestamp, baro);
                     
                     n = 5;
                     day = 2;
@@ -453,7 +457,8 @@ function fetchWeatherTodayForecast(latitude, longitude) {  //sends days 1, 2
                     if (debug_flag > 1) {
                         console.log("requesting sendDayMessages(" + day + ")");
                     }
-                    sendDayMessages(day);
+				storePersistent(day, icon, temp, conditions, timestamp, baro);
+                    sendDayMessages(day, icon, temp, conditions, timestamp, baro);
                     
                 } else {console.log("fail responseText.lenght > 100 -" + ownName);}
             } else {console.log("fail 200: " + ownName);}
@@ -505,7 +510,8 @@ function fetchWeather3DayForecast(latitude, longitude) {       // sends days 3, 
                     if (debug_flag > 1) {
                         console.log("requesting sendDayMessages(" + day + ")");
                     }
-                    sendDayMessages(day);
+				storePersistent(day, icon, temp, conditions, timestamp, baro);
+                    sendDayMessages(day, icon, temp, conditions, timestamp, baro);
                     
                     n = m + 1;
                     day = 4;
@@ -523,7 +529,8 @@ function fetchWeather3DayForecast(latitude, longitude) {       // sends days 3, 
                     if (debug_flag > 1) {
                         console.log("requesting sendDayMessages(" + day + ")");
                     }
-                    sendDayMessages(day);
+				storePersistent(day, icon, temp, conditions, timestamp, baro);
+                    sendDayMessages(day, icon, temp, conditions, timestamp, baro);
                     
                     
                     n = m + 2;
@@ -542,7 +549,8 @@ function fetchWeather3DayForecast(latitude, longitude) {       // sends days 3, 
                     if (debug_flag > 1) {
                         console.log("requesting sendDayMessages(" + day + ")");
                     }
-                    sendDayMessages(day);
+				storePersistent(day, icon, temp, conditions, timestamp, baro);
+                    sendDayMessages(day, icon, temp, conditions, timestamp, baro);
                     
                 } else {console.log("fail responseText.lenght > 100 -" + ownName);}
             } else {console.log("fail 200: " + ownName);}
@@ -599,7 +607,8 @@ function fetchWeatherUndergroundConditions(latitude, longitude) { // gets day 0
                     if (debug_flag > 1) {
                         console.log("requesting sendDayMessages(" + day + ")");
                     }
-                    sendDayMessages(day);
+				storePersistent(day, icon, temp, conditions, timestamp, baro);
+                    sendDayMessages(day, icon, temp, conditions, timestamp, baro);
                     
                 } else {console.log("fail responseText.lenght > 100 -" + ownName);}
             } else {console.log("fail 200: " + ownName);}
@@ -665,7 +674,8 @@ function fetchWeatherUndergroundTodayForecast(latitude, longitude) { // gets day
                     if (debug_flag > 1) {
 					console.log("requesting sendDayMessages(" + day + ")");
                     }
-                    sendDayMessages(day);
+				storePersistent(day, icon, temp, conditions, timestamp, baro);
+                    sendDayMessages(day, icon, temp, conditions, timestamp, baro);
                     
                     n = 15;
                     day = 2;
@@ -688,7 +698,8 @@ function fetchWeatherUndergroundTodayForecast(latitude, longitude) { // gets day
 				 if (debug_flag > 1) {
 					 console.log("requesting sendDayMessages(" + day + ")");
 				 }
-				 sendDayMessages(day);
+				storePersistent(day, icon, temp, conditions, timestamp, baro);
+                    sendDayMessages(day, icon, temp, conditions, timestamp, baro);
                     
                 } else {console.log("fail responseText.lenght > 100 -" + ownName);}
             } else {console.log("fail 200: " + ownName);}
@@ -738,7 +749,8 @@ function fetchWeatherUnderground3DayForecast(latitude, longitude) { // gets day 
                     if (debug_flag > 1) {
                         console.log("requesting sendDayMessages(" + day + ")");
                     }
-                    sendDayMessages(day);
+				storePersistent(day, icon, temp, conditions, timestamp, baro);
+                    sendDayMessages(day, icon, temp, conditions, timestamp, baro);
                     
                     n = m;
                     day = 4;
@@ -755,7 +767,8 @@ function fetchWeatherUnderground3DayForecast(latitude, longitude) { // gets day 
                     if (debug_flag > 1) {
                         console.log("requesting sendDayMessages(" + day + ")");
                     }
-                    sendDayMessages(day);
+				storePersistent(day, icon, temp, conditions, timestamp, baro);
+                    sendDayMessages(day, icon, temp, conditions, timestamp, baro);
 
                     n = m + 1;
                     day = 5;	
@@ -772,7 +785,8 @@ function fetchWeatherUnderground3DayForecast(latitude, longitude) { // gets day 
                     if (debug_flag > 1) {
                         console.log("requesting sendDayMessages(" + day + ")");
                     }
-                    sendDayMessages(day);
+				storePersistent(day, icon, temp, conditions, timestamp, baro);
+                    sendDayMessages(day, icon, temp, conditions, timestamp, baro);
                     
                 } else {console.log("fail responseText.lenght > 100 -" + ownName);}
             } else {console.log("fail 200: " + ownName);}
@@ -823,7 +837,10 @@ function fetchSunriseSunset(latitude, longitude) {
                     if (debug_flag > 3) {
                         console.log("adgj sunset = " + sunset);
                     }
-                    MessageQueue.sendAppMessage({
+				 
+			
+				 storePersistentAlmanac(location, sunrise, sunset); 
+				 MessageQueue.sendAppMessage({
                                                 location: location,
                                                 sunrise: sunrise,
                                                 sunset: sunset,
@@ -835,11 +852,108 @@ function fetchSunriseSunset(latitude, longitude) {
     req.send(null);
     
 }
-
+/*
 function sendDayMessages(day) {
-    
+	var k0 = (day + 1) * 10; 
+	var k1 = k0 + 1; 
+	var k2 = k1 + 1; 
+	var k3 = k2 + 1;
+	var k4 = k3 + 1; 
+	
+	       console.log("day" + day + "_icon " + k0 + ":" + icon);
+            console.log("day" + day + "_temp: " +  k1 + ":" + temp);
+            console.log("day" + day + "_conditions: " +  k2 + ":" + conditions);
+            console.log("day" + day + "_timestamp: " +  k3 + ":" + timestamp);
+            console.log("day" + day + "_baro: " +  k4 + ":" + baro);
+	
+	        MessageQueue.sendAppMessage({
+                                    k0: icon,
+                                    k1: temp,
+                                    k2: conditions,
+                                    k3: timestamp,
+                                    k4: baro,
+                                    });
+        
+    }
+
+*/
+
+function storePersistent(day, icon, temp, conditions, timestamp, baro) {
+	        localStorage.setItem(day + "icon", icon);
+	        localStorage.setItem(day + "temp", temp);
+	        localStorage.setItem(day + "conditions", conditions);
+	        localStorage.setItem(day + "timestamp", timestamp);
+	        localStorage.setItem(day + "baro", baro);
+	if (debug_flag > 2) {
+	console.log('WRITING PERSISTENT STORAGE DAY' + day + " icon " + icon + " temp " + temp + " conditions " + conditions + " timestamp " + timestamp + " baro " + baro); 
+	console.log("verify storePersistent"); 
+	showPersistent(day);
+	}
+}
+
+function showPersistent(day) {
+	if (debug_flag > 2) {
+	console.log("CHECKING PERSISTENT STORAGE - day = " + day); 
+	console.log(day + "icon: " + localStorage.getItem(day + "icon")); 
+	console.log(day + "temp: " + localStorage.getItem(day + "temp")); 
+	console.log(day + "conditions: " + localStorage.getItem(day + "conditions")); 
+	console.log(day + "timestamp: " + localStorage.getItem(day + "timestamp")); 
+	console.log(day + "baro: " + localStorage.getItem(day + "baro")); 
+	}
+}
+
+function readPersistent(day) {
+	showPersistent(day);
+	if (debug_flag > 2) {
+	console.log("reading persistent storage requested"); 
+	console.log("icon: " + localStorage.getItem(day + "icon")); 
+	console.log("temp: " + localStorage.getItem(day + "temp")); 
+	console.log("conditions: " + localStorage.getItem(day + "conditions")); 
+	console.log("timestamp: " + localStorage.getItem(day + "timestamp")); 
+	console.log("baro: " + localStorage.getItem(day + "baro")); 
+	console.log("setting variables based on stored values" ); 
+	}
+	icon = parseInt(localStorage.getItem(day + "icon")); 
+	temp = localStorage.getItem(day + "temp"); 
+	conditions = localStorage.getItem(day + "conditions"); 
+	timestamp = parseInt(localStorage.getItem(day + "timestamp")); 
+	baro = localStorage.getItem(day + "baro"); 
+	if (debug_flag > 2) {
+		console.log("read persistent storage end day "  + day + " icon " + icon + " temp " + temp + " conditions " + conditions + " timestamp " + timestamp + " baro " + baro);
+	}
+
+	sendDayMessages(day, icon, temp, conditions, timestamp, baro); 
+
+}
+
+function storePersistentAlmanac(location, sunrise, sunset) {
+	if (debug_flag > -1) {
+		console.log("storing persistent data: location " + location + " sunrise " + sunrise + " sunset " + sunset); 
+	}
+	localStorage.setItem("location", location); 
+	localStorage.setItem("sunrise", sunrise);
+	localStorage.setItem("sunset", sunset);
+}
+
+function readPersistentAlmanac() {
+	var location = localStorage.getItem("location");
+	var sunrise = parseInt(localStorage.getItem(sunrise)); 
+	var sunset = parseInt(localStorage.getItem(sunset)); 
+	
+	MessageQueue.sendAppMessage({
+		 location: location,
+		 sunrise: sunrise,
+		 sunset: sunset,
+          });
+}
+
+
+
+function sendDayMessages(day, icon, temp, conditions, timestamp, baro) {
+//    var debug_flag = 2; 
     if (debug_flag > 1) {
-        console.log("day = " + day);
+        console.log("sending day = " + day);
+//	    showPersistent(day); 
     }
     n = 0;
     var k0 = day * 10; 
@@ -847,10 +961,14 @@ function sendDayMessages(day) {
     var k2 = k0 + 2;
     var k3 = k0 + 3;
     var k4 = k0 + 4;
-
+	
+//	storePersistent(day, icon, temp, conditions, timestamp, baro);
+//	showPersistent(day); 
+//	readPersistent(day); 
     
     if (day === 0) {
-        if (debug_flag > 1) {
+        if (debug_flag > -1) {
+		   console.log("send dayMessage" + day); 
             console.log("day0_icon " + k0 + ":" + icon);
             console.log("day0_temp: " +  k1 + ":" + temp);
             console.log("day0_conditions: " +  k2 + ":" + conditions);
@@ -858,17 +976,18 @@ function sendDayMessages(day) {
             console.log("day0_baro: " +  k4 + ":" + baro);
         }
         MessageQueue.sendAppMessage({
-                                    day0_icon: icon,
-                                    day0_temp: temp + "",
-                                    day0_conditions: conditions,
-                                    day0_timestamp: timestamp,
-                                    day0_baro: baro,
+                                    10: icon,
+                                    11: temp,
+                                    12: conditions,
+                                    13: timestamp,
+                                    14: baro,
                                     });
         
     }
     
     else if (day == 1) {
-        if (debug_flag > 1) {
+        if (debug_flag > -1) {
+		   console.log("send dayMessage" + day); 
             console.log("day1_icon " + k0 + ":" + icon);
             console.log("day1_temp: " +  k1 + ":" + temp);
             console.log("day1_conditions: " +  k2 + ":" + conditions);
@@ -885,6 +1004,7 @@ function sendDayMessages(day) {
     
     else if (day == 2) {
         if (debug_flag > 1) {
+		   console.log("send dayMessage" + day); 
             console.log("day2_icon " + k0 + ":" + icon);
             console.log("day2_temp: " +  k1 + ":" + temp);
             console.log("day2_conditions: " +  k2 + ":" + conditions);
@@ -901,6 +1021,7 @@ function sendDayMessages(day) {
     
     else if (day == 3) {
         if (debug_flag > 1) {
+		   console.log("send dayMessage" + day); 
             console.log("day3_icon " + k0 + ":" + icon);
             console.log("day3_temp: " +  k1 + ":" + temp);
             console.log("day3_conditions: " +  k2 + ":" + conditions);
@@ -917,6 +1038,7 @@ function sendDayMessages(day) {
     
     else if (day == 4) {
         if (debug_flag > 1) {
+		   console.log("send dayMessage" + day); 
             console.log("day4_icon " + k0 + ":" + icon);
             console.log("day4_temp: " +  k1 + ":" + temp);
             console.log("day4_conditions: " +  k2 + ":" + conditions);
@@ -933,6 +1055,7 @@ function sendDayMessages(day) {
     
     else if (day == 5) {
         if (debug_flag > 1) {
+		   console.log("send dayMessage" + day); 
             console.log("day5_icon " + k0 + ":" + icon);
             console.log("day5_temp: " +  k1 + ":" + temp);
             console.log("day5_conditions: " +  k2 + ":" + conditions);
@@ -946,7 +1069,7 @@ function sendDayMessages(day) {
                                     });
         
     }
-}
+}  
 
 
 
@@ -986,18 +1109,51 @@ timeout: 15e3,
 maximumAge: 6e4
 };
 
+function goDoStuff() {
+	var lastUpdate; 
+	var now = new Date().getTime();
+	now = Math.round(now / 1e3);
+	var delay = 1195;
+	console.log("lastUpdate: " + localStorage.getItem("lastUpdate")); 
+	if (!(localStorage.getItem("lastUpdate"))) {
+		console.log("local storage of lastUpdate not found"); 
+		lastUpdate = now - (delay + 1);
+		console.log("setting lastupdate to " + lastUpdate);
+		localStorage.setItem("lastUpdate", lastUpdate); 
+	} else {
+	lastUpdate = parseInt(localStorage.getItem("lastUpdate"));
+		console.log("localStorage.lastUpdate found: " + lastUpdate); 
+	}
+	
+	if ((lastUpdate + delay) < now) {
+		console.log("overdue " + (now - (lastUpdate + delay)) + " seconds");
+		localStorage.setItem("lastUpdate", now); 
+		locationWatcher = window.navigator.geolocation.watchPosition(locationSuccess, locationError, locationOptions);
+
+	} else if ((lastUpdate + delay) > now) {
+		console.log("please wait " + (now - (lastUpdate + delay)) + " seconds");
+		//readPersistentAlmanac(); 
+		for (var i = 0; i < 6; i++) {
+		//sendDayMessages(i);
+		readPersistent(i);
+		}
+	}
+}
+
 Pebble.addEventListener("ready", function(e) {
                         if (debug_flag > 1) {
                         console.log("addEventListener ready ");
                         }
-                        locationWatcher = window.navigator.geolocation.watchPosition(locationSuccess, locationError, locationOptions);
+					//locationWatcher = window.navigator.geolocation.watchPosition(locationSuccess, locationError, locationOptions);
+					goDoStuff(); 
                         });
 
 Pebble.addEventListener("appmessage", function(e) {
                         if (debug_flag > 1) {
                         console.log("addEventListener appmessage");
                         }
-                        window.navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
+                        //window.navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
+					goDoStuff(); 
                         /*
                          key = e.payload.action;
                          if (typeof(key) != 'undefined') {
@@ -1225,6 +1381,9 @@ function iconFromWeatherId(weatherId) {
 }
 
 
+var MessageQueue=function(){var RETRY_MAX=5;var queue=[];var sending=false;var timer=null;return{reset:reset,sendAppMessage:sendAppMessage,size:size};function reset(){queue=[];sending=false}function sendAppMessage(message,ack,nack){if(!isValidMessage(message)){return false}queue.push({message:message,ack:ack||null,nack:nack||null,attempts:0});setTimeout(function(){sendNextMessage()},1);return true}function size(){return queue.length}function isValidMessage(message){if(message!==Object(message)){return false}var keys=Object.keys(message);if(!keys.length){return false}for(var k=0;k<keys.length;k+=1){var validKey=/^[0-9a-zA-Z-_]*$/.test(keys[k]);if(!validKey){return false}var value=message[keys[k]];if(!validValue(value)){return false}}return true;function validValue(value){switch(typeof value){case"string":return true;case"number":return true;case"object":if(toString.call(value)=="[object Array]"){return true}}return false}}function sendNextMessage(){if(sending){return}var message=queue.shift();if(!message){return}message.attempts+=1;sending=true;Pebble.sendAppMessage(message.message,ack,nack);timer=setTimeout(function(){timeout()},1e3);function ack(){clearTimeout(timer);setTimeout(function(){sending=false;sendNextMessage()},200);if(message.ack){message.ack.apply(null,arguments)}}function nack(){clearTimeout(timer);if(message.attempts<RETRY_MAX){queue.unshift(message);setTimeout(function(){sending=false;sendNextMessage()},200*message.attempts)}else{if(message.nack){message.nack.apply(null,arguments)}}}function timeout(){setTimeout(function(){sending=false;sendNextMessage()},1e3);if(message.ack){message.ack.apply(null,arguments)}}}}();
+
+/*
 var MessageQueue = function() {
     function t() {
         s = [], c = !1;
@@ -1296,4 +1455,4 @@ var MessageQueue = function() {
     sendAppMessage: e,
     size: n
     };
-}();
+}();  */
