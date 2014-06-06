@@ -1,149 +1,149 @@
 {
-    "shortName": "FM Integrated",
+    "appKeys": {
+        "day2_temp": 31,
+        "day5_icon": 60,
+        "day5_timestamp": 63,
+        "day2_conditions": 32,
+        "day1_conditions": 22,
+        "day.0.conditions": 12,
+        "day2_icon": 30,
+        "sunrise": 70,
+        "day4_temp": 51,
+        "location": 72,
+        "day.0.baro": 14,
+        "day3_conditions": 42,
+        "day4_timestamp": 53,
+        "day.0.timestamp": 13,
+        "day3_temp": 41,
+        "day3_timestamp": 43,
+        "day1_icon": 20,
+        "day3_icon": 40,
+        "day1_timestamp": 23,
+        "day.0.icon": 10,
+        "day2_timestamp": 33,
+        "sunset": 71,
+        "day5_temp": 61,
+        "day.0.temp": 11,
+        "day4_conditions": 52,
+        "day4_icon": 50,
+        "day5_conditions": 62,
+        "day1_temp": 21
+    },
     "longName": "FM Integrated",
-    "versionLabel": "2.0.0",
     "capabilities": [
         "location",
         "configurable"
     ],
-    "appKeys": {
-        "day1_temp": 21,
-        "day5_conditions": 62,
-        "day.0.baro": 14,
-        "day5_timestamp": 63,
-        "location": 72,
-        "day2_conditions": 32,
-        "day5_icon": 60,
-        "day5_temp": 61,
-        "day2_temp": 31,
-        "sunrise": 70,
-        "day.0.timestamp": 13,
-        "day1_icon": 20,
-        "day3_conditions": 42,
-        "day2_icon": 30,
-        "day.0.temp": 11,
-        "day.0.conditions": 12,
-        "day1_conditions": 22,
-        "day3_temp": 41,
-        "day3_timestamp": 43,
-        "sunset": 71,
-        "day4_timestamp": 53,
-        "day4_conditions": 52,
-        "day4_temp": 51,
-        "day1_timestamp": 23,
-        "day3_icon": 40,
-        "day4_icon": 50,
-        "day.0.icon": 10,
-        "day2_timestamp": 33
-    },
+    "versionLabel": "2.0.0",
     "companyName": "the Klebeian Group",
-    "watchapp": {
-        "watchface": true
-    },
     "resources": {
         "media": [
             {
-                "name": "FONT_ARIAL_BOLD_16",
                 "file": "fonts/Arial Bold.ttf",
-                "type": "font"
+                "type": "font",
+                "name": "FONT_ARIAL_BOLD_16"
             },
             {
-                "name": "IMAGE_TSTORM",
                 "file": "images/vNext thunder.png",
-                "type": "png"
+                "type": "png",
+                "name": "IMAGE_TSTORM"
             },
             {
-                "name": "FONT_ARIAL_18",
                 "file": "fonts/Arial.ttf",
-                "type": "font"
+                "type": "font",
+                "name": "FONT_ARIAL_18"
             },
             {
-                "name": "FONT_ARIAL_15",
                 "file": "fonts/Arial.ttf",
-                "type": "font"
+                "type": "font",
+                "name": "FONT_ARIAL_15"
             },
             {
-                "name": "FONT_ARIAL_17",
                 "file": "fonts/Arial.ttf",
-                "type": "font"
+                "type": "font",
+                "name": "FONT_ARIAL_17"
             },
             {
-                "name": "FONT_ARIAL_16",
                 "file": "fonts/Arial.ttf",
-                "type": "font"
+                "type": "font",
+                "name": "FONT_ARIAL_16"
             },
             {
-                "name": "IMAGE_DATE_BORDER",
                 "file": "images/DateBorderSquare.png",
-                "type": "png"
+                "type": "png",
+                "name": "IMAGE_DATE_BORDER"
             },
             {
-                "name": "FONT_TAHOMA_BOLD_28",
                 "file": "fonts/Tahoma Bold.ttf",
-                "type": "font"
+                "type": "font",
+                "name": "FONT_TAHOMA_BOLD_28"
             },
             {
-                "name": "FONT_TAHOMA_BOLD_27",
                 "file": "fonts/Tahoma Bold.ttf",
-                "type": "font"
+                "type": "font",
+                "name": "FONT_TAHOMA_BOLD_27"
             },
             {
-                "name": "FONT_TAHOMA_BOLD_22",
                 "file": "fonts/Tahoma Bold.ttf",
-                "type": "font"
+                "type": "font",
+                "name": "FONT_TAHOMA_BOLD_22"
             },
             {
-                "name": "FONT_TAHOMA_BOLD_18",
                 "file": "fonts/Tahoma Bold.ttf",
-                "type": "font"
+                "type": "font",
+                "name": "FONT_TAHOMA_BOLD_18"
             },
             {
-                "name": "IMAGE_FOG",
                 "file": "images/haze_lines_3_block.png",
-                "type": "png"
+                "type": "png",
+                "name": "IMAGE_FOG"
             },
             {
-                "name": "IMAGE_SNOW",
                 "file": "images/snow.png",
-                "type": "png"
+                "type": "png",
+                "name": "IMAGE_SNOW"
             },
             {
-                "name": "IMAGE_RAIN",
                 "file": "images/rain.png",
-                "type": "png"
+                "type": "png",
+                "name": "IMAGE_RAIN"
             },
             {
-                "name": "IMAGE_CLOUD",
                 "file": "images/cloud.png",
-                "type": "png"
+                "type": "png",
+                "name": "IMAGE_CLOUD"
             },
             {
-                "name": "IMAGE_PCLOUDY_MOON",
                 "file": "images/pcloudy_moonV3.png",
-                "type": "png"
+                "type": "png",
+                "name": "IMAGE_PCLOUDY_MOON"
             },
             {
-                "name": "IMAGE_PCLOUDY",
                 "file": "images/pcloudyv2.png",
-                "type": "png"
+                "type": "png",
+                "name": "IMAGE_PCLOUDY"
             },
             {
-                "name": "IMAGE_MOON",
                 "file": "images/moonv3.png",
-                "type": "png"
+                "type": "png",
+                "name": "IMAGE_MOON"
             },
             {
-                "name": "IMAGE_UNKNOWN",
                 "file": "images/unknown.png",
-                "type": "png"
+                "type": "png",
+                "name": "IMAGE_UNKNOWN"
             },
             {
-                "name": "IMAGE_SUN",
                 "file": "images/sun v3.png",
-                "type": "png"
+                "type": "png",
+                "name": "IMAGE_SUN"
             }
         ]
     },
-    "versionCode": 1,
-    "uuid": "40588d95-2aed-41e6-9300-e53a9a501af3"
+    "watchapp": {
+        "watchface": true
+    },
+    "uuid": "40588d95-2aed-41e6-9300-e53a9a501af3",
+    "shortName": "FM Integrated",
+    "versionCode": 1
 }

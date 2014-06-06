@@ -12,7 +12,7 @@ var debug_flag = 3;
 var m = 1;
 var n = 0;
 var day; 
-var provider_flag = 1;
+var provider_flag = 0;
 //var tempFlag = 7; //0F, 1C, 2K, 3Ra, 4Re, 5Ro, 6N, 7De
 var offset = new Date().getTimezoneOffset() / 60;
 
@@ -933,12 +933,16 @@ function storePersistentAlmanac(location, sunrise, sunset) {
 	localStorage.setItem("location", location); 
 	localStorage.setItem("sunrise", sunrise);
 	localStorage.setItem("sunset", sunset);
+	
+	
 }
 
 function readPersistentAlmanac() {
 	var location = localStorage.getItem("location");
 	var sunrise = parseInt(localStorage.getItem(sunrise)); 
 	var sunset = parseInt(localStorage.getItem(sunset)); 
+	
+		console.log("read from persistent data: location " + location + " sunrise " + sunrise + " sunset " + sunset); 
 	
 	MessageQueue.sendAppMessage({
 		 location: location,
@@ -1113,7 +1117,7 @@ function goDoStuff() {
 	var lastUpdate; 
 	var now = new Date().getTime();
 	now = Math.round(now / 1e3);
-	var delay = 1195;
+	var delay = 30;
 	console.log("lastUpdate: " + localStorage.getItem("lastUpdate")); 
 	if (!(localStorage.getItem("lastUpdate"))) {
 		console.log("local storage of lastUpdate not found"); 
@@ -1132,7 +1136,7 @@ function goDoStuff() {
 
 	} else if ((lastUpdate + delay) > now) {
 		console.log("please wait " + (now - (lastUpdate + delay)) + " seconds");
-		//readPersistentAlmanac(); 
+//		readPersistentAlmanac(); 
 		for (var i = 0; i < 6; i++) {
 		//sendDayMessages(i);
 		readPersistent(i);
@@ -1141,47 +1145,18 @@ function goDoStuff() {
 }
 
 Pebble.addEventListener("ready", function(e) {
-                        if (debug_flag > 1) {
                         console.log("addEventListener ready ");
-                        }
 					//locationWatcher = window.navigator.geolocation.watchPosition(locationSuccess, locationError, locationOptions);
 					goDoStuff(); 
                         });
 
 Pebble.addEventListener("appmessage", function(e) {
-                        if (debug_flag > 1) {
                         console.log("addEventListener appmessage");
-                        }
                         //window.navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
 					goDoStuff(); 
-                        /*
-                         key = e.payload.action;
-                         if (typeof(key) != 'undefined') {
-                         var settings = localStorage.getItem(setPebbleToken);
-                         if (typeof(settings) == 'string') {
-                         try {
-                         Pebble.sendAppMessage(JSON.parse(settings));
-                         } catch (e) {
-                         }
-                         }
-                         
-                         var request = new XMLHttpRequest();
-                         request.open('GET', 'http://x.SetPebble.com/api/' + setPebbleToken + '/' + Pebble.getAccountToken(), true);
-                         request.onload = function(e) {
-                         if (request.readyState == 4)
-                         if (request.status == 200)
-                         try {
-                         Pebble.sendAppMessage(JSON.parse(request.responseText));
-                         } catch (e) {
-                         }
-                         }
-                         request.send(null);
-                         }  */
                         });
 
-Pebble.addEventListener("showConfiguration", function() {
-                        //    Pebble.openURL("http://assets.getpebble.com.s3-website-us-east-1.amazonaws.com/pebble-js/configurable.html");
-                        
+Pebble.addEventListener("showConfiguration", function() {                   
                         Pebble.openURL('http://x.SetPebble.com/' + setPebbleToken + '/' + Pebble.getAccountToken());
                         });
 
@@ -1189,7 +1164,7 @@ Pebble.addEventListener("webviewclosed", function(e) {
                         if ((typeof(e.response) == 'string') && (e.response.length > 0)) {
                         //set local value tempFlag to return value
                         //Pebble.sendAppMessage(JSON.parse(e.response));se);
-					    var responseText		= e.response;
+					var responseText		= e.response;
 					    //var item = "1";
                         
                         if (debug_flag > -1) {
