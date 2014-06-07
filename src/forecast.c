@@ -582,6 +582,8 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             if (debug_flag > 6) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "STRING [02] %s has %d characters", location_counter, charCount);
             }
+		
+		debug_flag = 7; 
             
             if (charCount < 10 ) {
                 //GFont custom_font_large_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
@@ -602,8 +604,9 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
                 //GFont custom_font_small_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_18));
                 // not in use anymore
                 GFont custom_font_small_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_18));
-                //text_layer_set_font(location_layer, custom_font_small_location);
-                text_layer_set_font(location_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
+                text_layer_set_font(location_layer, custom_font_small_location);
+                //text_layer_set_font(location_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
+                //text_layer_set_font(location_layer, fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK));
                 //layer_set_frame(text_layer_get_layer(location_layer), (GRect(0, 122+changer, 144, 100)));
                 if (debug_flag > 6) {
                     APP_LOG(APP_LOG_LEVEL_DEBUG, "setting location_layer, custom_font_small_location");
