@@ -302,7 +302,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 	GFont custom_font_tinytemp 	= fonts_get_system_font(FONT_KEY_GOTHIC_18);
 	GFont custom_font_temp 		= fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
 	GFont custom_font_large_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
-	//debug_flag = 1; 
+//	debug_flag = 6; 
     
 	
 	switch (key) {
@@ -1316,12 +1316,12 @@ static void window_unload(Window *window) {
     
     text_layer_destroy(current_barometer_layer);
     
-      text_layer_destroy(current_status_layer);
-//    text_layer_destroy(current_temperature_layer);
+//      text_layer_destroy(current_status_layer);
+//      text_layer_destroy(current_temperature_layer);
 
-//    bitmap_layer_destroy(current_icon_layer);
-//    bitmap_layer_destroy(day2_icon_layer);
-//    bitmap_layer_destroy(day1_icon_layer);
+//      bitmap_layer_destroy(current_icon_layer);
+//      bitmap_layer_destroy(day2_icon_layer);
+//      bitmap_layer_destroy(day1_icon_layer);
 //    bitmap_layer_destroy(nextday_icon_layer);
 //    bitmap_layer_destroy(tomorrow_icon_layer);
 //    bitmap_layer_destroy(today_icon_layer);
