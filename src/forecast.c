@@ -2,18 +2,18 @@
 #include "bluetooth.h"
 #include "forecast.h"
 
-//native background white
-	//extra comment for GIT
-//inverted background black
 
-// weather underground fm_forecast_stable
+
+
+
+
 
 
 int 				debug_flag = 0;
 int                 switchFlag = 0;
 
 Window *window;
-//Layer *window_layer; // = window_get_root_layer(window);
+
 
 BitmapLayer *today_icon_layer;
 BitmapLayer *tomorrow_icon_layer;
@@ -185,18 +185,18 @@ void black_layer_update_callback(Layer *layer, GContext* ctx) {
 
 static void fetch_message(void) {
     
-    //	layer_set_hidden(text_layer_get_layer(build_layer), false);
-    //	layer_set_hidden(bitmap_layer_get_layer(comm_status_layer), false);
+
+
 	
-    //	refresh_counter = 0;
+
     DictionaryIterator *iter;
     app_message_outbox_begin(&iter);
     
     if (iter == NULL) {
-        //		layer_set_hidden(text_layer_get_layer(build_layer), false);
+
         return;
 	}
-    //	dict_write_end(iter);
+
 	app_message_outbox_send();
 }
 
@@ -211,13 +211,13 @@ void config_provider(void *context) {
 
 
 void windowSwitch(void) {
-    //    if (switchFlag == 0) {
-    //		switchFlag = 1;
-    //	} else
+
+
+
     
-    /*    if (counter_one == 0) {
-     counter_one = 15;
-     }  */
+
+
+
     
     if (switchFlag == 0) {
         // show today_forecast
@@ -247,7 +247,7 @@ void accel_tap_handler(AccelAxisType axis, int32_t direction) {
 }
 
 static void handle_battery(BatteryChargeState charge_state) {
-    //int xPos = lclTimeInt % 60;
+
 	
     
     APP_LOG(APP_LOG_LEVEL_INFO, "battery handler invoked");
@@ -255,16 +255,16 @@ static void handle_battery(BatteryChargeState charge_state) {
 	xPos = (144 * xPos) / 100;
 	layer_set_frame(power_bar_layer, GRect(xPos, 37, 1, 2));
     
-    /*int xPos = charge_state.charge_percent;
-     xPos = (144 * xPos) / 100;
-     layer_set_frame(power_bar_layer, GRect(xPos, 97, 1, 2));
-     //	layer_set_update_proc(power_bar_layer, black_layer_update_callback);
-     */
-    /*	if (charge_state.is_charging) {
+
+
+
+
+
+
      
-     } else {
+
      
-     }  */
+
 	
 }
 
@@ -298,7 +298,7 @@ int countChar(char *s)
 
 
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
-	//GFont custom_font_temp		= fonts_get_system_font(FONT_KEY_FONT_FALLBACK);
+
 	GFont custom_font_tinytemp 	= fonts_get_system_font(FONT_KEY_GOTHIC_18);
 	GFont custom_font_temp 		= fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
 	GFont custom_font_large_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
@@ -316,7 +316,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             
             
 		case WEATHER_DAY0_TIMESTAMP_KEY:
-            //        todayInt = new_tuple->value->uint32;
+
             current_conditions_time_int = new_tuple->value->uint32;
             time_t currentStamp     = current_conditions_time_int;
             timer_tm = localtime (&currentStamp);
@@ -329,7 +329,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             
 		case WEATHER_DAY1_TIMESTAMP_KEY:
             todayForecastTimeInt = new_tuple->value->uint32;
-            //
+
             time_t timeStamp   		= todayForecastTimeInt;
             timer_tm = localtime (&timeStamp);
             strftime(day_text, sizeof(day_text), "%l%P\n %a", timer_tm);
@@ -392,7 +392,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             
 		case WEATHER_DAY1_CONDITIONS_KEY:
             text_layer_set_text(day1_cond_layer, new_tuple->value->cstring);
-            //        today_conditions = new_tuple->value->cstring;
+
             if (debug_flag == 2) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY1_CONDITIONS_KEY %s", new_tuple->value->cstring);
             }
@@ -400,7 +400,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             
 		case WEATHER_DAY2_CONDITIONS_KEY:
             text_layer_set_text(day2_cond_layer, new_tuple->value->cstring);
-            //        today_conditions = new_tuple->value->cstring;
+
             if (debug_flag == 3) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY2_CONDITIONS_KEY %s", new_tuple->value->cstring);
             }
@@ -583,31 +583,31 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "STRING [02] %s has %d characters", location_counter, charCount);
             }
 		
-		//debug_flag = 7; 
+
             
             if (charCount < 10 ) {
-                //GFont custom_font_large_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
-                //text_layer_set_font(location_layer, custom_font_large_location);
-                //text_layer_set_font(location_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
+
+
+
                 if (debug_flag > 6) {
                     APP_LOG(APP_LOG_LEVEL_DEBUG, "charCount %d reads less than 10", charCount);
                     APP_LOG(APP_LOG_LEVEL_DEBUG, "setting location_layer, custom_font_large_location");
                     APP_LOG(APP_LOG_LEVEL_DEBUG, "setting ocation_layer, GTextOverflowModeTrailingEllipsis");
                 }
-                //layer_set_frame(text_layer_get_layer(location_layer), (GRect(-10, 115+changer, 164, 35)));
-                //text_layer_set_overflow_mode(location_layer, GTextOverflowModeTrailingEllipsis);
+
+
             } else if (charCount < 16) {
                 if (debug_flag > 6) {
                     APP_LOG(APP_LOG_LEVEL_DEBUG, "charCount %d reads greater than 10 less than 16", charCount);
                 }
                 text_layer_set_overflow_mode(location_layer, GTextOverflowModeWordWrap);
-                //GFont custom_font_small_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_18));
-                // not in use anymore
+
+
                 GFont custom_font_small_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_18));
-                //text_layer_set_font(location_layer, custom_font_small_location);
-                //text_layer_set_font(location_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
-                //text_layer_set_font(location_layer, fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK));
-                //layer_set_frame(text_layer_get_layer(location_layer), (GRect(0, 122+changer, 144, 100)));
+
+
+
+
                 if (debug_flag > 6) {
                     APP_LOG(APP_LOG_LEVEL_DEBUG, "setting location_layer, custom_font_small_location");
                     APP_LOG(APP_LOG_LEVEL_DEBUG, "setting ocation_layer, GTextOverflowModeWordWrap");
@@ -620,9 +620,9 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
                     APP_LOG(APP_LOG_LEVEL_DEBUG, "setting ocation_layer, GTextOverflowModeWordWrap");
                 }
                 GFont custom_font_tiny_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_BOLD_16));
-                //text_layer_set_font(location_layer, custom_font_tiny_location);
+
                 text_layer_set_font(location_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
-                //layer_set_frame(text_layer_get_layer(location_layer), (GRect(0, 125+changer, 144, 100)));
+
                 text_layer_set_overflow_mode(location_layer, GTextOverflowModeWordWrap);
             }
             if (debug_flag > 6) {
@@ -656,25 +656,25 @@ void handle_minute_tick() {
 	uint32_t lclTimeInt = lclTime;
 	uint32_t zuluTimeInt = lclTime + (60*60*offsetInt);
 	time_t zuluTime = zuluTimeInt;
-	struct tm *timer_tm; //(zuluTime, zulu_time);
+	struct tm *timer_tm; 
 	timer_tm = localtime (&zuluTime);
-	////APP_LOG(APP_LOG_LEVEL_DEBUG, "time_t gmt = time(NULL) %lu", gmt);
-	////APP_LOG(APP_LOG_LEVEL_DEBUG, "time_t nowInt = time(NULL) %lu", nowInt);
-    //	uint32_t diffInt;
-    //	diffInt = nowInt - staleInt;
-	////APP_LOG(APP_LOG_LEVEL_DEBUG, "sunInt");
-	////APP_LOG(APP_LOG_LEVEL_DEBUG, "%d", sunInt);
+
+
+
+
+
+
 	char displayTimeString[32];
 	strftime(displayTimeString, sizeof(displayTimeString), "%A %l:%M%P", timer_tm);
-	////APP_LOG(APP_LOG_LEVEL_DEBUG, "zulu Time rendered is %s", displayTimeString);
+
 	timer_tm = localtime (&lclTime);
 	strftime(displayTimeString, sizeof(displayTimeString), "%A %l:%M%P", timer_tm);
-	////APP_LOG(APP_LOG_LEVEL_DEBUG, "local Time rendered is %s", displayTimeString);
+
     
-	////APP_LOG(APP_LOG_LEVEL_DEBUG, "sunriseInt = %lu", sunriseInt);
+
 	time_t display_time_t = sunriseInt;
 	timer_tm = localtime (&display_time_t);
-    //	char displayTimeString[32];
+
 	strftime(displayTimeString, sizeof(displayTimeString), "%A %l:%M%P", timer_tm);
     if (debug_flag > 3) {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "GMT sunrise: %s", displayTimeString);
@@ -685,19 +685,19 @@ void handle_minute_tick() {
 	timer_tm = localtime (&display_time_t);
 	strftime(displayTimeString, sizeof(displayTimeString), "%A %l:%M%P", timer_tm);
 	
-	//display_time_t = staleInt;
-	//timer_tm = localtime(&display_time_t);
-	//strftime(displayTimeString, sizeof(displayTimeString), "%A %l:%M%P", timer_tm);
-	////APP_LOG(APP_LOG_LEVEL_DEBUG, "RAW stale time: %s", displayTimeString);
+
+
+
+
 	
 	
-	//uint32_t localStaleInt = staleInt - (3600*offsetInt);
-	//display_time_t = localStaleInt;
-	//timer_tm = localtime (&display_time_t);
-	//strftime(displayTimeString, sizeof(displayTimeString), "%A %l:%M%P", timer_tm);
-	////APP_LOG(APP_LOG_LEVEL_DEBUG, "adjusted stale time: %s", displayTimeString);
+
+
+
+
+
 	
-	//change zulu sunset into a local sunset
+
     
 	uint32_t localSunsetInt = sunsetInt - (3600*offsetInt);
 	display_time_t = localSunsetInt;
@@ -730,21 +730,21 @@ void handle_minute_tick() {
         //				(sunsetInt - (3600*offsetInt)) % 86400 / 3600 );
 		//APP_LOG(APP_LOG_LEVEL_DEBUG, "sunrise %lu < now %lu > sunset %lu", (localSunriseInt % 86400) / 3600, (lclTimeInt % 86400) / 3600, (localSunsetInt % 86400) / 3600);
         
-        /*	if (sunInt <= 7) {
-         ////APP_LOG(APP_LOG_LEVEL_DEBUG, "sunInt %d <= 7", sunInt);
-         night_flag = 1;
-         layer_set_hidden(inverter_layer_get_layer(inverter_layer), false);
+
+
+
+
+
+
+
+
+
+
+
+
+
          
-         } else if (sunInt >= 19) {
-         ////APP_LOG(APP_LOG_LEVEL_DEBUG, "sunInt %d >= 19", sunInt);
-         night_flag = 1;
-         layer_set_hidden(inverter_layer_get_layer(inverter_layer), false);
-         } else {
-         ////APP_LOG(APP_LOG_LEVEL_DEBUG, "7 <= sunInt %d >= 19", sunInt);
-         night_flag = 0;
-         layer_set_hidden(inverter_layer_get_layer(inverter_layer), true);
-         
-         } */
+
 		if (lclTimeInt % 3600 == 0) {
 			handle_hour_tick();
         }
@@ -754,7 +754,7 @@ void handle_minute_tick() {
 
 static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
     
-    //	handle_battery(battery_state_service_peek());
+
     if (counter_one == 0) {
         if (debug_flag > 8) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "counter_one = 0");
@@ -771,46 +771,46 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
     }
 	
 	static char time_text[] = "00:00AAA"; // Needs to be static because it's used by the system later. "%l:%M %y"
-    //	strftime(time_text, sizeof(time_text), "%l:%M%p", tick_time);
+
     strftime(time_text, sizeof(time_text), "%l:%M%p", tick_time);
 	text_layer_set_text(time_layer, time_text);
 	
-	//strftime(time_text, sizeof(time_text), "%H", tick_time);
-    //	////APP_LOG(APP_LOG_LEVEL_DEBUG, time_text);
+
+
 	
 	static char date_text[] = "00/00";
 	strftime(date_text, sizeof(date_text), "%d", tick_time);
 	text_layer_set_text(date_layer, date_text);
     
-    //snip begin
+
     
-    //	static char date_text[] = "00/00";
+
 	strftime(date_text, sizeof(date_text), "%d", tick_time);
 	text_layer_set_text(date_layer, date_text);
 	
-    //	static int sunInt = atoi(time_text);
-    //	////APP_LOG(APP_LOG_LEVEL_DEBUG, "sunInt");
-    //	////APP_LOG(APP_LOG_LEVEL_DEBUG, "%d", sunInt);
-    //	static char date_text[] = "00/00";
+
+
+
+
 	static char day_text[] = "aaa";
 	static char day1_text[] = "aaa";
 	static char day2_text[] = "aaa";
 	
 	time_t current   = time(0);
-    //	time_t inOneDay = current + (60*60*24); // 60 minutes of 60 sec.
-    //	time_t inTwoDays = current + (60*60*48);
+
+
 	
-    //uint32_t todayInt = 1395345600;
-    //uint32_t tomorrowInt = 1395432000;
-    //uint32_t nextdayInt = 1395518400;
+
+
+
 	
-    //	time_t current   = time(1395345600);
-    //	time_t inOneDay = time(1395432000); // 60 minutes of 60 sec.
-    //	time_t inTwoDays = time(1395432000);
+
+
+
     
-    //	time_t current   	= 1395345600 + (offset*3600);
-    //	time_t inOneDay 	= 1395432000 + (offset*3600); // 60 minutes of 60 sec.
-    //	time_t inTwoDays 	= 1395432000 + (offset*3600);
+
+
+
 	
 	time_t today   		= todayInt 		- (offsetInt*3600);
 	time_t inOneDay 	= tomorrowInt	- (offsetInt*3600); // 60 minutes of 60 sec.
@@ -823,11 +823,11 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "day[0]text: %s", day_text);
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "day[0]Int = %lu", todayInt);
 	}
-    //	strftime(time_text, sizeof(time_text), "%l:%M%P", timer_tm);
-	////APP_LOG(APP_LOG_LEVEL_DEBUG, time_text);
+
+
 	timer_tm = localtime (&current);
-    //	strftime(time_text, sizeof(time_text), "%l:%M%P", timer_tm);
-	////APP_LOG(APP_LOG_LEVEL_DEBUG, time_text);
+
+
     
 	
 	timer_tm = localtime (&inOneDay);
@@ -845,7 +845,7 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "day[2]text %s", day2_text);
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "day[2]Int = %lu", nextdayInt);
 	}
-	//snip end
+
     
 	time_t nowInt = time(NULL);
 	if (nowInt % 60 == 0 ) {
@@ -1014,8 +1014,8 @@ static void window_load(Window *window) {
 		TupletInteger(WEATHER_SUNRISE_KEY, (int) 999928800), //1395410913 ),
 		TupletInteger(WEATHER_SUNSET_KEY, (int) 999979200), //1395455062 ),
         
-        //uint32_t sunriseInt = 1095429600;
-        //uint32_t sunsetInt = 1095472800;
+
+
 	};
     
     if (debug_flag > 2) {
@@ -1029,9 +1029,9 @@ static void window_load(Window *window) {
 	int w_size = 48;
 	int h_size = 50;
 	int downset = -1; //perfect for ARIAL_15
-    //	int downset = -5; //This is for GOTHIC 24
+
 	int downTempSet = -2; //This is for GOTHIC 18
-	//int dayhite = 15;
+
     
 	bt_layer = text_layer_create(GRect(2, 41, 15, 19));
 	
@@ -1043,9 +1043,9 @@ static void window_load(Window *window) {
 	
 	time_layer = text_layer_create(GRect(0, 1, 144 * .75, 50));
 	date_layer = text_layer_create(GRect(92+4, -1, 52, 32));
-    //	location_layer = text_layer_create(GRect(0, 111-3, 144, 100));
+
 	location_layer = text_layer_create(GRect(-2, 125, 148, 40));
-    //    layer_set_frame(text_layer_get_layer(location_layer), (GRect(-10, 115+changer, 164, 35)));
+
     
     
 	current_icon_layer = bitmap_layer_create(GRect(9, 58-43, 50, 50));
@@ -1092,7 +1092,7 @@ static void window_load(Window *window) {
 	text_layer_set_text_alignment(day4_temp_layer, GTextAlignmentCenter);
 	text_layer_set_text_alignment(day5_temp_layer, GTextAlignmentCenter);
 	
-    //	text_layer_set_overflow_mode(day3_temp_layer, GTextOverflowModeFill);
+
 	text_layer_set_overflow_mode(day3_cond_layer, GTextOverflowModeWordWrap);
 	text_layer_set_overflow_mode(day4_cond_layer, GTextOverflowModeWordWrap);
 	text_layer_set_overflow_mode(day5_cond_layer, GTextOverflowModeWordWrap);
@@ -1143,7 +1143,7 @@ static void window_load(Window *window) {
 	text_layer_set_background_color(day4_cond_layer, GColorClear);
 	text_layer_set_background_color(day5_cond_layer, GColorClear);
 	
-	//GFont custom_font_status = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_17));
+
 	GFont custom_font_temp 		= fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
 	text_layer_set_font(day3_cond_layer, custom_font_status);
 	text_layer_set_font(day4_cond_layer, custom_font_status);
@@ -1162,7 +1162,7 @@ static void window_load(Window *window) {
 	
 	text_layer_set_background_color(time_layer, GColorClear);
 	text_layer_set_text_alignment(time_layer, GTextAlignmentLeft);
-	//GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
+
 	text_layer_set_font(time_layer, custom_font_time);
 	text_layer_set_overflow_mode(time_layer, GTextOverflowModeFill);
 	
