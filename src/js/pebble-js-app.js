@@ -8,11 +8,11 @@ var setPebbleToken = 'JUCP'; //    'XPGE'; 'JUCP is FM Forecast, XPGE is WU Fore
 //console.log("request.open( http://x.SetPebble.com/api/" + setPebbleToken + '/' + Pebble.getAccountToken());
 //Pebble.addEventListener('ready', function(e) {
 //});
-var debug_flag = 3;
+var debug_flag = 0;
 var m = 1;
 var n = 0;
 var day; 
-var provider_flag = 0;
+var provider_flag = 1;
 //var tempFlag = 7; //0F, 1C, 2K, 3Ra, 4Re, 5Ro, 6N, 7De
 var offset = new Date().getTimezoneOffset() / 60;
 
@@ -79,6 +79,7 @@ function stripper(stripped) {
     stripped = stripped.replace("Partly Cloudy", "part cldy");
     stripped = stripped.replace("Mostly Cloudy", "most cldy");
     stripped = stripped.replace("overcast", "over cast");
+    stripped = stripped.replace("over cast clouds", "overcast clouds"); 
     if (debug_flag > 2) {
         console.log("stripper output: " + stripped);
     }
@@ -86,7 +87,7 @@ function stripper(stripped) {
 }
 
 function tempShower(inTemp) {
-	debug_flag = 2; 
+	//debug_flag = 2; 
 	if (debug_flag > 1) {
 		temp = (inTemp * (9/5)) - 459.67;
 		temp = Math.round(temp);
@@ -329,7 +330,7 @@ function fetchWeatherConditions(latitude, longitude) {  //sends day0, day1 temp 
                     console.log("fetchWeatherConditions response = \n" + req.responseText);
                 }
                 if (req.responseText.length > 100) {
-                    var location = response.name;
+                    //var location = response.name;
                     
                     n = 0;
                     day = 0;
@@ -353,7 +354,7 @@ function fetchWeatherConditions(latitude, longitude) {  //sends day0, day1 temp 
 				storePersistent(day, icon, temp, conditions, timestamp, baro);
                     sendDayMessages(day, icon, temp, conditions, timestamp, baro);
                     
-                    
+				 /*
                     var sunrise = response.sys.sunrise;
 					if (debug_flag > 3) {
                         console.log("raw sunrise = " + sunrise);
@@ -378,8 +379,9 @@ function fetchWeatherConditions(latitude, longitude) {  //sends day0, day1 temp 
                                                 sunset: sunset,
                                                 });
                     if (debug_flag > 1) {
-                        console.log("location: " + location + " sunrise: " + sunrise + " sunset: " + sunset);
+                        console.log("location: " + location + " sunrise: " + sunrise + " sunset: " + s);
                     }
+				*/
                 } else {console.log("fail responseText.lenght > 100 -" + ownName);}
             } else {console.log("fail 200: " + ownName);}
         } else {console.log("fail readyState == 4 " + ownName);}
@@ -815,7 +817,7 @@ function fetchSunriseSunset(latitude, longitude) {
                 response = JSON.parse(req.responseText);
                 if (debug_flag > 4) {
                     console.log("req.responseText.lenght = " + req.responseText.length);
-                    console.log("fetchWeatherConditions response = \n" + req.responseText);
+                    console.log("fetchSunriseSunset response = \n" + req.responseText);
                 }
                 if (req.responseText.length > 100) {
                     var location = response.name;
@@ -845,6 +847,7 @@ function fetchSunriseSunset(latitude, longitude) {
                                                 sunrise: sunrise,
                                                 sunset: sunset,
                                                 });
+//				 readPersistentAlmanac(); 
                 } else {console.log("fail responseText.lenght > 100 -" + ownName);}
             } else {console.log("fail 200: " + ownName);}
         } else {console.log("fail readyState == 4 " + ownName);}
@@ -939,10 +942,13 @@ function storePersistentAlmanac(location, sunrise, sunset) {
 
 function readPersistentAlmanac() {
 	var location = localStorage.getItem("location");
-	var sunrise = parseInt(localStorage.getItem(sunrise)); 
-	var sunset = parseInt(localStorage.getItem(sunset)); 
-	
-		console.log("read from persistent data: location " + location + " sunrise " + sunrise + " sunset " + sunset); 
+	var sunrise = parseInt(localStorage.getItem("sunrise")); 
+	var sunset = parseInt(localStorage.getItem("sunset")); 
+	if (debug_flag > 1) {
+	console.log("check INTS: location: " + location + " sunrise parseInt: " + parseInt(localStorage.getItem("sunrise")) + " sunset parseInt " + parseInt(localStorage.getItem("sunset")));
+	console.log("check raw values : location: " + location + " sunrise parseInt: " + localStorage.getItem("sunrise") + " sunset parseInt " + localStorage.getItem("sunset"));	
+	console.log("rpopulated values read from storage: location " + location + " sunrise " + sunrise + " sunset " + sunset); 
+	}
 	
 	MessageQueue.sendAppMessage({
 		 location: location,
@@ -971,7 +977,7 @@ function sendDayMessages(day, icon, temp, conditions, timestamp, baro) {
 //	readPersistent(day); 
     
     if (day === 0) {
-        if (debug_flag > -1) {
+        if (debug_flag > 1) {
 		   console.log("send dayMessage" + day); 
             console.log("day0_icon " + k0 + ":" + icon);
             console.log("day0_temp: " +  k1 + ":" + temp);
@@ -990,7 +996,7 @@ function sendDayMessages(day, icon, temp, conditions, timestamp, baro) {
     }
     
     else if (day == 1) {
-        if (debug_flag > -1) {
+        if (debug_flag > 1) {
 		   console.log("send dayMessage" + day); 
             console.log("day1_icon " + k0 + ":" + icon);
             console.log("day1_temp: " +  k1 + ":" + temp);
@@ -1102,7 +1108,7 @@ function locationSuccess(pos) {
 }
 
 function locationError(err) {
-    console.warn("location error (" + err.code + "): " + err.message);
+    console.warn("location lookup error (" + err.code + "): " + err.message);
     MessageQueue.sendAppMessage({
                                 city: "Loc Unavailable",
                                 });
@@ -1117,7 +1123,7 @@ function goDoStuff() {
 	var lastUpdate; 
 	var now = new Date().getTime();
 	now = Math.round(now / 1e3);
-	var delay = 30;
+	var delay = 31;
 	console.log("lastUpdate: " + localStorage.getItem("lastUpdate")); 
 	if (!(localStorage.getItem("lastUpdate"))) {
 		console.log("local storage of lastUpdate not found"); 
@@ -1135,8 +1141,8 @@ function goDoStuff() {
 		locationWatcher = window.navigator.geolocation.watchPosition(locationSuccess, locationError, locationOptions);
 
 	} else if ((lastUpdate + delay) > now) {
-		console.log("please wait " + (now - (lastUpdate + delay)) + " seconds");
-//		readPersistentAlmanac(); 
+		console.log("please wait " + parseInt((now - (lastUpdate + delay))) + " seconds");
+		readPersistentAlmanac(); 
 		for (var i = 0; i < 6; i++) {
 		//sendDayMessages(i);
 		readPersistent(i);
@@ -1167,7 +1173,7 @@ Pebble.addEventListener("webviewclosed", function(e) {
 					var responseText		= e.response;
 					    //var item = "1";
                         
-                        if (debug_flag > -1) {
+                        if (debug_flag > 1) {
                         console.log("raw e.response (no JSON.parse) = " + e.response);
                         console.log("responseText.replace = " + responseText);
                         console.log("tempFlag = " + tempFlag);
@@ -1177,7 +1183,7 @@ Pebble.addEventListener("webviewclosed", function(e) {
                         responseText = responseText.replace("\"3\"", "\"location\"");
                         responseText = responseText.replace("\"4\"", "\"provider\"");
 					    
-                        if (debug_flag > -1) {
+                        if (debug_flag > 1) {
                         console.log("responseText.replace = " + responseText);
 				    }
                         var config = JSON.parse(responseText);
@@ -1207,7 +1213,7 @@ function iconFromWeatherString(weatherId) {
 	
 	if (weatherId == "tstorms") {
 		if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 6"); // 200 series - thunderstorms, // 300 to 321 defined as rain, 400-499 not defined, 500-599 is rain
-        return 6;
+        return 12;
         }
     } else if (weatherId == "rain") {
 		if (debug_flag > 2) { console.log("weatherId = " + weatherId + ", return 6"); // 200 series - thunderstorms, // 300 to 321 defined as rain, 400-499 not defined, 500-599 is rain

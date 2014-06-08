@@ -9,8 +9,8 @@
 // weather underground fm_forecast_stable
 
 
-int 					debug_flag = 0;
-int                     switchFlag = 0;
+int 				debug_flag = 0;
+int                 switchFlag = 0;
 
 Window *window;
 //Layer *window_layer; // = window_get_root_layer(window);
@@ -302,7 +302,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 	GFont custom_font_tinytemp 	= fonts_get_system_font(FONT_KEY_GOTHIC_18);
 	GFont custom_font_temp 		= fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
 	GFont custom_font_large_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
-	debug_flag = 1; 
+	//debug_flag = 1; 
     
 	
 	switch (key) {
@@ -583,7 +583,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "STRING [02] %s has %d characters", location_counter, charCount);
             }
 		
-		debug_flag = 7; 
+		//debug_flag = 7; 
             
             if (charCount < 10 ) {
                 //GFont custom_font_large_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
@@ -604,7 +604,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
                 //GFont custom_font_small_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_18));
                 // not in use anymore
                 GFont custom_font_small_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_18));
-                text_layer_set_font(location_layer, custom_font_small_location);
+                //text_layer_set_font(location_layer, custom_font_small_location);
                 //text_layer_set_font(location_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
                 //text_layer_set_font(location_layer, fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK));
                 //layer_set_frame(text_layer_get_layer(location_layer), (GRect(0, 122+changer, 144, 100)));
@@ -1059,6 +1059,7 @@ static void window_load(Window *window) {
 	text_layer_set_text_alignment(current_status_layer, GTextAlignmentLeft);
 	text_layer_set_text_alignment(current_conditions_layer, GTextAlignmentLeft);
     GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
+    GFont custom_font_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_24));
 	text_layer_set_font(current_temperature_layer, custom_font_time);
     GFont custom_font_status = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_17));
 	GFont custom_font_status_16 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_16));
@@ -1171,7 +1172,7 @@ static void window_load(Window *window) {
 	
 	text_layer_set_text_color(location_layer, GColorBlack);
 	text_layer_set_background_color(location_layer, GColorClear);
-	text_layer_set_font(location_layer, custom_font_time);
+	text_layer_set_font(location_layer, custom_font_location);
   	text_layer_set_text_alignment(location_layer, GTextAlignmentCenter);
     
 	layer_add_child(window_layer, text_layer_get_layer(day3_cond_layer));
@@ -1315,7 +1316,7 @@ static void window_unload(Window *window) {
     
     text_layer_destroy(current_barometer_layer);
     
-//    text_layer_destroy(current_status_layer);
+      text_layer_destroy(current_status_layer);
 //    text_layer_destroy(current_temperature_layer);
 
 //    bitmap_layer_destroy(current_icon_layer);

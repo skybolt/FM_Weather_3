@@ -81,12 +81,7 @@
             },
             {
                 "file": "fonts/Tahoma Bold.ttf",
-                "name": "FONT_TAHOMA_BOLD_28",
-                "type": "font"
-            },
-            {
-                "file": "fonts/Tahoma Bold.ttf",
-                "name": "FONT_TAHOMA_BOLD_27",
+                "name": "FONT_TAHOMA_BOLD_18",
                 "type": "font"
             },
             {
@@ -96,7 +91,12 @@
             },
             {
                 "file": "fonts/Tahoma Bold.ttf",
-                "name": "FONT_TAHOMA_BOLD_18",
+                "name": "FONT_TAHOMA_BOLD_24",
+                "type": "font"
+            },
+            {
+                "file": "fonts/Tahoma Bold.ttf",
+                "name": "FONT_TAHOMA_BOLD_28",
                 "type": "font"
             },
             {
