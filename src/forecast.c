@@ -2,18 +2,10 @@
 #include "bluetooth.h"
 #include "forecast.h"
 
-
-
-
-
-
-
-
 int 				debug_flag = 0;
 int                 switchFlag = 0;
 
 Window *window;
-
 
 BitmapLayer *today_icon_layer;
 BitmapLayer *tomorrow_icon_layer;
@@ -69,6 +61,8 @@ static TextLayer *current_temperature_layer;
 static TextLayer *current_status_layer;
 static TextLayer *current_conditions_layer;
 static TextLayer *current_barometer_layer;
+
+static GFont custom_font_tiny_temp, custom_font_temp, custom_font_large_location, custom_font_small_location, custom_font_time, custom_font_location, custom_font_status, custom_font_status_16; 
 
 
 InverterLayer *inverter_layer;
@@ -587,8 +581,8 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 
 
         if (charCount < 10 ) {
-
-
+		   //GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
+		   //text_layer_set_font(location_layer, custom_font_time); 
 
             if (debug_flag > 6) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "charCount %d reads less than 10", charCount);
@@ -602,12 +596,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "charCount %d reads greater than 10 less than 16", charCount);
             }
             text_layer_set_overflow_mode(location_layer, GTextOverflowModeWordWrap);
-
-
             GFont custom_font_small_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_18));
-
-
-
 
             if (debug_flag > 6) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting location_layer, custom_font_small_location");
@@ -636,6 +625,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         if (debug_flag == 1) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_SUNRISE_KEY sunriseInt: %lu", sunriseInt);
         }
+	   //handle_minute_tick();
         break;
 
     case WEATHER_SUNSET_KEY:
@@ -643,6 +633,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         if (debug_flag == 1) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_SUNSET_KEY sunsetInt: %lu", sunsetInt);
         }
+	   //handle_minute_tick();
         break;
     }
 }
@@ -980,13 +971,20 @@ static void window_load(Window *window) {
     if (debug_flag > 2) {
         APP_LOG(APP_LOG_LEVEL_INFO, "window_load START");
     }
+	
+
+	GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
+	GFont custom_font_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_24));
+	GFont custom_font_status = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_17));
+	GFont custom_font_status_16 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_16));
+	GFont custom_font_temp 		= fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
 
     if (debug_flag > 2) {
         APP_LOG(APP_LOG_LEVEL_INFO, "Tuplets START");
     }
 
     Tuplet initial_values[] = {
-        TupletCString(WEATHER_DAY0_BARO_KEY, "27 +÷* "),
+        TupletCString(WEATHER_DAY0_BARO_KEY, "Hg +÷* "),
         TupletInteger(WEATHER_DAY0_ICON_KEY, (int) 14),
         TupletInteger(WEATHER_DAY1_ICON_KEY, (int) 14),
         TupletInteger(WEATHER_DAY2_ICON_KEY, (int) 14),
@@ -1059,11 +1057,7 @@ static void window_load(Window *window) {
 
     text_layer_set_text_alignment(current_status_layer, GTextAlignmentLeft);
     text_layer_set_text_alignment(current_conditions_layer, GTextAlignmentLeft);
-    GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
-    GFont custom_font_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_24));
     text_layer_set_font(current_temperature_layer, custom_font_time);
-    GFont custom_font_status = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_17));
-    GFont custom_font_status_16 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_16));
     text_layer_set_font(current_status_layer, custom_font_status);
     text_layer_set_font(current_conditions_layer, custom_font_status);
     text_layer_set_font(current_barometer_layer, custom_font_status);
@@ -1144,8 +1138,6 @@ static void window_load(Window *window) {
     text_layer_set_background_color(day4_cond_layer, GColorClear);
     text_layer_set_background_color(day5_cond_layer, GColorClear);
 
-
-    GFont custom_font_temp 		= fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
     text_layer_set_font(day3_cond_layer, custom_font_status);
     text_layer_set_font(day4_cond_layer, custom_font_status);
     text_layer_set_font(day5_cond_layer, custom_font_status);
@@ -1173,7 +1165,8 @@ static void window_load(Window *window) {
 
     text_layer_set_text_color(location_layer, GColorBlack);
     text_layer_set_background_color(location_layer, GColorClear);
-    text_layer_set_font(location_layer, custom_font_location);
+//    text_layer_set_font(location_layer, custom_font_location);
+    text_layer_set_font(location_layer, custom_font_time);
     text_layer_set_text_alignment(location_layer, GTextAlignmentCenter);
 
     layer_add_child(window_layer, text_layer_get_layer(day3_cond_layer));
@@ -1279,8 +1272,45 @@ static void window_load(Window *window) {
     accel_tap_service_subscribe(accel_tap_handler);
 }
 
-static void window_unload(Window *window) {
+static void window_unload(Window *window) {	
 
+    text_layer_destroy(bt_layer);
+    text_layer_destroy(time_layer);
+    text_layer_destroy(date_layer);
+    text_layer_destroy(location_layer);
+	
+    layer_destroy(top_line_layer);
+    layer_destroy(bottom_line_layer); //
+    layer_destroy(info_line_layer);
+    layer_destroy(power_bar_layer);
+    layer_destroy(second_layer);
+
+    text_layer_destroy(day5_temp_layer);
+    text_layer_destroy(day4_temp_layer);
+    text_layer_destroy(day3_temp_layer);
+    text_layer_destroy(day5_cond_layer);
+    text_layer_destroy(day4_cond_layer);
+    text_layer_destroy(day3_cond_layer);
+    text_layer_destroy(day5_time_layer);
+    text_layer_destroy(day4_time_layer);
+    text_layer_destroy(day3_time_layer);
+    text_layer_destroy(current_barometer_layer);
+    text_layer_destroy(current_status_layer);
+    text_layer_destroy(current_temperature_layer);
+
+    bitmap_layer_destroy(date_border_layer);	
+    if (date_layer_bitmap) {
+        gbitmap_destroy(date_layer_bitmap);
+    }
+	
+    //    bitmap_layer_destroy(current_icon_layer);
+    //    bitmap_layer_destroy(day2_icon_layer);
+    //    bitmap_layer_destroy(day1_icon_layer);
+    //    bitmap_layer_destroy(nextday_icon_layer);
+    //    bitmap_layer_destroy(tomorrow_icon_layer);
+    //    bitmap_layer_destroy(today_icon_layer);
+	
+	
     if (day5_icon_bitmap) {
         gbitmap_destroy(day5_icon_bitmap);
     }
@@ -1299,49 +1329,36 @@ static void window_unload(Window *window) {
     if (day0_icon_bitmap) {
         gbitmap_destroy(day0_icon_bitmap);
     }
-
-    text_layer_destroy(bt_layer);
-    text_layer_destroy(time_layer);
-    text_layer_destroy(date_layer);
-    text_layer_destroy(location_layer);
-    bitmap_layer_destroy(date_border_layer);
+	
     //	inverter_layer_destroy(inverter_layer);
     //  inverter_layer_destroy(inverter_layer);
     //  inverter_layer_destroy(day2_time_layer_inverter_layer);
 
-    /*  text_layer_destroy(day1_time_layer);
+    /*  
      text_layer_destroy(day2_time_layer);
+     text_layer_destroy(day1_time_layer);
      text_layer_destroy(day2_temp_layer);
      text_layer_destroy(day1_temp_layer);
      text_layer_destroy(day2_cond_layer);
      text_layer_destroy(day1_cond_layer);
 
      */
-    text_layer_destroy(day5_temp_layer);
-    text_layer_destroy(day4_temp_layer);
-    text_layer_destroy(day3_temp_layer);
-    text_layer_destroy(day5_cond_layer);
-    text_layer_destroy(day4_cond_layer);
-    text_layer_destroy(day3_cond_layer);
-    text_layer_destroy(day5_time_layer);
-    text_layer_destroy(day4_time_layer);
-    text_layer_destroy(day3_time_layer);
+	
 
-    text_layer_destroy(current_barometer_layer);
 
-    //      text_layer_destroy(current_status_layer);
-    //      text_layer_destroy(current_temperature_layer);
 
-    //      bitmap_layer_destroy(current_icon_layer);
-    //      bitmap_layer_destroy(day2_icon_layer);
-    //      bitmap_layer_destroy(day1_icon_layer);
-    //    bitmap_layer_destroy(nextday_icon_layer);
-    //    bitmap_layer_destroy(tomorrow_icon_layer);
-    //    bitmap_layer_destroy(today_icon_layer);
 
     //    layer_destroy(todayForecastLayer);
     //    layer_destroy(currentConditionsLayer);
-
+	fonts_unload_custom_font(custom_font_time); 
+/*	fonts_unload_custom_font(custom_font_tiny_temp);  
+	fonts_unload_custom_font(custom_font_temp);  
+	fonts_unload_custom_font(custom_font_large_location);  
+	fonts_unload_custom_font(custom_font_small_location);  
+	fonts_unload_custom_font(custom_font_location); 
+	fonts_unload_custom_font(custom_font_status); 
+	fonts_unload_custom_font(custom_font_status_16);
+*/
 
 }
 
@@ -1358,20 +1375,23 @@ void handle_init(void) {
     app_message_open(inbound_size, outbound_size);
     window_stack_push(window, true /* Animated */);
 }
+
+	/*
 void infolines_deinit(void) {
     //to call infolines_deinit();
+
     layer_destroy(top_line_layer);
     layer_destroy(bottom_line_layer); //
     layer_destroy(info_line_layer);
     layer_destroy(power_bar_layer);
     layer_destroy(second_layer);
-
-
-
 }
+*/
+
 
 void handle_deinit(void) {
-    infolines_deinit();
+	
+//    infolines_deinit();
     window_destroy(window);
     //    layer_destroy(text_layer_get_layer(current_conditions_layer));
 
