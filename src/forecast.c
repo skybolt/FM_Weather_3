@@ -7,9 +7,9 @@ int                 switchFlag = 0;
 
 Window *window;
 
-BitmapLayer *today_icon_layer;
-BitmapLayer *tomorrow_icon_layer;
-BitmapLayer *nextday_icon_layer;
+BitmapLayer *day3_icon_layer;
+BitmapLayer *day4_icon_layer;
+BitmapLayer *day5_icon_layer;
 BitmapLayer *date_border_layer;
 
 const char *new_location;
@@ -56,11 +56,12 @@ InverterLayer *day2_time_layer_inverter_layer;
 
 
 Layer *currentConditionsLayer;
-static BitmapLayer *current_icon_layer;
-static TextLayer *current_temperature_layer;
-static TextLayer *current_status_layer;
-static TextLayer *current_conditions_layer;
-static TextLayer *current_barometer_layer;
+// consider creating a Layer *threeDayForecastLayer, and Layer *clearOverlayLayerForThingsLikeBTIconLayer
+static BitmapLayer *day0_icon_layer;
+static TextLayer *day0_temperature_layer;
+static TextLayer *day0_status_layer;
+static TextLayer *day0_conditions_layer;
+static TextLayer *day0_barometer_layer;
 
 static GFont custom_font_tiny_temp, custom_font_temp, custom_font_large_location, custom_font_small_location, custom_font_time, custom_font_location, custom_font_status, custom_font_status_16; 
 
@@ -249,17 +250,6 @@ static void handle_battery(BatteryChargeState charge_state) {
     xPos = (144 * xPos) / 100;
     layer_set_frame(power_bar_layer, GRect(xPos, 37, 1, 2));
 
-
-
-
-
-
-
-
-
-
-
-
 }
 
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
@@ -315,7 +305,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         time_t currentStamp     = current_conditions_time_int;
         timer_tm = localtime (&currentStamp);
         strftime(current_text, sizeof(current_text), "%l:%M%P", timer_tm);
-        text_layer_set_text(current_status_layer, current_text);
+        text_layer_set_text(day0_status_layer, current_text);
         if (debug_flag == 1) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY0_TIMESTAMP_KEY %lu", new_tuple->value->uint32);
         }
@@ -370,7 +360,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 
     case WEATHER_DAY0_BARO_KEY:
         current_barometer = new_tuple->value->cstring;
-        text_layer_set_text(current_barometer_layer, current_barometer);
+        text_layer_set_text(day0_barometer_layer, current_barometer);
         if (debug_flag == 1) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY0_BARO_KEY %s", new_tuple->value->cstring);
         }
@@ -378,7 +368,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 
     case WEATHER_DAY0_CONDITIONS_KEY:
         current_conditions = new_tuple->value->cstring;
-        text_layer_set_text(current_conditions_layer, current_conditions);
+        text_layer_set_text(day0_conditions_layer, current_conditions);
         if (debug_flag == 1) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY0_CONDITIONS_KEY %s", new_tuple->value->cstring);
         }
@@ -431,7 +421,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         if (day0_icon_bitmap) {
             gbitmap_destroy(day0_icon_bitmap);
         }
-        bitmap_layer_set_bitmap(current_icon_layer, day0_icon_bitmap);
+        bitmap_layer_set_bitmap(day0_icon_layer, day0_icon_bitmap);
         day0_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + night_flag]);
         break;
 
@@ -467,7 +457,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         if (day3_icon_bitmap) {
             gbitmap_destroy(day3_icon_bitmap);
         }
-        bitmap_layer_set_bitmap(today_icon_layer, day3_icon_bitmap);
+        bitmap_layer_set_bitmap(day3_icon_layer, day3_icon_bitmap);
         day3_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + night_flag]);
         if (debug_flag == 4) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY3_ICON_KEY %lu + night_flag %d", new_tuple->value->uint32, night_flag);
@@ -478,7 +468,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         if (day4_icon_bitmap) {
             gbitmap_destroy(day4_icon_bitmap);
         }
-        bitmap_layer_set_bitmap(tomorrow_icon_layer, day4_icon_bitmap);
+        bitmap_layer_set_bitmap(day4_icon_layer, day4_icon_bitmap);
         day4_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + night_flag]);
         if (debug_flag == 5) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY4_ICON_KEY %lu + night_flag %d", new_tuple->value->uint32, night_flag);
@@ -489,7 +479,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         if (day5_icon_bitmap) {
             gbitmap_destroy(day5_icon_bitmap);
         }
-        bitmap_layer_set_bitmap(nextday_icon_layer, day5_icon_bitmap);
+        bitmap_layer_set_bitmap(day5_icon_layer, day5_icon_bitmap);
         day5_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + night_flag]);
         if (debug_flag == 6) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY5_ICON_KEY %lu + night_flag %d", new_tuple->value->uint32, night_flag);
@@ -501,7 +491,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY0_TEMP_KEY %s", new_tuple->value->cstring);
         }
         current_temperature = new_tuple->value->cstring;
-        text_layer_set_text(current_temperature_layer, current_temperature);
+        text_layer_set_text(day0_temperature_layer, current_temperature);
         break;
 
     case WEATHER_DAY1_TEMP_KEY:
@@ -873,9 +863,9 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
         layer_set_hidden(text_layer_get_layer(day4_time_layer), false);
         layer_set_hidden(text_layer_get_layer(day5_time_layer), false);
 
-        layer_set_hidden(text_layer_get_layer(current_status_layer), false);
-        layer_set_hidden(text_layer_get_layer(current_conditions_layer), true);
-        layer_set_hidden(text_layer_get_layer(current_barometer_layer), true);
+        layer_set_hidden(text_layer_get_layer(day0_status_layer), false);
+        layer_set_hidden(text_layer_get_layer(day0_conditions_layer), true);
+        layer_set_hidden(text_layer_get_layer(day0_barometer_layer), true);
 
 
     } else if (nowInt % 12 == 4) {
@@ -898,9 +888,9 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
         layer_set_hidden(text_layer_get_layer(day3_time_layer), true);
         layer_set_hidden(text_layer_get_layer(day4_time_layer), true);
         layer_set_hidden(text_layer_get_layer(day5_time_layer), true);
-        layer_set_hidden(text_layer_get_layer(current_status_layer), true);
-        layer_set_hidden(text_layer_get_layer(current_conditions_layer), false);
-        layer_set_hidden(text_layer_get_layer(current_barometer_layer), true);
+        layer_set_hidden(text_layer_get_layer(day0_status_layer), true);
+        layer_set_hidden(text_layer_get_layer(day0_conditions_layer), false);
+        layer_set_hidden(text_layer_get_layer(day0_barometer_layer), true);
 
     } else if (nowInt % 12 == 8) {
         if (debug_flag > 8) {
@@ -923,9 +913,9 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
         layer_set_hidden(text_layer_get_layer(day4_time_layer), true);
         layer_set_hidden(text_layer_get_layer(day5_time_layer), true);
 
-        layer_set_hidden(text_layer_get_layer(current_status_layer), true);
-        layer_set_hidden(text_layer_get_layer(current_conditions_layer), true);
-        layer_set_hidden(text_layer_get_layer(current_barometer_layer), false);
+        layer_set_hidden(text_layer_get_layer(day0_status_layer), true);
+        layer_set_hidden(text_layer_get_layer(day0_conditions_layer), true);
+        layer_set_hidden(text_layer_get_layer(day0_barometer_layer), false);
     }
 }
 
@@ -1047,30 +1037,30 @@ static void window_load(Window *window) {
 
 
 
-    current_icon_layer = bitmap_layer_create(GRect(9, 58-43, 50, 50));
-    current_temperature_layer = text_layer_create(GRect(64, 63-43, 124, 36));
-    current_status_layer = text_layer_create(GRect(65, 92-43, 144, 36));
-    current_conditions_layer = text_layer_create(GRect(65, 92-43, 144, 36));
-    current_barometer_layer = text_layer_create(GRect(65, 92-43, 144, 36));
+    day0_icon_layer = bitmap_layer_create(GRect(9, 58-43, 50, 50));
+    day0_temperature_layer = text_layer_create(GRect(64, 63-43, 124, 36));
+    day0_status_layer = text_layer_create(GRect(65, 92-43, 144, 36));
+    day0_conditions_layer = text_layer_create(GRect(65, 92-43, 144, 36));
+    day0_barometer_layer = text_layer_create(GRect(65, 92-43, 144, 36));
 
 
 
-    text_layer_set_text_alignment(current_status_layer, GTextAlignmentLeft);
-    text_layer_set_text_alignment(current_conditions_layer, GTextAlignmentLeft);
-    text_layer_set_font(current_temperature_layer, custom_font_time);
-    text_layer_set_font(current_status_layer, custom_font_status);
-    text_layer_set_font(current_conditions_layer, custom_font_status);
-    text_layer_set_font(current_barometer_layer, custom_font_status);
-    text_layer_set_overflow_mode(current_status_layer, GTextOverflowModeFill);
-    text_layer_set_overflow_mode(current_conditions_layer, GTextOverflowModeTrailingEllipsis);
-    text_layer_set_overflow_mode(current_barometer_layer, GTextOverflowModeTrailingEllipsis);
+    text_layer_set_text_alignment(day0_status_layer, GTextAlignmentLeft);
+    text_layer_set_text_alignment(day0_conditions_layer, GTextAlignmentLeft);
+    text_layer_set_font(day0_temperature_layer, custom_font_time);
+    text_layer_set_font(day0_status_layer, custom_font_status);
+    text_layer_set_font(day0_conditions_layer, custom_font_status);
+    text_layer_set_font(day0_barometer_layer, custom_font_status);
+    text_layer_set_overflow_mode(day0_status_layer, GTextOverflowModeFill);
+    text_layer_set_overflow_mode(day0_conditions_layer, GTextOverflowModeTrailingEllipsis);
+    text_layer_set_overflow_mode(day0_barometer_layer, GTextOverflowModeTrailingEllipsis);
 
 
     //GRect X, Y, Width, Height
 
-    today_icon_layer 		= bitmap_layer_create(GRect(0, hite, w_size, h_size));
-    tomorrow_icon_layer		= bitmap_layer_create(GRect(48, hite, w_size, h_size));
-    nextday_icon_layer 		= bitmap_layer_create(GRect(96, hite, w_size, h_size));
+    day3_icon_layer 		= bitmap_layer_create(GRect(0, hite, w_size, h_size));
+    day4_icon_layer		= bitmap_layer_create(GRect(48, hite, w_size, h_size));
+    day5_icon_layer 		= bitmap_layer_create(GRect(96, hite, w_size, h_size));
     day3_time_layer 		= text_layer_create(GRect(0, hite + h_size + downset, w_size, h_size));
     day4_time_layer 		= text_layer_create(GRect(48, hite + h_size + downset, w_size, h_size));
     day5_time_layer 		= text_layer_create(GRect(96, hite + h_size + downset, w_size, h_size));
@@ -1103,13 +1093,13 @@ static void window_load(Window *window) {
 
     date_border_layer 		= bitmap_layer_create(GRect(99+4, 1, 38, 35));
 
-    bitmap_layer_set_background_color(today_icon_layer, GColorClear);
-    bitmap_layer_set_background_color(tomorrow_icon_layer, GColorClear);
-    bitmap_layer_set_background_color(nextday_icon_layer, GColorClear);
+    bitmap_layer_set_background_color(day3_icon_layer, GColorClear);
+    bitmap_layer_set_background_color(day4_icon_layer, GColorClear);
+    bitmap_layer_set_background_color(day5_icon_layer, GColorClear);
     bitmap_layer_set_background_color(date_border_layer, GColorClear);
-    bitmap_layer_set_alignment(today_icon_layer, GAlignCenter);
-    bitmap_layer_set_alignment(tomorrow_icon_layer, GAlignCenter);
-    bitmap_layer_set_alignment(nextday_icon_layer, GAlignCenter);
+    bitmap_layer_set_alignment(day3_icon_layer, GAlignCenter);
+    bitmap_layer_set_alignment(day4_icon_layer, GAlignCenter);
+    bitmap_layer_set_alignment(day5_icon_layer, GAlignCenter);
 
 
     day0_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_UNKNOWN);
@@ -1118,10 +1108,10 @@ static void window_load(Window *window) {
     day5_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_UNKNOWN);
     date_layer_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_DATE_BORDER);
 
-    bitmap_layer_set_bitmap(current_icon_layer, day0_icon_bitmap);
-    bitmap_layer_set_bitmap(today_icon_layer, day3_icon_bitmap);
-    bitmap_layer_set_bitmap(tomorrow_icon_layer, day4_icon_bitmap);
-    bitmap_layer_set_bitmap(nextday_icon_layer, day5_icon_bitmap);
+    bitmap_layer_set_bitmap(day0_icon_layer, day0_icon_bitmap);
+    bitmap_layer_set_bitmap(day3_icon_layer, day3_icon_bitmap);
+    bitmap_layer_set_bitmap(day4_icon_layer, day4_icon_bitmap);
+    bitmap_layer_set_bitmap(day5_icon_layer, day5_icon_bitmap);
     bitmap_layer_set_bitmap(date_border_layer, date_layer_bitmap);
 
     text_layer_set_text_alignment(day3_cond_layer, GTextAlignmentCenter);
@@ -1185,9 +1175,9 @@ static void window_load(Window *window) {
     layer_add_child(window_layer, bitmap_layer_get_layer(date_border_layer));
     layer_add_child(window_layer, text_layer_get_layer(date_layer));
 
-    layer_add_child(window_layer, bitmap_layer_get_layer(today_icon_layer));
-    layer_add_child(window_layer, bitmap_layer_get_layer(tomorrow_icon_layer));
-    layer_add_child(window_layer, bitmap_layer_get_layer(nextday_icon_layer));
+    layer_add_child(window_layer, bitmap_layer_get_layer(day3_icon_layer));
+    layer_add_child(window_layer, bitmap_layer_get_layer(day4_icon_layer));
+    layer_add_child(window_layer, bitmap_layer_get_layer(day5_icon_layer));
 
     layer_add_child(window_layer, text_layer_get_layer(bt_layer));
     layer_set_hidden(text_layer_get_layer(bt_layer), true);
@@ -1240,11 +1230,11 @@ static void window_load(Window *window) {
     layer_add_child(todayForecastLayer, inverter_layer_get_layer(day2_time_layer_inverter_layer));
 
     layer_add_child(window_layer, currentConditionsLayer);
-    layer_add_child(currentConditionsLayer, bitmap_layer_get_layer(current_icon_layer));
-    layer_add_child(currentConditionsLayer, text_layer_get_layer(current_temperature_layer));
-    layer_add_child(currentConditionsLayer, text_layer_get_layer(current_status_layer));
-    layer_add_child(currentConditionsLayer, text_layer_get_layer(current_barometer_layer));
-    layer_add_child(currentConditionsLayer, text_layer_get_layer(current_conditions_layer));
+    layer_add_child(currentConditionsLayer, bitmap_layer_get_layer(day0_icon_layer));
+    layer_add_child(currentConditionsLayer, text_layer_get_layer(day0_temperature_layer));
+    layer_add_child(currentConditionsLayer, text_layer_get_layer(day0_status_layer));
+    layer_add_child(currentConditionsLayer, text_layer_get_layer(day0_barometer_layer));
+    layer_add_child(currentConditionsLayer, text_layer_get_layer(day0_conditions_layer));
     layer_set_hidden(currentConditionsLayer, false);
 
     inverter_layer = inverter_layer_create(GRect(0, 0, 144, 168));
@@ -1272,7 +1262,9 @@ static void window_load(Window *window) {
     accel_tap_service_subscribe(accel_tap_handler);
 }
 
-static void window_unload(Window *window) {	
+static void window_unload(Window *window) {
+    
+    Layer *window_layer = window_get_root_layer(window);
 
     text_layer_destroy(bt_layer);
     text_layer_destroy(time_layer);
@@ -1284,31 +1276,37 @@ static void window_unload(Window *window) {
     layer_destroy(info_line_layer);
     layer_destroy(power_bar_layer);
     layer_destroy(second_layer);
-
+//    layer_remove_from_parent(day2_temp_layer);
+//    layer_destroy(todayForecastLayer);
+//    layer_remove_child_layers(todayForecastLayer);
+//    layer_remove_child_layers(window_layer);
+//    layer_remove_from_parent(text_layer_get_layer(day5_cond_layer));
+    
     text_layer_destroy(day5_temp_layer);
     text_layer_destroy(day4_temp_layer);
     text_layer_destroy(day3_temp_layer);
+//    text_layer_destroy(day2_temp_layer);
     text_layer_destroy(day5_cond_layer);
     text_layer_destroy(day4_cond_layer);
     text_layer_destroy(day3_cond_layer);
     text_layer_destroy(day5_time_layer);
     text_layer_destroy(day4_time_layer);
     text_layer_destroy(day3_time_layer);
-    text_layer_destroy(current_barometer_layer);
-    text_layer_destroy(current_status_layer);
-    text_layer_destroy(current_temperature_layer);
+    text_layer_destroy(day0_barometer_layer);
+    text_layer_destroy(day0_status_layer);
+    text_layer_destroy(day0_temperature_layer);
 
     bitmap_layer_destroy(date_border_layer);	
     if (date_layer_bitmap) {
         gbitmap_destroy(date_layer_bitmap);
     }
 	
-    //    bitmap_layer_destroy(current_icon_layer);
+    //    bitmap_layer_destroy(day5_icon_layer);
+    //    bitmap_layer_destroy(day4_icon_layer);
+    //    bitmap_layer_destroy(day3_icon_layer);
+    //    bitmap_layer_destroy(day0_icon_layer);
     //    bitmap_layer_destroy(day2_icon_layer);
     //    bitmap_layer_destroy(day1_icon_layer);
-    //    bitmap_layer_destroy(nextday_icon_layer);
-    //    bitmap_layer_destroy(tomorrow_icon_layer);
-    //    bitmap_layer_destroy(today_icon_layer);
 	
 	
     if (day5_icon_bitmap) {
@@ -1350,8 +1348,8 @@ static void window_unload(Window *window) {
 
     //    layer_destroy(todayForecastLayer);
     //    layer_destroy(currentConditionsLayer);
-	fonts_unload_custom_font(custom_font_time); 
-/*	fonts_unload_custom_font(custom_font_tiny_temp);  
+	fonts_unload_custom_font(custom_font_time);
+/*	fonts_unload_custom_font(custom_font_tiny_temp);
 	fonts_unload_custom_font(custom_font_temp);  
 	fonts_unload_custom_font(custom_font_large_location);  
 	fonts_unload_custom_font(custom_font_small_location);  
@@ -1393,7 +1391,7 @@ void handle_deinit(void) {
 	
 //    infolines_deinit();
     window_destroy(window);
-    //    layer_destroy(text_layer_get_layer(current_conditions_layer));
+    //    layer_destroy(text_layer_get_layer(day0_conditions_layer));
 
 }
 
