@@ -2,7 +2,7 @@
 #include "bluetooth.h"
 #include "forecast.h"
 
-int 				debug_flag = 0;
+int 				debug_flag = -3;
 int                 switchFlag = 0;
 
 Window *window;
@@ -63,7 +63,7 @@ static TextLayer *day0_status_layer;
 static TextLayer *day0_conditions_layer;
 static TextLayer *day0_barometer_layer;
 
-static GFont custom_font_tiny_temp, custom_font_temp, custom_font_large_location, custom_font_small_location, custom_font_time, custom_font_location, custom_font_status, custom_font_status_16; 
+static GFont custom_font_tiny_temp, custom_font_temp, custom_font_large_location, custom_font_small_location, custom_font_time, custom_font_location, custom_font_status, custom_font_status_16;
 
 
 InverterLayer *inverter_layer;
@@ -243,13 +243,14 @@ void accel_tap_handler(AccelAxisType axis, int32_t direction) {
 
 static void handle_battery(BatteryChargeState charge_state) {
 
-
-
     APP_LOG(APP_LOG_LEVEL_INFO, "battery handler invoked");
     int xPos = charge_state.charge_percent;
     xPos = (144 * xPos) / 100;
     layer_set_frame(power_bar_layer, GRect(xPos, 37, 1, 2));
-
+    /*
+    layer_set_hidden(top_line_layer, false);
+    layer_set_hidden(bottom_line_layer, false);
+     */
 }
 
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
@@ -571,8 +572,8 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 
 
         if (charCount < 10 ) {
-		   //GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
-		   //text_layer_set_font(location_layer, custom_font_time); 
+            //GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
+            //text_layer_set_font(location_layer, custom_font_time);
 
             if (debug_flag > 6) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "charCount %d reads less than 10", charCount);
@@ -615,7 +616,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         if (debug_flag == 1) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_SUNRISE_KEY sunriseInt: %lu", sunriseInt);
         }
-	   //handle_minute_tick();
+        //handle_minute_tick();
         break;
 
     case WEATHER_SUNSET_KEY:
@@ -623,7 +624,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         if (debug_flag == 1) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_SUNSET_KEY sunsetInt: %lu", sunsetInt);
         }
-	   //handle_minute_tick();
+        handle_minute_tick();
         break;
     }
 }
@@ -667,20 +668,6 @@ void handle_minute_tick() {
     timer_tm = localtime (&display_time_t);
     strftime(displayTimeString, sizeof(displayTimeString), "%A %l:%M%P", timer_tm);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     uint32_t localSunsetInt = sunsetInt - (3600*offsetInt);
     display_time_t = localSunsetInt;
     timer_tm = localtime (&display_time_t);
@@ -712,25 +699,10 @@ void handle_minute_tick() {
         //				(sunsetInt - (3600*offsetInt)) % 86400 / 3600 );
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "sunrise %lu < now %lu > sunset %lu", (localSunriseInt % 86400) / 3600, (lclTimeInt % 86400) / 3600, (localSunsetInt % 86400) / 3600);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         if (lclTimeInt % 3600 == 0) {
             handle_hour_tick();
         }
-        fetch_message(); // commenting this out disables auto updates
+        // commenting this out disables auto updates
     }
 }
 
@@ -757,9 +729,6 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
     strftime(time_text, sizeof(time_text), "%l:%M%p", tick_time);
     text_layer_set_text(time_layer, time_text);
 
-
-
-
     static char date_text[] = "00/00";
     strftime(date_text, sizeof(date_text), "%d", tick_time);
     text_layer_set_text(date_layer, date_text);
@@ -770,28 +739,11 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
     strftime(date_text, sizeof(date_text), "%d", tick_time);
     text_layer_set_text(date_layer, date_text);
 
-
-
-
-
     static char day_text[] = "aaa";
     static char day1_text[] = "aaa";
     static char day2_text[] = "aaa";
 
     time_t current   = time(0);
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     time_t today   		= todayInt 		- (offsetInt*3600);
@@ -835,6 +787,9 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
     }
     if (debug_flag > 8) {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "%lu", (nowInt % 12));
+    }
+    if (nowInt % 63 == 0) {
+        fetch_message();
     }
 
     int xPos = nowInt % 60;
@@ -961,13 +916,13 @@ static void window_load(Window *window) {
     if (debug_flag > 2) {
         APP_LOG(APP_LOG_LEVEL_INFO, "window_load START");
     }
-	
 
-	GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
-	GFont custom_font_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_24));
-	GFont custom_font_status = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_17));
-	GFont custom_font_status_16 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_16));
-	GFont custom_font_temp 		= fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
+
+    GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
+    GFont custom_font_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_24));
+    GFont custom_font_status = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_17));
+    GFont custom_font_status_16 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_16));
+    GFont custom_font_temp 		= fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
 
     if (debug_flag > 2) {
         APP_LOG(APP_LOG_LEVEL_INFO, "Tuplets START");
@@ -999,11 +954,9 @@ static void window_load(Window *window) {
         TupletInteger(WEATHER_DAY3_TIMESTAMP_KEY, (int) 1000000800),
         TupletInteger(WEATHER_DAY4_TIMESTAMP_KEY, (int) 1000000800),
         TupletInteger(WEATHER_DAY5_TIMESTAMP_KEY, (int) 1000000800),
-        TupletCString(WEATHER_LOCATION_KEY, "Loc . +÷*"),
+        TupletCString(WEATHER_LOCATION_KEY, "         "),
         TupletInteger(WEATHER_SUNRISE_KEY, (int) 999928800), //1395410913 ),
         TupletInteger(WEATHER_SUNSET_KEY, (int) 999979200), //1395455062 ),
-
-
 
     };
 
@@ -1179,7 +1132,6 @@ static void window_load(Window *window) {
     layer_add_child(window_layer, bitmap_layer_get_layer(day4_icon_layer));
     layer_add_child(window_layer, bitmap_layer_get_layer(day5_icon_layer));
 
-    layer_add_child(window_layer, text_layer_get_layer(bt_layer));
     layer_set_hidden(text_layer_get_layer(bt_layer), true);
 
     layer_add_child(window_layer, text_layer_get_layer(location_layer));
@@ -1240,6 +1192,9 @@ static void window_load(Window *window) {
     inverter_layer = inverter_layer_create(GRect(0, 0, 144, 168));
     layer_set_hidden(inverter_layer_get_layer(inverter_layer), true);
     layer_set_hidden(todayForecastLayer, true);
+
+    layer_add_child(window_layer, text_layer_get_layer(bt_layer));
+
     layer_add_child(window_layer, inverter_layer_get_layer(inverter_layer));
 
     send_cmd();
@@ -1247,6 +1202,7 @@ static void window_load(Window *window) {
     handle_minute_tick();
     handle_hour_tick();
     bluetooth_connection_service_subscribe(&handle_bluetooth);
+    bluetooth_init(bluetooth_connection_service_peek());
     if (debug_flag > 2) {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "next line sets battery service subscribe on");
     }
@@ -1260,17 +1216,18 @@ static void window_load(Window *window) {
         APP_LOG(APP_LOG_LEVEL_INFO, "window_load END");
     }
     accel_tap_service_subscribe(accel_tap_handler);
+    handle_minute_tick();
 }
 
 static void window_unload(Window *window) {
-    
+
     Layer *window_layer = window_get_root_layer(window);
 
     text_layer_destroy(bt_layer);
     text_layer_destroy(time_layer);
     text_layer_destroy(date_layer);
     text_layer_destroy(location_layer);
-	
+
     layer_destroy(top_line_layer);
     layer_destroy(bottom_line_layer); //
     layer_destroy(info_line_layer);
@@ -1281,11 +1238,12 @@ static void window_unload(Window *window) {
 //    layer_remove_child_layers(todayForecastLayer);
 //    layer_remove_child_layers(window_layer);
 //    layer_remove_from_parent(text_layer_get_layer(day5_cond_layer));
-    
+    /*
+
     text_layer_destroy(day5_temp_layer);
     text_layer_destroy(day4_temp_layer);
     text_layer_destroy(day3_temp_layer);
-//    text_layer_destroy(day2_temp_layer);
+    //    text_layer_destroy(day2_temp_layer);
     text_layer_destroy(day5_cond_layer);
     text_layer_destroy(day4_cond_layer);
     text_layer_destroy(day3_cond_layer);
@@ -1296,19 +1254,20 @@ static void window_unload(Window *window) {
     text_layer_destroy(day0_status_layer);
     text_layer_destroy(day0_temperature_layer);
 
-    bitmap_layer_destroy(date_border_layer);	
+    bitmap_layer_destroy(date_border_layer);
     if (date_layer_bitmap) {
         gbitmap_destroy(date_layer_bitmap);
     }
-	
+     */
+
     //    bitmap_layer_destroy(day5_icon_layer);
     //    bitmap_layer_destroy(day4_icon_layer);
     //    bitmap_layer_destroy(day3_icon_layer);
     //    bitmap_layer_destroy(day0_icon_layer);
     //    bitmap_layer_destroy(day2_icon_layer);
     //    bitmap_layer_destroy(day1_icon_layer);
-	
-	
+
+
     if (day5_icon_bitmap) {
         gbitmap_destroy(day5_icon_bitmap);
     }
@@ -1327,12 +1286,12 @@ static void window_unload(Window *window) {
     if (day0_icon_bitmap) {
         gbitmap_destroy(day0_icon_bitmap);
     }
-	
+
     //	inverter_layer_destroy(inverter_layer);
     //  inverter_layer_destroy(inverter_layer);
     //  inverter_layer_destroy(day2_time_layer_inverter_layer);
 
-    /*  
+    /*
      text_layer_destroy(day2_time_layer);
      text_layer_destroy(day1_time_layer);
      text_layer_destroy(day2_temp_layer);
@@ -1341,22 +1300,22 @@ static void window_unload(Window *window) {
      text_layer_destroy(day1_cond_layer);
 
      */
-	
+
 
 
 
 
     //    layer_destroy(todayForecastLayer);
     //    layer_destroy(currentConditionsLayer);
-	fonts_unload_custom_font(custom_font_time);
-/*	fonts_unload_custom_font(custom_font_tiny_temp);
-	fonts_unload_custom_font(custom_font_temp);  
-	fonts_unload_custom_font(custom_font_large_location);  
-	fonts_unload_custom_font(custom_font_small_location);  
-	fonts_unload_custom_font(custom_font_location); 
-	fonts_unload_custom_font(custom_font_status); 
-	fonts_unload_custom_font(custom_font_status_16);
-*/
+    fonts_unload_custom_font(custom_font_time);
+    /*	fonts_unload_custom_font(custom_font_tiny_temp);
+    	fonts_unload_custom_font(custom_font_temp);
+    	fonts_unload_custom_font(custom_font_large_location);
+    	fonts_unload_custom_font(custom_font_small_location);
+    	fonts_unload_custom_font(custom_font_location);
+    	fonts_unload_custom_font(custom_font_status);
+    	fonts_unload_custom_font(custom_font_status_16);
+    */
 
 }
 
@@ -1374,21 +1333,21 @@ void handle_init(void) {
     window_stack_push(window, true /* Animated */);
 }
 
-	/*
+/*
 void infolines_deinit(void) {
-    //to call infolines_deinit();
+//to call infolines_deinit();
 
-    layer_destroy(top_line_layer);
-    layer_destroy(bottom_line_layer); //
-    layer_destroy(info_line_layer);
-    layer_destroy(power_bar_layer);
-    layer_destroy(second_layer);
+layer_destroy(top_line_layer);
+layer_destroy(bottom_line_layer); //
+layer_destroy(info_line_layer);
+layer_destroy(power_bar_layer);
+layer_destroy(second_layer);
 }
 */
 
 
 void handle_deinit(void) {
-	
+
 //    infolines_deinit();
     window_destroy(window);
     //    layer_destroy(text_layer_get_layer(day0_conditions_layer));
