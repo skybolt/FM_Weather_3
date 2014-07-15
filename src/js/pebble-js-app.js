@@ -12,7 +12,7 @@ var debug_flag = -3;
 var m = 1;
 var n = 0;
 var day;
-var provider_flag = 0;
+var provider_flag = 1;
 //var tempFlag = 7; //0F, 1C, 2K, 3Ra, 4Re, 5Ro, 6N, 7De
 var offset = new Date().getTimezoneOffset() / 60;
 
