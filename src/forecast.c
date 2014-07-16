@@ -287,7 +287,6 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
     GFont custom_font_tinytemp 	= fonts_get_system_font(FONT_KEY_GOTHIC_18);
     GFont custom_font_temp 		= fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
     GFont custom_font_large_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
-    //	debug_flag = 6;
 
 
     switch (key) {
@@ -558,7 +557,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
     case WEATHER_LOCATION_KEY:
         new_location = new_tuple->value->cstring;
         text_layer_set_text(location_layer, new_location);
-        if (debug_flag == 1) {
+        if (debug_flag == 2) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_LOCATION_KEY %s", new_tuple->value->cstring);
         }
         static char location_counter[32];  //= "White Center";
@@ -613,7 +612,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 
     case WEATHER_SUNRISE_KEY:
         sunriseInt = new_tuple->value->uint32;
-        if (debug_flag == 1) {
+        if (debug_flag == 2) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_SUNRISE_KEY sunriseInt: %lu", sunriseInt);
         }
         //handle_minute_tick();
@@ -621,7 +620,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 
     case WEATHER_SUNSET_KEY:
         sunsetInt = new_tuple->value->uint32;
-        if (debug_flag == 1) {
+        if (debug_flag == 2) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_SUNSET_KEY sunsetInt: %lu", sunsetInt);
         }
         handle_minute_tick();
@@ -788,7 +787,7 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
     if (debug_flag > 8) {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "%lu", (nowInt % 12));
     }
-    if (nowInt % 63 == 0) {
+    if (nowInt % 600 == 0) {
         fetch_message();
     }
 
