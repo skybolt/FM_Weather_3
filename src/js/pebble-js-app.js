@@ -9,7 +9,7 @@ var setPebbleToken = 'JUCP'; //    'XPGE'; 'JUCP is FM Forecast, XPGE is WU Fore
 //});
 
 
-var debug_flag = 0;
+var debug_flag = 10;
 var m = 1;
 var n = 0;
 var day;
