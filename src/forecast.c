@@ -2,7 +2,7 @@
 #include "bluetooth.h"
 #include "forecast.h"
 
-int 				debug_flag = -3;
+int 				debug_flag = 0;
 int                 switchFlag = 0;
 
 Window *window;
