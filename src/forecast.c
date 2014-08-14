@@ -2,7 +2,7 @@
 #include "bluetooth.h"
 #include "forecast.h"
 
-int 				debug_flag = 0;
+int 				debug_flag = 2;
 int                 switchFlag = 0;
 
 Window *window;
@@ -208,12 +208,6 @@ void config_provider(void *context) {
 void windowSwitch(void) {
 
 
-
-
-
-
-
-
     if (switchFlag == 0) {
         // show today_forecast
         layer_set_hidden(currentConditionsLayer, true);
@@ -247,15 +241,21 @@ static void handle_battery(BatteryChargeState charge_state) {
     int xPos = charge_state.charge_percent;
     xPos = (144 * xPos) / 100;
     layer_set_frame(power_bar_layer, GRect(xPos, 37, 1, 2));
-    /*
-    layer_set_hidden(top_line_layer, false);
-    layer_set_hidden(bottom_line_layer, false);
-     */
+
+    if (charge_state.is_charging) {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "charge_state.is_charging, battery %i", charge_state.charge_percent);
+        layer_set_hidden(top_line_layer, false);
+        layer_set_hidden(bottom_line_layer, false);
+    } else {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "battery not charging, battery %i", charge_state.charge_percent);
+        layer_set_hidden(top_line_layer, true);
+        layer_set_hidden(bottom_line_layer, true);
+    }
 }
 
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
-    //APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %d", app_message_error);
-    //APP_LOG(APP_LOG_LEVEL_DEBUG, "Got error: %s", translate_error(app_message_error));
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %d", app_message_error);
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Got error: %s", translate_error(app_message_error));
 }
 
 static void send_cmd(void) {
@@ -283,6 +283,7 @@ int countChar(char *s)
 
 
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "sync_tuple_changed_callback (message received?");
 
     GFont custom_font_tinytemp 	= fonts_get_system_font(FONT_KEY_GOTHIC_18);
     GFont custom_font_temp 		= fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);

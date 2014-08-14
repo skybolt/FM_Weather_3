@@ -22,6 +22,7 @@ void bluetooth_deinit(void) {
 }
 
 //static
+
 char *translate_error(AppMessageResult result) {
     switch (result) {
     case APP_MSG_OK:

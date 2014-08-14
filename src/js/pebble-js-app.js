@@ -9,6 +9,7 @@ var setPebbleToken = 'JUCP'; //    'XPGE'; 'JUCP is FM Forecast, XPGE is WU Fore
 //});
 
 var day1_high;
+var day2_low;
 var debug_flag = 0;
 var m = 1;
 var n = 0;
@@ -305,8 +306,8 @@ function tempGetter(temp) {
 }
 
 
-function fetchWeatherConditions(latitude, longitude) {  //sends day0, day1 temp (high), day2 temp (low);
-    var debug_flag = 1;
+function fetchOpenWeatherConditions(latitude, longitude) {  //sends day0, day1 temp (high), day2 temp (low);
+    //var debug_flag = 1;
     var ownName = arguments.callee.toString();
     ownName = ownName.substr('function '.length);        // trim off "function "
     ownName = ownName.substr(0, ownName.indexOf('('));        // trim off everything after the function name
@@ -392,7 +393,7 @@ function fetchWeatherConditions(latitude, longitude) {  //sends day0, day1 temp 
     req.send(null);
 }
 
-function fetchWeatherTodayForecast(latitude, longitude) {  //sends days 1, 2
+function fetchOpenWeatherTodayForecast(latitude, longitude) {  //sends days 1, 2
     var ownName = arguments.callee.toString();
     ownName = ownName.substr('function '.length);        // trim off "function "
     ownName = ownName.substr(0, ownName.indexOf('('));        // trim off everything after the function name
@@ -479,7 +480,7 @@ function fetchWeatherTodayForecast(latitude, longitude) {  //sends days 1, 2
     req.send(null);
 }
 
-function fetchWeather3DayForecast(latitude, longitude) {       // sends days 3, 4, 5
+function fetchOpenWeather3DayForecast(latitude, longitude) {       // sends days 3, 4, 5
     var ownName = arguments.callee.toString();
     ownName = ownName.substr('function '.length);        // trim off "function "
     ownName = ownName.substr(0, ownName.indexOf('('));        // trim off everything after the function name
@@ -644,7 +645,7 @@ function fetchWeatherUndergroundConditions(latitude, longitude) { // gets day 0
     req.send(null);
 }
 
-function fetchWeatherUndergroundTodayForecast(latitude, longitude) { // gets day 1, 2
+function fetchWeatherUndergroundHourlyForecast(latitude, longitude) { // gets day 1, 2
     var ownName = arguments.callee.toString();
     ownName = ownName.substr('function '.length);        // trim off "function "
     ownName = ownName.substr(0, ownName.indexOf('('));        // trim off everything after the function name
@@ -844,7 +845,7 @@ function fetchWeatherUnderground3DayForecast(latitude, longitude) { // gets day 
     req.send(null);
 }
 
-function fetchSunriseSunset(latitude, longitude) {
+function fetchOpenWeatherSunriseSunset(latitude, longitude) {
     var ownName = arguments.callee.toString();
     ownName = ownName.substr('function '.length);        // trim off "function "
     ownName = ownName.substr(0, ownName.indexOf('('));        // trim off everything after the function name
@@ -936,6 +937,7 @@ function sendDayMessages(day) {
 */
 
 function storePersistent(day, icon, temp, conditions, timestamp, baro) {
+    var debug_flag = 1;
     localStorage.setItem(day + "icon", icon);
     localStorage.setItem(day + "temp", temp);
     localStorage.setItem(day + "conditions", conditions);
@@ -1167,17 +1169,17 @@ function locationSuccess(pos) {
     //var longitude = 12.577281;
     //fetchWeather(latitude, longitude);
     if (provider_flag === 0) {
-        fetchWeatherConditions(coordinates.latitude, coordinates.longitude);
-        fetchWeather3DayForecast(coordinates.latitude, coordinates.longitude);
-        fetchWeatherTodayForecast(coordinates.latitude, coordinates.longitude);
-        fetchSunriseSunset(coordinates.latitude, coordinates.longitude);
+        fetchOpenWeatherConditions(coordinates.latitude, coordinates.longitude);
+        fetchOpenWeather3DayForecast(coordinates.latitude, coordinates.longitude);
+        fetchOpenWeatherTodayForecast(coordinates.latitude, coordinates.longitude);
+        fetchOpenWeatherSunriseSunset(coordinates.latitude, coordinates.longitude);
     }
 
     else if (provider_flag == 1) {
         fetchWeatherUndergroundConditions(coordinates.latitude, coordinates.longitude);
         fetchWeatherUnderground3DayForecast(coordinates.latitude, coordinates.longitude);
-        fetchWeatherUndergroundTodayForecast(coordinates.latitude, coordinates.longitude);
-        fetchSunriseSunset(coordinates.latitude, coordinates.longitude);
+        fetchWeatherUndergroundHourlyForecast(coordinates.latitude, coordinates.longitude);
+        fetchOpenWeatherSunriseSunset(coordinates.latitude, coordinates.longitude);
     }
 
 }
