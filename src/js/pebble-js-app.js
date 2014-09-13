@@ -132,6 +132,7 @@ function tempShower(inTemp) {
     } // end of if debug_flag > 1 condition
 }
 
+/*
 function getTempLabel() {
     if (tempFlag === 0 ) {
         //temp = "°F";
@@ -157,6 +158,36 @@ function getTempLabel() {
     } else if (tempFlag == 7) {
         //Delisle °D
         return "°De";
+    }
+}
+ */
+
+
+function getTempLabel() {
+    if (tempFlag === 0 ) {
+        //temp = "°F";
+        return "F";
+    } else if (tempFlag == 1) {
+        //Celsius °C
+        return "C";
+    } else if (tempFlag == 2) {
+        //Kelvin K
+        return "K";
+    } else if (tempFlag == 3) {
+        //Rankine °Ra
+        return "Ra";
+    } else if (tempFlag == 4) {
+        //Réaumur °Ré
+        return "Ré" ;
+    } else if (tempFlag == 5) {
+        //Rømer °Rø
+        return "Rø";
+    } else if (tempFlag == 6) {
+        //Newton °N
+        return "N";
+    } else if (tempFlag == 7) {
+        //Delisle °D
+        return "De";
     }
 }
 
@@ -307,7 +338,7 @@ function tempGetter(temp) {
 
 
 function fetchOpenWeatherConditions(latitude, longitude) {  //sends day0, day1 temp (high), day2 temp (low);
-    //var debug_flag = 1;
+    var debug_flag = 1;
     var ownName = arguments.callee.toString();
     ownName = ownName.substr('function '.length);        // trim off "function "
     ownName = ownName.substr(0, ownName.indexOf('('));        // trim off everything after the function name
@@ -394,6 +425,7 @@ function fetchOpenWeatherConditions(latitude, longitude) {  //sends day0, day1 t
 }
 
 function fetchOpenWeatherTodayForecast(latitude, longitude) {  //sends days 1, 2
+    var debug_flag = 1;
     var ownName = arguments.callee.toString();
     ownName = ownName.substr('function '.length);        // trim off "function "
     ownName = ownName.substr(0, ownName.indexOf('('));        // trim off everything after the function name
@@ -481,6 +513,7 @@ function fetchOpenWeatherTodayForecast(latitude, longitude) {  //sends days 1, 2
 }
 
 function fetchOpenWeather3DayForecast(latitude, longitude) {       // sends days 3, 4, 5
+    var debug_flag = 1;
     var ownName = arguments.callee.toString();
     ownName = ownName.substr('function '.length);        // trim off "function "
     ownName = ownName.substr(0, ownName.indexOf('('));        // trim off everything after the function name
@@ -580,10 +613,10 @@ function fetchOpenWeather3DayForecast(latitude, longitude) {       // sends days
 }
 
 
-
 /*NEXT SECTION IS FOR WEATHER UNDERGROUND*/
 
 function fetchWeatherUndergroundConditions(latitude, longitude) { // gets day 0
+    var debug_flag = 1;
     var ownName = arguments.callee.toString();
     ownName = ownName.substr('function '.length);        // trim off "function "
     ownName = ownName.substr(0, ownName.indexOf('('));        // trim off everything after the function name
@@ -624,7 +657,7 @@ function fetchWeatherUndergroundConditions(latitude, longitude) { // gets day 0
                     temp = tempGetter(response.current_observation.temp_c + 273.15) + getTempLabel();
                     conditions = response.current_observation.weather.replace(" ", "\n");
                     timestamp = parseInt(response.current_observation.local_epoch) - (offset * 3600);
-                    baro = pressureGetter(response.current_observation.pressure_in) + getPressureLabel() + response.current_observation.pressure_trend.replace("0", "*").replace("-", "÷");
+                    baro = pressureGetter(response.current_observation.pressure_in) + getPressureLabel() + response.current_observation.pressure_trend.replace("0", "*").replace("-", " ");
 
                     if (debug_flag > 0) {
                         console.log("requesting sendDayMessages(" + day + ")");
@@ -646,6 +679,7 @@ function fetchWeatherUndergroundConditions(latitude, longitude) { // gets day 0
 }
 
 function fetchWeatherUndergroundHourlyForecast(latitude, longitude) { // gets day 1, 2
+    var debug_flag = 1;
     var ownName = arguments.callee.toString();
     ownName = ownName.substr('function '.length);        // trim off "function "
     ownName = ownName.substr(0, ownName.indexOf('('));        // trim off everything after the function name
@@ -747,6 +781,7 @@ function fetchWeatherUndergroundHourlyForecast(latitude, longitude) { // gets da
 }
 
 function fetchWeatherUnderground3DayForecast(latitude, longitude) { // gets day 3, 4, 5
+    var debug_flag = 1;
     var ownName = arguments.callee.toString();
     ownName = ownName.substr('function '.length);        // trim off "function "
     ownName = ownName.substr(0, ownName.indexOf('('));        // trim off everything after the function name
@@ -846,6 +881,7 @@ function fetchWeatherUnderground3DayForecast(latitude, longitude) { // gets day 
 }
 
 function fetchOpenWeatherSunriseSunset(latitude, longitude) {
+    var debug_flag = 1;
     var ownName = arguments.callee.toString();
     ownName = ownName.substr('function '.length);        // trim off "function "
     ownName = ownName.substr(0, ownName.indexOf('('));        // trim off everything after the function name
@@ -937,7 +973,7 @@ function sendDayMessages(day) {
 */
 
 function storePersistent(day, icon, temp, conditions, timestamp, baro) {
-    var debug_flag = 1;
+    //var debug_flag = 1;
     localStorage.setItem(day + "icon", icon);
     localStorage.setItem(day + "temp", temp);
     localStorage.setItem(day + "conditions", conditions);
@@ -1088,6 +1124,7 @@ day1_timestamp: timestamp,
     }
 
     else if (day == 2) {
+        var debug_Flag = 1;
         if (debug_flag > 0) {
             console.log("send dayMessage" + day);
             console.log("k0 = " + k0);
@@ -1097,6 +1134,7 @@ day1_timestamp: timestamp,
             console.log("day2_timestamp: " +  k3 + ":" + timestamp);
 
         }
+        debug_flag = 0;
         MessageQueue.sendAppMessage({
 day2_icon: icon,
 day2_temp: temp + "",
@@ -1203,7 +1241,7 @@ function goDoStuff() {
     var lastUpdate;
     var now = new Date().getTime();
     now = Math.round(now / 1e3);
-    var delay = 58;
+    var delay = 300;
     if (debug_flag > 0) {
         console.log("FUNCTION NAME = " + ownName);
         console.log("lastUpdate: " + localStorage.getItem("lastUpdate"));
@@ -1491,7 +1529,8 @@ function iconFromWeatherId(weatherId) {
 
 
 var MessageQueue=function() {
-    var RETRY_MAX=5;
+    console.log("sending message");
+    var RETRY_MAX=50;
     var queue=[];
     var sending=false;
     var timer=null;
@@ -1546,7 +1585,15 @@ var MessageQueue=function() {
             return false
         }
     }
+
     function sendNextMessage() {
+        var debug_flag = 1;
+        if (debug_flag > 0) {
+            var ownName = arguments.callee.toString();
+            ownName = ownName.substr('function '.length);        // trim off "function "
+            ownName = ownName.substr(0, ownName.indexOf('('));        // trim off everything after the function name
+        }
+
         if(sending) {
             return
         }
@@ -1561,6 +1608,9 @@ var MessageQueue=function() {
             timeout()
         },1e3);
         function ack() {
+            if (debug_flag > 0) {
+                console.log(ownName + " message ack");
+            }
             clearTimeout(timer);
             setTimeout(function() {
                 sending=false;
@@ -1571,7 +1621,9 @@ var MessageQueue=function() {
             }
         }
         function nack() {
+            //if (debug_flag > 0) {console.log(ownName + " message NACK");}
             clearTimeout(timer);
+            console.log(message.attempts + " =? " + RETRY_MAX + " message.attempts =? RETRY_MAX");
             if(message.attempts<RETRY_MAX) {
                 queue.unshift(message);
                 setTimeout(function() {
