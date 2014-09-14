@@ -32,29 +32,10 @@ BitmapLayer *date_border_layer;
 
 const char *new_location;
 
-
-
-
-
-
 TextLayer *time_layer;
 TextLayer *date_layer;
 TextLayer *location_layer;
 TextLayer *bt_layer;
-
-Layer* second_layer;
-Layer* power_bar_layer;
-Layer* info_line_layer;
-Layer* top_line_layer;
-Layer* bottom_line_layer;
-
-//int x, y, w, h;
-int x = 0;
-int y = 37;
-int w = 144;
-int h = 2;
-
-Layer *todayForecastLayer;
 
 TextLayer *day1_cond_layer;
 TextLayer *day2_cond_layer;
@@ -74,6 +55,20 @@ TextLayer *day3_time_layer;
 TextLayer *day4_time_layer;
 TextLayer *day5_time_layer;
 
+Layer* second_layer;
+Layer* power_bar_layer;
+Layer* info_line_layer;
+Layer* top_line_layer;
+Layer* bottom_line_layer;
+
+//int x, y, w, h;
+int x = 0;
+int y = 37;
+int w = 144;
+int h = 2;
+
+Layer *todayForecastLayer;
+
 InverterLayer *day2_time_layer_inverter_layer;
 
 
@@ -86,7 +81,6 @@ static TextLayer *day0_conditions_layer;
 static TextLayer *day0_barometer_layer;
 
 static GFont custom_font_tiny_temp, custom_font_temp, custom_font_large_location, custom_font_small_location, custom_font_time, custom_font_location, custom_font_status, custom_font_status_16;
-
 
 InverterLayer *inverter_layer;
 GBitmap *date_layer_bitmap = NULL;
@@ -193,14 +187,8 @@ void black_layer_update_callback(Layer *layer, GContext* ctx) {
 }
 
 static void fetch_message(void) {
-
-
-
-
-
     DictionaryIterator *iter;
     app_message_outbox_begin(&iter);
-
     if (iter == NULL) {
 
         return;
