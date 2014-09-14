@@ -234,6 +234,9 @@ void windowSwitch(void) {
 
 void accel_tap_handler(AccelAxisType axis, int32_t direction) {
     APP_LOG(APP_LOG_LEVEL_INFO, "accl event received");
+    //APP_LOG(APP_LOG_LEVEL_DEBUG, "%lu app_message_outbox_size_maximum", app_message_outbox_size_maximum() );
+    //APP_LOG(APP_LOG_LEVEL_DEBUG, "%lu app_message_inbox_size_maximum", app_message_inbox_size_maximum() );
+
     windowSwitch();
 }
 
@@ -437,8 +440,8 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         }
         day0_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + night_flag]);
         bitmap_layer_set_bitmap(day0_icon_layer, day0_icon_bitmap);
-        bitmap_layer_set_bitmap(day1_icon_layer, day0_icon_bitmap);
-        bitmap_layer_set_bitmap(day2_icon_layer, day0_icon_bitmap);
+//        bitmap_layer_set_bitmap(day1_icon_layer, day0_icon_bitmap);
+//        bitmap_layer_set_bitmap(day2_icon_layer, day0_icon_bitmap);
         //day0_icon = new_tuple->value->uint32;
         break;
 
@@ -450,7 +453,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             gbitmap_destroy(day1_icon_bitmap);
         }
         day1_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + night_flag]);
-        //bitmap_layer_set_bitmap(day1_icon_layer, day1_icon_bitmap);
+        bitmap_layer_set_bitmap(day1_icon_layer, day1_icon_bitmap);
         //day1_icon = new_tuple->value->uint32;
         break;
 
@@ -465,12 +468,12 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         if (night_flag == 0) {
             //APP_LOG(APP_LOG_LEVEL_DEBUG, "check one");
             day2_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + 1]);
-            //bitmap_layer_set_bitmap(day2_icon_layer, day2_icon_bitmap);
+            bitmap_layer_set_bitmap(day2_icon_layer, day2_icon_bitmap);
         }
         else if (night_flag == 1) {
             //APP_LOG(APP_LOG_LEVEL_DEBUG, "check two");
             day2_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + 0]);
-            //bitmap_layer_set_bitmap(day2_icon_layer, day2_icon_bitmap);
+            bitmap_layer_set_bitmap(day2_icon_layer, day2_icon_bitmap);
         }
         else {
             //APP_LOG(APP_LOG_LEVEL_DEBUG, "check three");
@@ -597,7 +600,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             //GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
             //text_layer_set_font(location_layer, custom_font_time);
 
-            if (debug_flag > 6) {
+            if (debug_flag > -1) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "charCount %d reads less than 10", charCount);
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting location_layer, custom_font_large_location");
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting ocation_layer, GTextOverflowModeTrailingEllipsis");
@@ -605,19 +608,19 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 
 
         } else if (charCount < 16) {
-            if (debug_flag > 6) {
+            if (debug_flag > -1) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "charCount %d reads greater than 10 less than 16", charCount);
             }
             text_layer_set_overflow_mode(location_layer, GTextOverflowModeWordWrap);
             GFont custom_font_small_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_18));
 
-            if (debug_flag > 6) {
+            if (debug_flag > -1) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting location_layer, custom_font_small_location");
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting ocation_layer, GTextOverflowModeWordWrap");
             }
         } else
         {
-            if (debug_flag > 6) {
+            if (debug_flag > -1) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "charCount %d reads 17 or more", charCount);
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting location_layer, custom_font_tiny_location");
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting ocation_layer, GTextOverflowModeWordWrap");
@@ -625,15 +628,13 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             GFont custom_font_tiny_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_BOLD_16));
 
             text_layer_set_font(location_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
-
             text_layer_set_overflow_mode(location_layer, GTextOverflowModeWordWrap);
         }
-        if (debug_flag > 6) {
+
+        if (debug_flag > -1) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "exiting location charCount if/then stack");
         }
         break;
-
-
 
     case WEATHER_SUNRISE_KEY:
         sunriseInt = new_tuple->value->uint32;
@@ -1127,7 +1128,7 @@ static void window_load(Window *window) {
 
     text_layer_set_text_color(location_layer, GColorBlack);
     text_layer_set_background_color(location_layer, GColorClear);
-//    text_layer_set_font(location_layer, custom_font_location);
+    //text_layer_set_font(location_layer, custom_font_location);
     text_layer_set_font(location_layer, custom_font_time);
     text_layer_set_text_alignment(location_layer, GTextAlignmentCenter);
 
@@ -1199,7 +1200,7 @@ static void window_load(Window *window) {
     layer_add_child(todayForecastLayer, text_layer_get_layer(day1_temp_layer));
     layer_add_child(todayForecastLayer, text_layer_get_layer(day1_time_layer));
     layer_add_child(todayForecastLayer, text_layer_get_layer(day2_time_layer));
-    //layer_add_child(todayForecastLayer, inverter_layer_get_layer(day2_time_layer_inverter_layer));
+    layer_add_child(todayForecastLayer, inverter_layer_get_layer(day2_time_layer_inverter_layer));
 
     layer_add_child(window_layer, currentConditionsLayer);
     layer_add_child(currentConditionsLayer, bitmap_layer_get_layer(day0_icon_layer));
@@ -1219,8 +1220,6 @@ static void window_load(Window *window) {
 
 
     layer_set_hidden(currentConditionsLayer, false);
-    layer_set_hidden(todayForecastLayer, true);
-
 
     send_cmd();
     tick_timer_service_subscribe(SECOND_UNIT, &handle_second_tick);
@@ -1243,6 +1242,7 @@ static void window_load(Window *window) {
     accel_tap_service_subscribe(accel_tap_handler);
     handle_minute_tick();
 
+    layer_set_hidden(todayForecastLayer, true);
 
     app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values, ARRAY_LENGTH(initial_values), sync_tuple_changed_callback, sync_error_callback, NULL);
 
@@ -1266,41 +1266,46 @@ static void window_unload(Window *window) {
     layer_destroy(power_bar_layer);
     layer_destroy(second_layer);
 //    layer_remove_from_parent(day2_temp_layer);
-//    layer_destroy(todayForecastLayer);
+    layer_destroy(todayForecastLayer);
 //    layer_remove_child_layers(todayForecastLayer);
 //    layer_remove_child_layers(window_layer);
 //    layer_remove_from_parent(text_layer_get_layer(day5_cond_layer));
-    /*
+
 
     text_layer_destroy(day5_temp_layer);
     text_layer_destroy(day4_temp_layer);
     text_layer_destroy(day3_temp_layer);
-    //    text_layer_destroy(day2_temp_layer);
+    text_layer_destroy(day2_temp_layer);
+    text_layer_destroy(day1_temp_layer);
+    text_layer_destroy(day0_temperature_layer);
+
     text_layer_destroy(day5_cond_layer);
     text_layer_destroy(day4_cond_layer);
     text_layer_destroy(day3_cond_layer);
+    text_layer_destroy(day2_cond_layer);
+    text_layer_destroy(day1_cond_layer);
+    text_layer_destroy(day0_conditions_layer);
+
     text_layer_destroy(day5_time_layer);
     text_layer_destroy(day4_time_layer);
     text_layer_destroy(day3_time_layer);
+    text_layer_destroy(day2_time_layer);
+    text_layer_destroy(day1_time_layer);
+
     text_layer_destroy(day0_barometer_layer);
     text_layer_destroy(day0_status_layer);
-    text_layer_destroy(day0_temperature_layer);
+
 
     bitmap_layer_destroy(date_border_layer);
     if (date_layer_bitmap) {
         gbitmap_destroy(date_layer_bitmap);
     }
-     */
 
-    //bitmap_layer_destroy(day5_icon_layer);
-    //bitmap_layer_destroy(day4_icon_layer);
 
     if (day5_icon_bitmap) {
         gbitmap_destroy(day5_icon_bitmap);
     }
-
-    // un comment out the next line and then app sync callback won't run
-    //bitmap_layer_destroy(day5_icon_layer);
+    bitmap_layer_destroy(day5_icon_layer);
     if (day4_icon_bitmap) {
         gbitmap_destroy(day4_icon_bitmap);
     }
@@ -1328,18 +1333,8 @@ static void window_unload(Window *window) {
     //  inverter_layer_destroy(day2_time_layer_inverter_layer);
 
     /*
-     text_layer_destroy(day2_time_layer);
-     text_layer_destroy(day1_time_layer);
-     text_layer_destroy(day2_temp_layer);
-     text_layer_destroy(day1_temp_layer);
-     text_layer_destroy(day2_cond_layer);
-     text_layer_destroy(day1_cond_layer);
 
      */
-
-
-
-
 
     //    layer_destroy(todayForecastLayer);
     //    layer_destroy(currentConditionsLayer);
@@ -1363,8 +1358,13 @@ void handle_init(void) {
         .load = window_load,
          .unload = window_unload,
     });
-    const int inbound_size = 1024;
-    const int outbound_size = 1024;
+    //APP_LOG(APP_LOG_LEVEL_DEBUG, "%lu app_message_outbox_size_maximum", app_message_outbox_size_maximum() );
+    //APP_LOG(APP_LOG_LEVEL_DEBUG, "%lu app_message_inbox_size_maximum", app_message_inbox_size_maximum() );
+    const int inbound_size = 64;
+    const int outbound_size = 64;
+
+    //const int inbound_size = 1024;
+    //const int outbound_size = 1024;
     app_message_open(inbound_size, outbound_size);
     window_stack_push(window, true /* Animated */);
 }
