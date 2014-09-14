@@ -32,17 +32,10 @@ BitmapLayer *date_border_layer;
 
 const char *new_location;
 
-TextLayer *day3_time_layer;
-TextLayer *day4_time_layer;
-TextLayer *day5_time_layer;
 
-TextLayer *day3_cond_layer;
-TextLayer *day4_cond_layer;
-TextLayer *day5_cond_layer;
 
-TextLayer *day3_temp_layer;
-TextLayer *day4_temp_layer;
-TextLayer *day5_temp_layer;
+
+
 
 TextLayer *time_layer;
 TextLayer *date_layer;
@@ -62,12 +55,25 @@ int w = 144;
 int h = 2;
 
 Layer *todayForecastLayer;
+
 TextLayer *day1_cond_layer;
 TextLayer *day2_cond_layer;
+TextLayer *day3_cond_layer;
+TextLayer *day4_cond_layer;
+TextLayer *day5_cond_layer;
+
 TextLayer *day1_temp_layer;
 TextLayer *day2_temp_layer;
+TextLayer *day3_temp_layer;
+TextLayer *day4_temp_layer;
+TextLayer *day5_temp_layer;
+
 TextLayer *day1_time_layer;
 TextLayer *day2_time_layer;
+TextLayer *day3_time_layer;
+TextLayer *day4_time_layer;
+TextLayer *day5_time_layer;
+
 InverterLayer *day2_time_layer_inverter_layer;
 
 
@@ -120,8 +126,6 @@ const char			*nextday_hilo;
 
 enum WeatherKey {
     SETTING_NUMBER_1_KEY        = 1,
-
-
 
     WEATHER_DAY0_ICON_KEY		= 10,
     WEATHER_DAY0_TEMP_KEY		= 11,
