@@ -669,18 +669,11 @@ void handle_minute_tick() {
     struct tm *timer_tm;
     timer_tm = localtime (&zuluTime);
 
-
-
-
-
-
     char displayTimeString[32];
     strftime(displayTimeString, sizeof(displayTimeString), "%A %l:%M%P", timer_tm);
 
     timer_tm = localtime (&lclTime);
     strftime(displayTimeString, sizeof(displayTimeString), "%A %l:%M%P", timer_tm);
-
-
 
     time_t display_time_t = sunriseInt;
     timer_tm = localtime (&display_time_t);
@@ -1016,8 +1009,6 @@ static void window_load(Window *window) {
 
     location_layer = text_layer_create(GRect(-2, 125, 148, 40));
 
-
-
     day0_icon_layer = bitmap_layer_create(GRect(9, 58-43, 50, 50));
     day0_temperature_layer = text_layer_create(GRect(64, 63-43, 124, 36));
     day0_status_layer = text_layer_create(GRect(65, 92-43, 144, 36));
@@ -1301,32 +1292,36 @@ static void window_unload(Window *window) {
     }
      */
 
-    //    bitmap_layer_destroy(day5_icon_layer);
-    //    bitmap_layer_destroy(day4_icon_layer);
-    //    bitmap_layer_destroy(day3_icon_layer);
-    //    bitmap_layer_destroy(day2_icon_layer);
-    //    bitmap_layer_destroy(day1_icon_layer);
-    bitmap_layer_destroy(day0_icon_layer);
-
+    //bitmap_layer_destroy(day5_icon_layer);
+    //bitmap_layer_destroy(day4_icon_layer);
 
     if (day5_icon_bitmap) {
         gbitmap_destroy(day5_icon_bitmap);
     }
+
+    // un comment out the next line and then app sync callback won't run
+    //bitmap_layer_destroy(day5_icon_layer);
     if (day4_icon_bitmap) {
         gbitmap_destroy(day4_icon_bitmap);
     }
+    bitmap_layer_destroy(day4_icon_layer);
     if (day3_icon_bitmap) {
         gbitmap_destroy(day3_icon_bitmap);
     }
+    bitmap_layer_destroy(day3_icon_layer);
     if (day2_icon_bitmap) {
         gbitmap_destroy(day2_icon_bitmap);
     }
+    bitmap_layer_destroy(day2_icon_layer);
     if (day1_icon_bitmap) {
         gbitmap_destroy(day1_icon_bitmap);
     }
+    bitmap_layer_destroy(day1_icon_layer);
     if (day0_icon_bitmap) {
         gbitmap_destroy(day0_icon_bitmap);
     }
+    bitmap_layer_destroy(day0_icon_layer);
+
 
     //	inverter_layer_destroy(inverter_layer);
     //  inverter_layer_destroy(inverter_layer);
