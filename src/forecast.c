@@ -9,9 +9,25 @@ int                 tuple_counter = 0;
 
 Window *window;
 
-BitmapLayer *day3_icon_layer;
-BitmapLayer *day4_icon_layer;
-BitmapLayer *day5_icon_layer;
+static BitmapLayer *day0_icon_layer;
+static BitmapLayer *day1_icon_layer;
+static BitmapLayer *day2_icon_layer;
+static BitmapLayer *day3_icon_layer;
+static BitmapLayer *day4_icon_layer;
+static BitmapLayer *day5_icon_layer;
+
+
+static GBitmap *day0_icon_bitmap = NULL;
+static GBitmap *day1_icon_bitmap = NULL;
+static GBitmap *day2_icon_bitmap = NULL;
+static GBitmap *day3_icon_bitmap = NULL;
+static GBitmap *day4_icon_bitmap = NULL;
+static GBitmap *day5_icon_bitmap = NULL;
+
+static int day0_icon;
+static int day1_icon;
+static int day2_icon;
+
 BitmapLayer *date_border_layer;
 
 const char *new_location;
@@ -46,8 +62,6 @@ int w = 144;
 int h = 2;
 
 Layer *todayForecastLayer;
-BitmapLayer *day1_icon_layer;
-BitmapLayer *day2_icon_layer;
 TextLayer *day1_cond_layer;
 TextLayer *day2_cond_layer;
 TextLayer *day1_temp_layer;
@@ -69,12 +83,6 @@ static GFont custom_font_tiny_temp, custom_font_temp, custom_font_large_location
 
 
 InverterLayer *inverter_layer;
-GBitmap *day0_icon_bitmap = NULL;
-GBitmap *day1_icon_bitmap = NULL;
-GBitmap *day2_icon_bitmap = NULL;
-GBitmap *day3_icon_bitmap = NULL;
-GBitmap *day4_icon_bitmap = NULL;
-GBitmap *day5_icon_bitmap = NULL;
 GBitmap *date_layer_bitmap = NULL;
 uint32_t offsetInt = 0;
 
@@ -436,8 +444,10 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             gbitmap_destroy(day0_icon_bitmap);
         }
         day0_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + night_flag]);
-        //day0_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[7]);
         bitmap_layer_set_bitmap(day0_icon_layer, day0_icon_bitmap);
+        bitmap_layer_set_bitmap(day1_icon_layer, day0_icon_bitmap);
+        bitmap_layer_set_bitmap(day2_icon_layer, day0_icon_bitmap);
+        //day0_icon = new_tuple->value->uint32;
         break;
 
     case WEATHER_DAY1_ICON_KEY:
@@ -448,7 +458,8 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
             gbitmap_destroy(day1_icon_bitmap);
         }
         day1_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + night_flag]);
-        bitmap_layer_set_bitmap(day1_icon_layer, day1_icon_bitmap);
+        //bitmap_layer_set_bitmap(day1_icon_layer, day1_icon_bitmap);
+        //day1_icon = new_tuple->value->uint32;
         break;
 
     case WEATHER_DAY2_ICON_KEY:
@@ -462,12 +473,12 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         if (night_flag == 0) {
             //APP_LOG(APP_LOG_LEVEL_DEBUG, "check one");
             day2_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + 1]);
-            bitmap_layer_set_bitmap(day2_icon_layer, day2_icon_bitmap);
+            //bitmap_layer_set_bitmap(day2_icon_layer, day2_icon_bitmap);
         }
         else if (night_flag == 1) {
             //APP_LOG(APP_LOG_LEVEL_DEBUG, "check two");
             day2_icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint32 + 0]);
-            bitmap_layer_set_bitmap(day2_icon_layer, day2_icon_bitmap);
+            //bitmap_layer_set_bitmap(day2_icon_layer, day2_icon_bitmap);
         }
         else {
             //APP_LOG(APP_LOG_LEVEL_DEBUG, "check three");
@@ -1205,7 +1216,7 @@ static void window_load(Window *window) {
     layer_add_child(todayForecastLayer, text_layer_get_layer(day1_temp_layer));
     layer_add_child(todayForecastLayer, text_layer_get_layer(day1_time_layer));
     layer_add_child(todayForecastLayer, text_layer_get_layer(day2_time_layer));
-    layer_add_child(todayForecastLayer, inverter_layer_get_layer(day2_time_layer_inverter_layer));
+    //layer_add_child(todayForecastLayer, inverter_layer_get_layer(day2_time_layer_inverter_layer));
 
     layer_add_child(window_layer, currentConditionsLayer);
     layer_add_child(currentConditionsLayer, bitmap_layer_get_layer(day0_icon_layer));
@@ -1259,7 +1270,7 @@ static void window_load(Window *window) {
 
 static void window_unload(Window *window) {
 
-    Layer *window_layer = window_get_root_layer(window);
+    //Layer *window_layer = window_get_root_layer(window);
 
     text_layer_destroy(bt_layer);
     text_layer_destroy(time_layer);
@@ -1301,9 +1312,9 @@ static void window_unload(Window *window) {
     //    bitmap_layer_destroy(day5_icon_layer);
     //    bitmap_layer_destroy(day4_icon_layer);
     //    bitmap_layer_destroy(day3_icon_layer);
-    //    bitmap_layer_destroy(day0_icon_layer);
     //    bitmap_layer_destroy(day2_icon_layer);
     //    bitmap_layer_destroy(day1_icon_layer);
+    bitmap_layer_destroy(day0_icon_layer);
 
 
     if (day5_icon_bitmap) {
