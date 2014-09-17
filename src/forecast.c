@@ -215,13 +215,13 @@ void windowSwitch(void) {
         layer_set_hidden(currentConditionsLayer, true);
         layer_set_hidden(todayForecastLayer, false);
         switchFlag = 1;
-        counter_one = 10;
+        counter_one = 12;
     } else if (switchFlag == 1) {
         // show way out forecast
         layer_set_hidden(currentConditionsLayer, true);
         layer_set_hidden(todayForecastLayer, true);
         switchFlag = 2;
-        counter_one = 10;
+        counter_one = 12;
     } else if (switchFlag == 2) {
         //set back to base leve, current conditions show
         layer_set_hidden(currentConditionsLayer, false);
@@ -260,7 +260,7 @@ static void handle_battery(BatteryChargeState charge_state) {
 
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %d", app_message_error);
-    if (debug_flag > 0) {
+    if (debug_flag > -1) {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "Got error: %s", translate_error(app_message_error));
     }
 }
@@ -592,46 +592,47 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         strcpy(location_counter, new_location);
         int charCount = countChar(location_counter);
         int changer = 10;
+        //debug_flag = 12;
         if (debug_flag > 6) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "STRING [02] %s has %d characters", location_counter, charCount);
         }
-
+        debug_flag = 0;
         if (charCount < 10 ) {
             //GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
             //text_layer_set_font(location_layer, custom_font_time);
 
-            if (debug_flag > -1) {
-                APP_LOG(APP_LOG_LEVEL_DEBUG, "charCount %d reads less than 10", charCount);
+            if (debug_flag > 0) {
+                APP_LOG(APP_LOG_LEVEL_DEBUG, "charCount of %s %d reads less than 10", new_tuple->value->cstring, charCount);
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting location_layer, custom_font_large_location");
-                APP_LOG(APP_LOG_LEVEL_DEBUG, "setting ocation_layer, GTextOverflowModeTrailingEllipsis");
+                APP_LOG(APP_LOG_LEVEL_DEBUG, "setting location_layer, GTextOverflowModeTrailingEllipsis");
             }
 
 
         } else if (charCount < 16) {
-            if (debug_flag > -1) {
+            if (debug_flag > 0) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "charCount %d reads greater than 10 less than 16", charCount);
             }
             text_layer_set_overflow_mode(location_layer, GTextOverflowModeWordWrap);
-            GFont custom_font_small_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_18));
+            //GFont custom_font_small_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_18));
 
-            if (debug_flag > -1) {
+            if (debug_flag > 0) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting location_layer, custom_font_small_location");
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting ocation_layer, GTextOverflowModeWordWrap");
             }
         } else
         {
-            if (debug_flag > -1) {
+            if (debug_flag > 0) {
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "charCount %d reads 17 or more", charCount);
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting location_layer, custom_font_tiny_location");
                 APP_LOG(APP_LOG_LEVEL_DEBUG, "setting ocation_layer, GTextOverflowModeWordWrap");
             }
-            GFont custom_font_tiny_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_BOLD_16));
+            //GFont custom_font_tiny_location = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_BOLD_16));
 
             text_layer_set_font(location_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
             text_layer_set_overflow_mode(location_layer, GTextOverflowModeWordWrap);
         }
 
-        if (debug_flag > -1) {
+        if (debug_flag > 0) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "exiting location charCount if/then stack");
         }
         break;
@@ -976,9 +977,9 @@ static void window_load(Window *window) {
         TupletInteger(WEATHER_DAY3_TIMESTAMP_KEY, (int) 999993600),
         TupletInteger(WEATHER_DAY4_TIMESTAMP_KEY, (int) 999993600),
         TupletInteger(WEATHER_DAY5_TIMESTAMP_KEY, (int) 999993600),
-        TupletCString(WEATHER_LOCATION_KEY, "         "),
-        TupletInteger(WEATHER_SUNRISE_KEY, (int) 999928800), //1395410913 ),
-        TupletInteger(WEATHER_SUNSET_KEY, (int) 999979200), //1395455062 ),
+        TupletCString(WEATHER_LOCATION_KEY, "no phone"),
+        TupletInteger(WEATHER_SUNRISE_KEY, (int) 999928800), //1395410913 ),        Seattle
+        TupletInteger(WEATHER_SUNSET_KEY, (int) 999979200), //1395455062 ),         no
 
     };
 
@@ -1242,34 +1243,29 @@ static void window_load(Window *window) {
     accel_tap_service_subscribe(accel_tap_handler);
     handle_minute_tick();
 
-    layer_set_hidden(todayForecastLayer, true);
+    //layer_set_hidden(todayForecastLayer, true);
 
     app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values, ARRAY_LENGTH(initial_values), sync_tuple_changed_callback, sync_error_callback, NULL);
 
     //app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values, ARRAY_LENGTH(initial_values), sync_tuple_changed_callback, sync_error_callback, NULL);
 
     //send_cmd();
+    layer_set_hidden(currentConditionsLayer, false);
+    layer_set_hidden(todayForecastLayer, true);
 }
 
 static void window_unload(Window *window) {
 
-    //Layer *window_layer = window_get_root_layer(window);
+    app_sync_deinit(&sync);
 
+    //Layer *window_layer = window_get_root_layer(window);
     text_layer_destroy(bt_layer);
     text_layer_destroy(time_layer);
     text_layer_destroy(date_layer);
     text_layer_destroy(location_layer);
 
-    layer_destroy(top_line_layer);
-    layer_destroy(bottom_line_layer); //
-    layer_destroy(info_line_layer);
-    layer_destroy(power_bar_layer);
-    layer_destroy(second_layer);
-//    layer_remove_from_parent(day2_temp_layer);
+
     layer_destroy(todayForecastLayer);
-//    layer_remove_child_layers(todayForecastLayer);
-//    layer_remove_child_layers(window_layer);
-//    layer_remove_from_parent(text_layer_get_layer(day5_cond_layer));
 
 
     text_layer_destroy(day5_temp_layer);
@@ -1327,27 +1323,18 @@ static void window_unload(Window *window) {
     }
     bitmap_layer_destroy(day0_icon_layer);
 
+    inverter_layer_destroy(inverter_layer);
+    inverter_layer_destroy(day2_time_layer_inverter_layer);
 
-    //	inverter_layer_destroy(inverter_layer);
-    //  inverter_layer_destroy(inverter_layer);
-    //  inverter_layer_destroy(day2_time_layer_inverter_layer);
-
-    /*
-
-     */
-
-    //    layer_destroy(todayForecastLayer);
-    //    layer_destroy(currentConditionsLayer);
+    layer_destroy(currentConditionsLayer);
     fonts_unload_custom_font(custom_font_time);
-    /*	fonts_unload_custom_font(custom_font_tiny_temp);
-    	fonts_unload_custom_font(custom_font_temp);
-    	fonts_unload_custom_font(custom_font_large_location);
-    	fonts_unload_custom_font(custom_font_small_location);
-    	fonts_unload_custom_font(custom_font_location);
-    	fonts_unload_custom_font(custom_font_status);
-    	fonts_unload_custom_font(custom_font_status_16);
-    */
-
+    fonts_unload_custom_font(custom_font_tiny_temp);
+    fonts_unload_custom_font(custom_font_temp);
+    fonts_unload_custom_font(custom_font_large_location);
+    fonts_unload_custom_font(custom_font_small_location);
+    fonts_unload_custom_font(custom_font_location);
+    fonts_unload_custom_font(custom_font_status);
+    fonts_unload_custom_font(custom_font_status_16);
 }
 
 
@@ -1358,9 +1345,7 @@ void handle_init(void) {
         .load = window_load,
          .unload = window_unload,
     });
-    //APP_LOG(APP_LOG_LEVEL_DEBUG, "%lu app_message_outbox_size_maximum", app_message_outbox_size_maximum() );
-    //APP_LOG(APP_LOG_LEVEL_DEBUG, "%lu app_message_inbox_size_maximum", app_message_inbox_size_maximum() );
-    const int inbound_size = 64;
+    const int inbound_size = 128;
     const int outbound_size = 64;
 
     //const int inbound_size = 1024;
@@ -1369,25 +1354,22 @@ void handle_init(void) {
     window_stack_push(window, true /* Animated */);
 }
 
-/*
+
 void infolines_deinit(void) {
 //to call infolines_deinit();
 
-layer_destroy(top_line_layer);
-layer_destroy(bottom_line_layer); //
-layer_destroy(info_line_layer);
-layer_destroy(power_bar_layer);
-layer_destroy(second_layer);
+    layer_destroy(top_line_layer);
+    layer_destroy(bottom_line_layer); //
+    layer_destroy(info_line_layer);
+    layer_destroy(power_bar_layer);
+    layer_destroy(second_layer);
 }
-*/
+
 
 
 void handle_deinit(void) {
-
-//    infolines_deinit();
+    infolines_deinit();
     window_destroy(window);
-    //    layer_destroy(text_layer_get_layer(day0_conditions_layer));
-
 }
 
 int main(void) {
