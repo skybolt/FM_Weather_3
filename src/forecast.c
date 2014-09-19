@@ -379,7 +379,6 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         if (debug_flag > 0) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "WEATHER_DAY0_BARO_KEY %s", new_tuple->value->cstring);
         }
-        debug_flag = debug_base;
         break;
 
     case WEATHER_DAY0_CONDITIONS_KEY:
@@ -592,11 +591,9 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         strcpy(location_counter, new_location);
         int charCount = countChar(location_counter);
         int changer = 10;
-        //debug_flag = 12;
         if (debug_flag > 6) {
             APP_LOG(APP_LOG_LEVEL_DEBUG, "STRING [02] %s has %d characters", location_counter, charCount);
         }
-        debug_flag = 0;
         if (charCount < 10 ) {
             //GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TAHOMA_BOLD_28));
             //text_layer_set_font(location_layer, custom_font_time);
@@ -729,7 +726,7 @@ void handle_minute_tick() {
 }
 
 static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
-
+    debug_flag = 0;
 
     if (counter_one == 0) {
         if (debug_flag > 8) {
@@ -895,6 +892,7 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed) {
         layer_set_hidden(text_layer_get_layer(day0_conditions_layer), true);
         layer_set_hidden(text_layer_get_layer(day0_barometer_layer), false);
     }
+    debug_flag = debug_base;
 }
 
 void infolines_init(void) {

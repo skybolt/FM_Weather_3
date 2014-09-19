@@ -523,10 +523,15 @@ function fetchOpenWeatherTodayForecast(latitude, longitude) {  //sends days 1, 2
                     }
                     icon = iconFromWeatherId(response.list[n].weather[0].id, day);
                     //temp = "oH: " + tempGetter(response.list[0].main.temp) + getTempLabel();
-                    temp = "H: " + day1_high;
+                    if (!day1_high) {
+                        temp = "";
+                    } else {
+                        temp = "H: " + day1_high;
+                    }
                     timestamp = response.list[n].dt;
                     timestamp = parseInt(timestamp) - parseInt (offset * 3600);
-                    conditions = stripper(response.list[n].weather[0].description);
+                    //conditions = stripper(response.list[n].weather[0].description);
+                    conditions = response.list[n].weather[0].description;
 
                     if (debug_flag > 0) {
                         console.log("requesting sendDayMessages(" + day + ")");
@@ -544,7 +549,9 @@ function fetchOpenWeatherTodayForecast(latitude, longitude) {  //sends days 1, 2
                     temp = "L: " + day2_low;
                     timestamp = response.list[n].dt;
                     timestamp = parseInt(timestamp) - parseInt (offset * 3600);
-                    conditions = stripper(response.list[n].weather[0].description);
+                    //conditions = stripper(response.list[n].weather[0].description);
+                    conditions = response.list[n].weather[0].description;
+
 
                     if (debug_flag > 0) {
                         console.log("requesting sendDayMessages(" + day + ")");
@@ -1296,7 +1303,7 @@ function goDoStuff() {
     var now = new Date().getTime();
     now = Math.round(now / 1e3);
     var delay = 300;
-    delay = 60;
+    //delay = 60;
     if (debug_flag > 0) {
         console.log("FUNCTION NAME = " + ownName);
         console.log("lastUpdate: " + localStorage.getItem("lastUpdate"));
@@ -1390,8 +1397,10 @@ location: config.location,
 });
 
 
-function iconFromWeatherString(weatherId) {
 
+
+function iconFromWeatherString(weatherId) {
+    var debug_flag = 1;
     if (weatherId == "tstorms") {
         if (debug_flag > 0) {
             console.log("weatherId = " + weatherId + ", return 6");
