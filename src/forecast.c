@@ -291,6 +291,7 @@ int countChar(char *s)
 
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "%d = night flag", night_flag);
+    debug_flag = 12;
     if (debug_flag > 0) {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "%i sync_tuple_changed_callback (message received or tuplet initialized)", tuple_counter);
     }
@@ -652,7 +653,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 
 
     }
-
+    debug_flag = 0;
 }
 
 void handle_hour_tick() {
