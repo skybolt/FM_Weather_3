@@ -143,12 +143,12 @@ function tempShower(inTemp) {
         temp = (inTemp * (9/5)) - 459.67;
         temp = Math.round(temp);
         if (debug_flag > 0) {
-            console.log("temp is " + temp + "°F" );
+            console.log("temp is " + temp + "F" );
         }
         temp = inTemp - 273.15;
         temp = Math.round(temp);
         if (debug_flag > 0) {
-            console.log("temp is " + temp + "\u00B0C" );
+            console.log("temp is " + temp + "" );
         }
         temp = Math.round(inTemp);
         if (debug_flag > 0) {
@@ -158,27 +158,27 @@ function tempShower(inTemp) {
         temp = inTemp * (9/5);
         temp = Math.round(temp);
         if (debug_flag > 0) {
-            console.log("temp is " + temp + "°Ra" );
+            console.log("temp is " + temp + "Ra" );
         }
         temp = (inTemp - 273.15) * (4/5);
         temp = Math.round(temp);
         if (debug_flag > 0) {
-            console.log("temp is " + temp + "°Ré" );
+            console.log("temp is " + temp + "Ré" );
         }
         temp = ((inTemp - 273.15) * (21/40)) + 7.5;
         temp = Math.round(temp);
         if (debug_flag > 0) {
-            console.log("temp is " + temp + "°Rø" );
+            console.log("temp is " + temp + "Rø" );
         }
         temp = (inTemp - 273.15) * (33/100);
         temp = Math.round(temp);
         if (debug_flag > 0) {
-            console.log("temp is " + temp + "°N" );
+            console.log("temp is " + temp + "N" );
         }
         temp = (373.15 - inTemp) * (3/2);
         temp = Math.round(temp);
         if (debug_flag > 0) {
-            console.log("temp is " + temp + "°De" );
+            console.log("temp is " + temp + "De" );
         }
     } // end of if debug_flag > 1 condition
 }
@@ -217,28 +217,28 @@ function getTempLabel() {
 function getTempLabel() {
     if (tempFlag === 0 ) {
         //temp = "°F";
-        return "°F";
+        return "\u00B0F";
     } else if (tempFlag == 1) {
         //Celsius °C
-        return "°C";
+        return "\u00B0C";
     } else if (tempFlag == 2) {
         //Kelvin K
         return "K";
     } else if (tempFlag == 3) {
         //Rankine °Ra
-        return "°Ra";
+        return "\u00B0Ra";
     } else if (tempFlag == 4) {
         //Réaumur °Ré
-        return "°Ré" ;
+        return "\u00B0Ré" ;
     } else if (tempFlag == 5) {
         //Rømer °Rø
-        return "°Rø";
+        return "\u00B0Rø";
     } else if (tempFlag == 6) {
         //Newton °N
-        return "°N";
+        return "\u00B0N";
     } else if (tempFlag == 7) {
         //Delisle °D
-        return "°De";
+        return "\u00B0De";
     }
 }
 
@@ -319,7 +319,7 @@ function tempGetter(temp) {
         temp = (temp * (9/5)) - 459.67;
         temp = Math.round(temp);
         if (debug_flag > 0) {
-            console.log("temp is " + temp + "°F" );
+            console.log("temp is " + temp + "F" );
         }
         return temp;
     } else if (tempFlag == 1) {
@@ -328,7 +328,7 @@ function tempGetter(temp) {
         temp = temp - 273.15;
         temp = Math.round(temp);
         if (debug_flag > 0) {
-            console.log("temp is " + temp + "°C" );
+            console.log("temp is " + temp + "C" );
         }
         return temp;
     } else if (tempFlag == 2) {
@@ -345,7 +345,7 @@ function tempGetter(temp) {
         temp = temp * (9/5);
         temp = Math.round(temp);
         if (debug_flag > 0) {
-            console.log("temp is " + temp + "°Ra" );
+            console.log("temp is " + temp + "Ra" );
         }
         return temp;
     } else if (tempFlag == 4) {
@@ -354,7 +354,7 @@ function tempGetter(temp) {
         temp = (temp - 273.15) * (4/5);
         temp = Math.round(temp);
         if (debug_flag > 0) {
-            console.log("temp is " + temp + "°Ré" );
+            console.log("temp is " + temp + "Ré" );
         }
         return temp;
     } else if (tempFlag == 5) {
@@ -363,7 +363,7 @@ function tempGetter(temp) {
         temp = ((temp - 273.15) * (21/40)) + 7.5;
         temp = Math.round(temp);
         if (debug_flag > 0) {
-            console.log("temp is " + temp + "°Rø" );
+            console.log("temp is " + temp + "Rø" );
         }
         return temp;
     } else if (tempFlag == 6) {
@@ -372,7 +372,7 @@ function tempGetter(temp) {
         temp = (temp - 273.15) * (33/100);
         temp = Math.round(temp);
         if (debug_flag > 0) {
-            console.log("temp is " + temp + "°N" );
+            console.log("temp is " + temp + "N" );
         }
         return temp;
     } else if (tempFlag == 7) {
@@ -381,7 +381,7 @@ function tempGetter(temp) {
         temp = (373.15 - temp) * (3/2);
         temp = Math.round(temp);
         if (debug_flag > 0) {
-            console.log("temp is " + temp + "°De" );
+            console.log("temp is " + temp + "De" );
         }
         return temp;
     }
@@ -1112,7 +1112,7 @@ sunset: sunset,
 
 
 function sendDayMessages(day, icon, temp, conditions, timestamp, baro) {
-    if (debug_flag > 0) {
+    if (debug_flag > -1) {
         console.log("sending day = " + day);
         showPersistent(day);
     }
@@ -1303,7 +1303,7 @@ function goDoStuff() {
     var now = new Date().getTime();
     now = Math.round(now / 1e3);
     var delay = 300;
-    //delay = 60;
+    delay = 60;
     if (debug_flag > 0) {
         console.log("FUNCTION NAME = " + ownName);
         console.log("lastUpdate: " + localStorage.getItem("lastUpdate"));
