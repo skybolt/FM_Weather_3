@@ -120,18 +120,19 @@ function stripper(stripped) {
     if (debug_flag > 0) {
         console.log("stripper input: " + stripped);
     }
-    stripped = stripped.replace("Chance of a Thunderstorm", "Chnc T-St");
-    stripped = stripped.replace("moderate rain", "Rain");
-    stripped = stripped.replace("scattered clouds", "Ptly Cldy");
-    stripped = stripped.replace("sky is clear", "Clear");
-    stripped = stripped.replace("Thunderstorm", "T-Strm");
-    stripped = stripped.replace("Rain Showers", "Showers");
-    stripped = stripped.replace("Partly Cloudy", "Ptly Cldy");
+    stripped = stripped.replace("Chance of a Thunderstorm", "chnc t-St");
+    stripped = stripped.replace("moderate rain", "rain");
+    stripped = stripped.replace("scattered clouds", "ptly cldy");
+    stripped = stripped.replace("sky is clear", "clear");
+    stripped = stripped.replace("Thunderstorm", "t-Strm");
+    stripped = stripped.replace("Rain Showers", "showers");
+    stripped = stripped.replace("Partly Cloudy", "ptly cldy");
     stripped = stripped.replace("Mostly Cloudy", "Mstly Cldy");
-    stripped = stripped.replace("overcast", "Over cast");
-    stripped = stripped.replace("Overcast", "Over cast");
-    stripped = stripped.replace("over cast clouds", "Over cast");
-    stripped = stripped.replace("Chance of Rain", "Chnc Rain");
+    stripped = stripped.replace("overcast", "over cast");
+    stripped = stripped.replace("Overcast", "over cast");
+    stripped = stripped.replace("over cast clouds", "over cast");
+    stripped = stripped.replace("Chance of Rain", "chnc rain");
+    stripped = stripped.replace("Rain", "rain");
     if (debug_flag > 0) {
         console.log("stripper output: " + stripped);
     }
@@ -1112,8 +1113,8 @@ sunset: sunset,
 
 
 function sendDayMessages(day, icon, temp, conditions, timestamp, baro) {
-    if (debug_flag > -1) {
-        console.log("sending day = " + day);
+    if (debug_flag > 0) {
+        //console.log("sending day = " + day);
         showPersistent(day);
     }
     n = 0;
@@ -1303,7 +1304,7 @@ function goDoStuff() {
     var now = new Date().getTime();
     now = Math.round(now / 1e3);
     var delay = 300;
-    delay = 60;
+    //delay = 60;
     if (debug_flag > 0) {
         console.log("FUNCTION NAME = " + ownName);
         console.log("lastUpdate: " + localStorage.getItem("lastUpdate"));
