@@ -145,41 +145,49 @@ function tempShower(inTemp) {
         temp = Math.round(temp);
         if (debug_flag > 0) {
             console.log("temp is " + temp + "F" );
+		//Degrees Farenheit
         }
         temp = inTemp - 273.15;
         temp = Math.round(temp);
         if (debug_flag > 0) {
             console.log("temp is " + temp + "" );
+		//Degrees Celsius
         }
         temp = Math.round(inTemp);
         if (debug_flag > 0) {
             console.log("temp is " + temp + "K" );
             console.log("base calc unit is K");
+		//Kelvin
         }
         temp = inTemp * (9/5);
         temp = Math.round(temp);
         if (debug_flag > 0) {
             console.log("temp is " + temp + "Ra" );
+		//Degrees Rankine
         }
         temp = (inTemp - 273.15) * (4/5);
         temp = Math.round(temp);
         if (debug_flag > 0) {
             console.log("temp is " + temp + "Ré" );
+		//Degrees Réaumur
         }
         temp = ((inTemp - 273.15) * (21/40)) + 7.5;
         temp = Math.round(temp);
         if (debug_flag > 0) {
             console.log("temp is " + temp + "Rø" );
+		//Degrees Rømer
         }
         temp = (inTemp - 273.15) * (33/100);
         temp = Math.round(temp);
         if (debug_flag > 0) {
             console.log("temp is " + temp + "N" );
+		//Degrees Newton
         }
         temp = (373.15 - inTemp) * (3/2);
         temp = Math.round(temp);
         if (debug_flag > 0) {
             console.log("temp is " + temp + "De" );
+		//Degrees Delisle
         }
     } // end of if debug_flag > 1 condition
 }
